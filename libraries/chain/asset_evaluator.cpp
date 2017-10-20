@@ -63,7 +63,7 @@ void_result asset_create_evaluator::do_evaluate( const asset_create_operation& o
                 ("s",op.symbol)("p",prefix) );
       FC_ASSERT( asset_symbol_itr->issuer == op.issuer, "Asset ${s} may only be created by issuer of ${p}, ${i}",
                 ("s",op.symbol)("p",prefix)("i", op.issuer(d).name) );
-   } 
+   }
    core_fee_paid -= core_fee_paid.value/2;
 
    if( op.bitasset_opts )

@@ -61,11 +61,11 @@ bool is_valid_name( const string& name )
     const size_t len = name.size();
 
     /** this condition will prevent witnesses from including new names before this time, but
-     * allow them after this time.   This check can be removed from the code after HARDFORK_385_TIME
+     * allow them after this time.   This check can be removed from the code after
      * has passed.
      */
-    if( fc::time_point::now() < fc::time_point(HARDFORK_385_TIME) )
-       FC_ASSERT( len >= 3 );
+    //name length must >1
+    FC_ASSERT( len >= 1 );
 
     if( len < GRAPHENE_MIN_ACCOUNT_NAME_LENGTH )
     {

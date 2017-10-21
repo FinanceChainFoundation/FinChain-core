@@ -59,7 +59,13 @@ namespace graphene { namespace chain {
 
       void validate()const;
    };
-
+    
+   struct locked_balance
+   {
+        share_type balance;
+        uint64_t unlock_time;
+   };
+   inline bool operator < ( const locked_balance& a, const locked_balance& b ) { return a.unlock_time <  b.unlock_time; }
    /**
     *  @ingroup operations
     */
@@ -264,6 +270,8 @@ namespace graphene { namespace chain {
 } } // graphene::chain
 
 FC_REFLECT(graphene::chain::account_options, (memo_key)(voting_account)(num_witness)(num_committee)(votes)(extensions))
+FC_REFLECT(graphene::chain::locked_balance, (balance)(unlock_time))
+
 FC_REFLECT_ENUM( graphene::chain::account_whitelist_operation::account_listing,
                 (no_listing)(white_listed)(black_listed)(white_and_black_listed))
 

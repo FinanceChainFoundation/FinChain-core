@@ -107,7 +107,8 @@ namespace graphene { namespace chain {
          account_id_type   owner;
          asset_id_type     asset_type;
          share_type        balance;
-
+         set<locked_balance> locked;
+         //locked_balance    locked;
          asset get_balance()const { return asset(balance, asset_type); }
          void  adjust_balance(const asset& delta);
    };
@@ -383,7 +384,7 @@ FC_REFLECT_DERIVED( graphene::chain::account_object,
 
 FC_REFLECT_DERIVED( graphene::chain::account_balance_object,
                     (graphene::db::object),
-                    (owner)(asset_type)(balance) )
+                    (owner)(asset_type)(balance)(locked))
 
 FC_REFLECT_DERIVED( graphene::chain::account_statistics_object,
                     (graphene::chain::object),

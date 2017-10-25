@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2015 Cryptonomex, Inc., and contributors.
+ * Copyright (c) 2017 FinChain, Inc., and contributors.
  *
  * The MIT License
  *
@@ -26,6 +27,7 @@
 #include <boost/multi_index/composite_key.hpp>
 #include <graphene/db/flat_index.hpp>
 #include <graphene/db/generic_index.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
 
 /**
  * @defgroup prediction_market Prediction Market
@@ -62,9 +64,27 @@ namespace graphene { namespace chain {
 
          /// The number of shares currently in existence
          share_type current_supply;
-         share_type confidential_supply; ///< total asset held in confidential balances
-         share_type accumulated_fees; ///< fees accumulate to be paid out over time
-         share_type fee_pool;         ///< in core asset
+         share_type confidential_supply;        ///< total asset held in confidential balances
+         share_type accumulated_fees;           ///< fees accumulate to be paid out over time
+         share_type fee_pool;                   ///< in core asset
+         share_type locked_balance;             /// locked supply;
+   };
+   
+   class asset_lock_data_object : public abstract_object<asset_lock_data_object>
+   {
+      public:
+         static const uint8_t space_id = implementation_ids;
+         static const uint8_t type_id  = impl_asset_lock_data_type;
+      
+         //using u128 =      boost::multiprecision::number<boost::multiprecision::cpp_int_backend<128, 128, boost::multiprecision::unsigned_magnitude, boost::multiprecision::unchecked, void>>;
+         using coin_day=   safe<fc::uint128> ;
+      
+         uint64_t    nominal_interest_rate; //
+         uint16_t    reward_coefficient;
+         share_type  interest_pool;
+         coin_day    lock_coin_day;
+      
+      
    };
 
    /**
@@ -127,9 +147,12 @@ namespace graphene { namespace chain {
 
          /// Current supply, fee pool, and collected fees are stored in a separate object as they change frequently.
          asset_dynamic_data_id_type  dynamic_asset_data_id;
+      
+         optional<asset_lock_data_id_type> lock_data_id;
+      
          /// Extra data associated with BitAssets. This field is non-null if and only if is_market_issued() returns true
          optional<asset_bitasset_data_id_type> bitasset_data_id;
-
+      
          optional<account_id_type> buyback_account;
 
          asset_id_type get_id()const { return id; }
@@ -152,6 +175,10 @@ namespace graphene { namespace chain {
          const asset_dynamic_data_object& dynamic_data(const DB& db)const
          { return db.get(dynamic_asset_data_id); }
 
+         template<class DB>
+         const asset_lock_data_object& lock_data(const DB& db)const
+         { return db.get(lock_data_id); }
+ 
          /**
           *  The total amount of an asset that is reserved for future issuance. 
           */
@@ -253,7 +280,10 @@ namespace graphene { namespace chain {
 } } // graphene::chain
 
 FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::object),
-                    (current_supply)(confidential_supply)(accumulated_fees)(fee_pool) )
+                    (current_supply)(confidential_supply)(accumulated_fees)(fee_pool) (locked_balance))
+
+FC_REFLECT_DERIVED( graphene::chain::asset_lock_data_object, (graphene::db::object),
+                   (nominal_interest_rate)(reward_coefficient)(interest_pool)(lock_coin_day) )
 
 FC_REFLECT_DERIVED( graphene::chain::asset_bitasset_data_object, (graphene::db::object),
                     (feeds)
@@ -272,6 +302,7 @@ FC_REFLECT_DERIVED( graphene::chain::asset_object, (graphene::db::object),
                     (issuer)
                     (options)
                     (dynamic_asset_data_id)
+                    (lock_data_id)
                     (bitasset_data_id)
                     (buyback_account)
                   )

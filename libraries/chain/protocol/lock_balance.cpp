@@ -38,6 +38,22 @@ void lock_balance_operation::validate()const
    FC_ASSERT( fee.amount >= 0 );
    FC_ASSERT( amount.amount > 0 );
 }
+   
+share_type set_lock_data_operation::calculate_fee( const fee_parameters_type& schedule )const
+{
+   share_type core_fee_required = schedule.fee;
+   
+   return core_fee_required;
+}
+
+
+void set_lock_data_operation::validate()const
+{
+   FC_ASSERT( fee.amount >= 0 );
+   FC_ASSERT(nominal_interest_rate>0);
+   FC_ASSERT(init_interest_pool.amount>=0);
+   
+}
 
 
 

@@ -78,6 +78,7 @@ add_library( graphene_chain
              withdraw_permission_evaluator.cpp
              worker_evaluator.cpp
              confidential_evaluator.cpp
+             lock_balance_evaluator.cpp
              special_authority.cpp
              buyback.cpp
 

@@ -46,6 +46,7 @@
 #include <graphene/chain/witness_object.hpp>
 #include <graphene/chain/witness_schedule_object.hpp>
 #include <graphene/chain/worker_object.hpp>
+#include <graphene/chain/locked_balance_object.hpp>
 
 #include <graphene/chain/account_evaluator.hpp>
 #include <graphene/chain/asset_evaluator.hpp>
@@ -61,6 +62,7 @@
 #include <graphene/chain/withdraw_permission_evaluator.hpp>
 #include <graphene/chain/witness_evaluator.hpp>
 #include <graphene/chain/worker_evaluator.hpp>
+#include <graphene/chain/lock_balance_evaluator.hpp>
 
 #include <graphene/chain/protocol/fee_schedule.hpp>
 
@@ -125,6 +127,12 @@ const uint8_t witness_object::type_id;
 
 const uint8_t worker_object::space_id;
 const uint8_t worker_object::type_id;
+   
+const uint8_t locked_balance_object::space_id;
+const uint8_t locked_balance_object::type_id;
+
+const uint8_t asset_lock_data_object::space_id;
+const uint8_t asset_lock_data_object::type_id;
 
 
 void database::initialize_evaluators()
@@ -171,6 +179,7 @@ void database::initialize_evaluators()
    register_evaluator<transfer_from_blind_evaluator>();
    register_evaluator<blind_transfer_evaluator>();
    register_evaluator<asset_claim_fees_evaluator>();
+   register_evaluator<lock_balance_evaluator>();
 }
 
 void database::initialize_indexes()
@@ -216,6 +225,7 @@ void database::initialize_indexes()
    add_index< primary_index< buyback_index                                > >();
 
    add_index< primary_index< simple_index< fba_accumulator_object       > > >();
+   add_index< primary_index< simple_index< asset_lock_data_object       > > >();
 }
 
 void database::init_genesis(const genesis_state_type& genesis_state)

@@ -57,6 +57,7 @@ add_library( graphene_chain
              protocol/fee_schedule.cpp
              protocol/confidential.cpp
              protocol/vote.cpp
+             protocol/lock_balance.cpp
 
              genesis_state.cpp
              get_config.cpp
@@ -89,6 +90,7 @@ add_library( graphene_chain
              block_database.cpp
 
              is_authorized_asset.cpp
+             locked_balance_object.cpp
 
              ${HEADERS}
              ${PROTOCOL_HEADERS}

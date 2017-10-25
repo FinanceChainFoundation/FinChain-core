@@ -1,4 +1,4 @@
-7/*
+/*
  * Copyright (c) 2017 FinChain, Inc., and contributors.
  *
  * The MIT License

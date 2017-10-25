@@ -155,7 +155,9 @@ namespace graphene { namespace chain {
       impl_budget_record_object_type,
       impl_special_authority_object_type,
       impl_buyback_object_type,
-      impl_fba_accumulator_object_type
+      impl_fba_accumulator_object_type,
+      impl_locked_balance_object_type,
+      impl_asset_lock_data_type
    };
 
    //typedef fc::unsigned_int            object_id_type;
@@ -207,6 +209,8 @@ namespace graphene { namespace chain {
    class special_authority_object;
    class buyback_object;
    class fba_accumulator_object;
+   class locked_balance_object;
+   class asset_lock_data_object;
 
    typedef object_id< implementation_ids, impl_global_property_object_type,  global_property_object>                    global_property_id_type;
    typedef object_id< implementation_ids, impl_dynamic_global_property_object_type,  dynamic_global_property_object>    dynamic_global_property_id_type;
@@ -227,6 +231,8 @@ namespace graphene { namespace chain {
    typedef object_id< implementation_ids, impl_special_authority_object_type, special_authority_object >                special_authority_id_type;
    typedef object_id< implementation_ids, impl_buyback_object_type, buyback_object >                                    buyback_id_type;
    typedef object_id< implementation_ids, impl_fba_accumulator_object_type, fba_accumulator_object >                    fba_accumulator_id_type;
+   typedef object_id< implementation_ids, impl_locked_balance_object_type, locked_balance_object >                      locked_balance_id_type;
+   typedef object_id< implementation_ids, impl_asset_lock_data_type, asset_lock_data_object >                           asset_lock_data_id_type;
 
    typedef fc::array<char, GRAPHENE_MAX_ASSET_SYMBOL_LENGTH>    symbol_type;
    typedef fc::ripemd160                                        block_id_type;
@@ -359,6 +365,8 @@ FC_REFLECT_ENUM( graphene::chain::impl_object_type,
                  (impl_special_authority_object_type)
                  (impl_buyback_object_type)
                  (impl_fba_accumulator_object_type)
+                 (impl_locked_balance_object_type)
+                 (impl_asset_lock_data_type)
                )
 
 FC_REFLECT_TYPENAME( graphene::chain::share_type )
@@ -390,6 +398,8 @@ FC_REFLECT_TYPENAME( graphene::chain::budget_record_id_type )
 FC_REFLECT_TYPENAME( graphene::chain::special_authority_id_type )
 FC_REFLECT_TYPENAME( graphene::chain::buyback_id_type )
 FC_REFLECT_TYPENAME( graphene::chain::fba_accumulator_id_type )
+FC_REFLECT_TYPENAME( graphene::chain::locked_balance_id_type )
+FC_REFLECT_TYPENAME( graphene::chain::asset_lock_data_id_type)
 
 FC_REFLECT( graphene::chain::void_t, )
 

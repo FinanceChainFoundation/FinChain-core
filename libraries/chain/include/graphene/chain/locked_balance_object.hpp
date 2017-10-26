@@ -46,10 +46,10 @@ namespace graphene { namespace chain {
          userSet
       };
       
-      share_type initial_lock_balance;
-      share_type locked_balance;
-      uint64_t lock_time;
-      uint32_t lock_period;
+      share_type  initial_lock_balance;
+      share_type  locked_balance;
+      uint64_t    lock_time;
+      uint32_t    lock_period;
       
       uint64_t get_interest(){
          share_type profile=(locked_balance-initial_lock_balance)/initial_lock_balance;

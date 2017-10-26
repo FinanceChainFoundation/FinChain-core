@@ -84,6 +84,12 @@ namespace graphene { namespace chain {
          share_type  interest_pool;
          coin_day    lock_coin_day=0;
       
+         uint64_t    get_interest(uint32_t lock_period)const{
+            //TODO calculate interest
+            return 0;
+            
+         }
+   
       
    };
 
@@ -177,8 +183,12 @@ namespace graphene { namespace chain {
 
          template<class DB>
          const asset_lock_data_object& lock_data(const DB& db)const
-         { return db.get(lock_data_id); }
+         {
+            FC_ASSERT(lock_data_id,"asset ${symbol} no lock option ");
+            return db.get(*lock_data_id);
+         }
  
+         bool validate_lock_option()const {return lock_data_id.valid();}
          /**
           *  The total amount of an asset that is reserved for future issuance. 
           */

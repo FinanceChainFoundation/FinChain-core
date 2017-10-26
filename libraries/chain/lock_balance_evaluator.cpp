@@ -27,20 +27,44 @@
 #include <graphene/chain/is_authorized_asset.hpp>
 
 namespace graphene { namespace chain {
-void_result lock_balance_evaluator::do_evaluate( const lock_balance_operation & op )
-{ try {
+   void_result lock_balance_evaluator::do_evaluate( const lock_balance_operation & op )
+   {
+      try {
+      
+         const database& d = db();
+         const account_object& issuer           = op.issuer(d);
+         const asset_object&   asset_type       = op.amount.asset_id(d);
+         //const asset_lock_data_object lock_data = asset_type.lock_data(d);
+
+         FC_ASSERT(asset_type.validate_lock_option(),"asset ${symbol} no lock option ");
+         
+         bool insufficient_balance = d.get_balance( op.issuer, op.amount.asset_id ).amount >= op.amount.amount;
+         FC_ASSERT(insufficient_balance,
+                   "Insufficient Balance: unable to lock balance"
+                   );
+
+   }  FC_CAPTURE_AND_RETHROW( (op) ) }
    
-   const database& d = db();
-
-   const account_object& issuer    = op.issuer(d);
-   const asset_object&   asset_type      = op.amount.asset_id(d);
-
-   try {
-
-   } FC_RETHROW_EXCEPTIONS( error, "Unable to transfer ${a} from ${f} to ${t}", ("a",d.to_pretty_string(op.amount)) );
-
-}  FC_CAPTURE_AND_RETHROW( (op) ) }
-
+   void_result lock_balance_evaluator::do_apply( const lock_balance_operation& o )
+   {
+      try {
+         database& d = db();
+         const asset_object&   asset_type       = o.amount.asset_id(d);
+         const asset_lock_data_object lock_data_obj=asset_type.lock_data(d);
+         const auto instrest=lock_data_obj.get_interest(o.period);
+         const share_type locked_balance=instrest*o.amount.amount;
+         
+         const auto new_locked_balance_o =d.create<locked_balance_object>([&](locked_balance_object &obj){
+         });
+         
+         //const auto new_locked_balance_o = d.create<locked_balance_object>([&](locked_balance_object& obj){
+         //   obj.locked_balance=locked_balance;
+            
+         //});
+         
+      return void_result();
+   } FC_CAPTURE_AND_RETHROW( (o) ) }
+   
    void_result set_lock_data_evaluator::do_evaluate( const set_lock_data_operation & op )
    { try {
       
@@ -48,22 +72,18 @@ void_result lock_balance_evaluator::do_evaluate( const lock_balance_operation & 
       
       const asset_object&   asset_type =op.init_interest_pool.asset_id(d);
 
-      try {
+      
+      FC_ASSERT(asset_type.issuer==op.issuer,
+                "operation issuer ${op.issuer} is not asset issuer ${asset_type.issuer}"
+      );
+      
+      if(op.init_interest_pool.amount>0){
+         bool insufficient_balance = d.get_balance( op.issuer, op.init_interest_pool.asset_id ).amount >= op.init_interest_pool.amount;
+         FC_ASSERT(insufficient_balance,
+                   "Insufficient Balance: unable to pure to init lock interest pool");
+      }
+      return void_result();
          
-         FC_ASSERT(asset_type.issuer==op.issuer,
-                   "operation issuer ${op.issuer} is not asset issuer ${asset_type.issuer}"
-         );
-         
-         if(op.init_interest_pool.amount>0){
-            bool insufficient_balance = d.get_balance( op.issuer, op.init_interest_pool.asset_id ).amount >= op.init_interest_pool.amount;
-            FC_ASSERT(insufficient_balance,
-                      "Insufficient Balance: unable to pure to init lock interest pool"
-                      );
-         }
-         
-         return void_result();
-         
-      } FC_RETHROW_EXCEPTIONS( error ,"Unable to set asset ${op.init_interest_pool.asset_id} lock data");
       
    }  FC_CAPTURE_AND_RETHROW( (op) ) }
    

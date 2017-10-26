@@ -25,6 +25,7 @@
 #include <graphene/chain/account_object.hpp>
 #include <graphene/chain/exceptions.hpp>
 #include <graphene/chain/is_authorized_asset.hpp>
+#include <graphene/chain/locked_balance_object.hpp>
 
 namespace graphene { namespace chain {
    void_result lock_balance_evaluator::do_evaluate( const lock_balance_operation & op )
@@ -32,7 +33,6 @@ namespace graphene { namespace chain {
       try {
       
          const database& d = db();
-         const account_object& issuer           = op.issuer(d);
          const asset_object&   asset_type       = op.amount.asset_id(d);
          //const asset_lock_data_object lock_data = asset_type.lock_data(d);
 

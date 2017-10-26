@@ -27,6 +27,7 @@
 #include <math.h>
 
 namespace graphene { namespace chain {
+   using namespace graphene::db;
    class database;
    
    /**
@@ -35,13 +36,13 @@ namespace graphene { namespace chain {
     * @ingroup implementation
     *
     */
-   class locked_balance_object : public graphene::db::abstract_object<locked_balance_object>
+   class locked_balance_object : public abstract_object<locked_balance_object>
    {
    public:
       static const uint8_t space_id = implementation_ids;
       static const uint8_t type_id  = impl_locked_balance_object_type;
       
-      enum lock_type{
+      enum LockType{
          genesis,
          userSet
       };
@@ -50,6 +51,7 @@ namespace graphene { namespace chain {
       share_type  locked_balance;
       uint64_t    lock_time;
       uint32_t    lock_period;
+      LockType    lock_type;
       
       uint64_t get_interest(){
          share_type profile=(locked_balance-initial_lock_balance)/initial_lock_balance;
@@ -65,6 +67,7 @@ namespace graphene { namespace chain {
    /**
     * @ingroup object_index
     */
+   /*
    typedef multi_index_container<
       locked_balance_object,
       indexed_by<
@@ -72,14 +75,14 @@ namespace graphene { namespace chain {
       >
    > locked_balance_index_type;
    
-   /**
-    * @ingroup object_index
-    */
-   typedef generic_index<locked_balance_object, locked_balance_index_type> locked_balance_index;
 
+   typedef generic_index<locked_balance_object, locked_balance_index_type> locked_balance_index;
+    */
 }}
+
+FC_REFLECT_ENUM(graphene::chain::locked_balance_object::LockType,(genesis)(userSet))
 
 FC_REFLECT_DERIVED( graphene::chain::locked_balance_object,
                    (graphene::db::object),
-                   (initial_lock_balance)(locked_balance)(lock_time)(lock_period)
+                   (initial_lock_balance)(locked_balance)(lock_time)(lock_period)(lock_type)
                    )

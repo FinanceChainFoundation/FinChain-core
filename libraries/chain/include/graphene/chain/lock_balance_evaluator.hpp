@@ -39,11 +39,11 @@ namespace graphene { namespace chain {
    
    class set_lock_data_evaluator : public evaluator<set_lock_data_evaluator>
    {
-   public:
-      typedef set_lock_data_operation operation_type;
-      
-      void_result do_evaluate( const set_lock_data_operation& o );
-      void_result do_apply( const set_lock_data_operation& o );
+      public:
+         typedef set_lock_data_operation operation_type;
+         
+         void_result do_evaluate( const set_lock_data_operation& o );
+         void_result do_apply( const set_lock_data_operation& o );
    };
 
 

@@ -226,7 +226,7 @@ void database::initialize_indexes()
 
    add_index< primary_index< simple_index< fba_accumulator_object       > > >();
    
-   add_index< primary_index<locked_balance_index                          > >();
+   add_index< primary_index< simple_index< locked_balance_object        > > >();
    add_index< primary_index< simple_index< asset_lock_data_object       > > >();
 }
 

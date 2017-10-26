@@ -104,13 +104,24 @@ namespace graphene { namespace chain {
          static const uint8_t space_id = implementation_ids;
          static const uint8_t type_id  = impl_account_balance_object_type;
 
-         account_id_type   owner;
-         asset_id_type     asset_type;
-         share_type        balance;
-         set<locked_balance> locked;
+         account_id_type               owner;
+         asset_id_type                 asset_type;
+         share_type                    balance;
+         set<locked_balance_id_type>   locked;
          //locked_balance    locked;
          asset get_balance()const { return asset(balance, asset_type); }
          void  adjust_balance(const asset& delta);
+      
+         void  add_lock_balance(locked_balance_id_type id){
+            
+            FC_ASSERT(locked.size()<50," max 50 lock balance per asset");
+            locked.insert(id);
+         }
+      
+         void unlock_balance(locked_balance_id_type id){
+            
+            locked.erase(id);
+         }
    };
 
 

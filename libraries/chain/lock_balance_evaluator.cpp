@@ -34,6 +34,10 @@ namespace graphene { namespace chain {
       
          const database& d = db();
          const asset_object&   asset_type       = op.amount.asset_id(d);
+         const asset_lock_data_object & lock_data_obj=asset_type.lock_data(d);
+         const auto instrest=lock_data_obj.get_interest(op.period);
+         
+         
          //const asset_lock_data_object lock_data = asset_type.lock_data(d);
 
          FC_ASSERT(asset_type.validate_lock_option(),"asset ${symbol} no lock option ");
@@ -41,6 +45,12 @@ namespace graphene { namespace chain {
          bool insufficient_balance = d.get_balance( op.issuer, op.amount.asset_id ).amount >= op.amount.amount;
          FC_ASSERT(insufficient_balance,
                    "Insufficient Balance: unable to lock balance"
+                   );
+         
+         to_locking_balance=instrest*op.amount.amount+op.amount.amount; //TODO check overflow
+         bool insufficient_pool=asset_type.lock_data(d).interest_pool>=to_locking_balance;
+         FC_ASSERT(insufficient_pool,
+                   "Insufficient interest pool: unable to lock balance"
                    );
 
    }  FC_CAPTURE_AND_RETHROW( (op) ) }
@@ -50,18 +60,42 @@ namespace graphene { namespace chain {
       try {
          database& d = db();
          const asset_object&   asset_type       = o.amount.asset_id(d);
-         const asset_lock_data_object lock_data_obj=asset_type.lock_data(d);
-         const auto instrest=lock_data_obj.get_interest(o.period);
-         const share_type locked_balance=instrest*o.amount.amount;
+         const asset_dynamic_data_object asset_dynamic_data_o=asset_type.dynamic_data(d);
+         const asset_lock_data_object & lock_data_obj=asset_type.lock_data(d);
+         
+         d.adjust_balance(o.issuer, -o.amount.amount);
          
          const auto new_locked_balance_o =d.create<locked_balance_object>([&](locked_balance_object &obj){
+            obj.initial_lock_balance=o.amount.amount;
+            obj.locked_balance=to_locking_balance;
+            obj.lock_period=o.period;
+            obj.lock_type=locked_balance_object::userSet;
+            obj.lock_time=d.get_dynamic_global_properties().time.sec_since_epoch();
          });
          
-         //const auto new_locked_balance_o = d.create<locked_balance_object>([&](locked_balance_object& obj){
-         //   obj.locked_balance=locked_balance;
-            
-         //});
          
+         auto& index = d.get_index_type<account_balance_index>().indices().get<by_account_asset>();
+         auto itr = index.find(boost::make_tuple(o.issuer, o.amount.asset_id));
+
+         FC_ASSERT( itr!=index.end(), "Insufficient Balance");
+         
+         d.modify(*itr,[&](account_balance_object & obj){
+            obj.add_lock_balance(new_locked_balance_o.id);
+         });
+         
+         d.modify(lock_data_obj,[&](asset_lock_data_object &obj){
+            
+            const s_uint128_t amount=o.amount.amount.value;
+            const s_uint128_t period=o.period;
+            obj.interest_pool-=to_locking_balance;
+            obj.lock_coin_day+=amount*period;
+         });
+
+         
+         d.modify(asset_dynamic_data_o, [&](asset_dynamic_data_object &obj){
+            obj.locked_balance+=to_locking_balance;
+         });
+
       return void_result();
    } FC_CAPTURE_AND_RETHROW( (o) ) }
    

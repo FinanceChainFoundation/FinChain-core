@@ -37,41 +37,58 @@ void_result lock_balance_evaluator::do_evaluate( const lock_balance_operation & 
 
    try {
 
-      /*GRAPHENE_ASSERT(
-         is_authorized_asset( d, from_account, asset_type ),
-         transfer_from_account_not_whitelisted,
-         "'from' account ${from} is not whitelisted for asset ${asset}",
-         ("from",op.from)
-         ("asset",op.amount.asset_id)
-         );
-      GRAPHENE_ASSERT(
-         is_authorized_asset( d, to_account, asset_type ),
-         transfer_to_account_not_whitelisted,
-         "'to' account ${to} is not whitelisted for asset ${asset}",
-         ("to",op.to)
-         ("asset",op.amount.asset_id)
-         );
-
-      if( asset_type.is_transfer_restricted() )
-      {
-         GRAPHENE_ASSERT(
-            from_account.id == asset_type.issuer || to_account.id == asset_type.issuer,
-            transfer_restricted_transfer_asset,
-            "Asset {asset} has transfer_restricted flag enabled",
-            ("asset", op.amount.asset_id)
-          );
-      }
-
-      bool insufficient_balance = d.get_balance( from_account, asset_type ).amount >= op.amount.amount;
-      FC_ASSERT( insufficient_balance,
-                 "Insufficient Balance: ${balance}, unable to transfer '${total_transfer}' from account '${a}' to '${t}'", 
-                 ("a",from_account.name)("t",to_account.name)("total_transfer",d.to_pretty_string(op.amount))("balance",d.to_pretty_string(d.get_balance(from_account, asset_type))) );
-
-      return void_result();
-       */
    } FC_RETHROW_EXCEPTIONS( error, "Unable to transfer ${a} from ${f} to ${t}", ("a",d.to_pretty_string(op.amount)) );
 
 }  FC_CAPTURE_AND_RETHROW( (op) ) }
 
+   void_result set_lock_data_evaluator::do_evaluate( const set_lock_data_operation & op )
+   { try {
+      
+      const database& d = db();
+      
+      const asset_object&   asset_type =op.init_interest_pool.asset_id(d);
+
+      try {
+         
+         FC_ASSERT(asset_type.issuer==op.issuer,
+                   "operation issuer ${op.issuer} is not asset issuer ${asset_type.issuer}"
+         );
+         
+         if(op.init_interest_pool.amount>0){
+            bool insufficient_balance = d.get_balance( op.issuer, op.init_interest_pool.asset_id ).amount >= op.init_interest_pool.amount;
+            FC_ASSERT(insufficient_balance,
+                      "Insufficient Balance: unable to pure to init lock interest pool"
+                      );
+         }
+         
+         return void_result();
+         
+      } FC_RETHROW_EXCEPTIONS( error ,"Unable to set asset ${op.init_interest_pool.asset_id} lock data");
+      
+   }  FC_CAPTURE_AND_RETHROW( (op) ) }
+   
+   void_result set_lock_data_evaluator::do_apply( const set_lock_data_operation& o )
+   { try {
+      if(o.init_interest_pool.amount>0)
+         db().adjust_balance( o.issuer, -o.init_interest_pool);
+      
+      
+      database& d = db();
+      const auto new_lock_data_o = d.create<asset_lock_data_object>([&](asset_lock_data_object& obj){
+         obj.interest_pool=o.init_interest_pool.amount;
+         obj.nominal_interest_rate=o.nominal_interest_rate;
+         obj.reward_coefficient=o.reward_coefficient;
+         obj.lock_coin_day=0;
+      });
+      
+      const asset_object&   asset_type =o.init_interest_pool.asset_id(d);
+      
+      d.modify(asset_type,[&](asset_object& obj){
+         obj.lock_data_id=new_lock_data_o.id;
+
+      });
+      
+      return void_result();
+   } FC_CAPTURE_AND_RETHROW( (o) ) }
 
 } } // graphene::chain

@@ -67,7 +67,7 @@ namespace graphene { namespace chain {
          share_type confidential_supply;        ///< total asset held in confidential balances
          share_type accumulated_fees;           ///< fees accumulate to be paid out over time
          share_type fee_pool;                   ///< in core asset
-         share_type locked_balance;             /// locked supply;
+         share_type locked_balance=0;           /// locked supply;
    };
    
    class asset_lock_data_object : public abstract_object<asset_lock_data_object>
@@ -82,7 +82,7 @@ namespace graphene { namespace chain {
          uint64_t    nominal_interest_rate; //
          uint16_t    reward_coefficient;
          share_type  interest_pool;
-         coin_day    lock_coin_day;
+         coin_day    lock_coin_day=0;
       
       
    };

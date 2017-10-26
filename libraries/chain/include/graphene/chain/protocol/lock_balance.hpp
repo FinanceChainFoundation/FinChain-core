@@ -62,10 +62,33 @@ namespace graphene { namespace chain {
       void            validate()const;
       share_type      calculate_fee(const fee_parameters_type& k)const;
    };
+   
+   struct set_lock_data_operation : public base_operation
+   {
+      struct fee_parameters_type {
+         uint64_t fee       = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
+         uint32_t price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
+      };
+      
+      asset             fee;
+      /// Account that lock balance
+      account_id_type   issuer;
+      uint64_t          nominal_interest_rate; //
+      uint16_t          reward_coefficient;
+      asset             init_interest_pool;
+      extensions_type   extensions;
+      
+      account_id_type fee_payer()const { return issuer; }
+      void            validate()const;
+      share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
 
 
 }} // graphene::chain
 
 FC_REFLECT( graphene::chain::lock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(extensions) )
+
+FC_REFLECT( graphene::chain::set_lock_data_operation::fee_parameters_type, (fee)(price_per_kbyte) )
+FC_REFLECT( graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_rate)(reward_coefficient)(init_interest_pool)(extensions) )
 

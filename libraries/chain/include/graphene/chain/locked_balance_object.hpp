@@ -49,7 +49,7 @@ namespace graphene { namespace chain {
       
       share_type  initial_lock_balance;
       share_type  locked_balance;
-      uint64_t    lock_time;
+      uint32_t    lock_time;
       uint32_t    lock_period;
       LockType    lock_type;
       

@@ -72,6 +72,10 @@ ENDIF()
 if( WIN32 )
 
     message( STATUS "Configuring FinChain on WIN32")
+
+#set compile option
+    add_compile_options(/MP)
+
     set( DB_VERSION 60 )
     set( BDB_STATIC_LIBS 1 )
 

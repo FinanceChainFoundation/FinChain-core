@@ -202,6 +202,16 @@ struct get_impacted_account_visitor
    {
       _impacted.insert( op.account_id );
    }
+   
+   void operator()( const set_lock_data_operation& op )
+   {
+      _impacted.insert( op.issuer );
+   }
+   
+   void operator()( const lock_balance_operation & op )
+   {
+      _impacted.insert( op.issuer );
+   }
 
 };
 

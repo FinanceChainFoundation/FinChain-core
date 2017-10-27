@@ -242,6 +242,9 @@ namespace graphene { namespace chain {
    typedef fc::ecc::compact_signature                           signature_type;
    typedef safe<int64_t>                                        share_type;
    typedef uint16_t                                             weight_type;
+   typedef safe<int32_t>                                        TimeStamp;
+   
+   typedef safe<fc::uint128_t>                                  s_uint128_t;
 
    struct public_key_type
    {

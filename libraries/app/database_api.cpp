@@ -843,18 +843,24 @@ vector<asset_locked_balance> database_api_impl::get_account_locked_balances(acco
       for (const account_balance_object& balance : boost::make_iterator_range(range.first, range.second))
          
          if(balance.locked.size()){
-            vector <account_locked_balance_object> temp_locked_balance_objs;
-            for(const auto & lk_id:lockeds )
-               temp_locked_balance_objs.push(lk_id(_db))
+            vector <locked_balance_object> temp_locked_balance_objs;
+            for(const auto & lk_id:balance.locked )
+               temp_locked_balance_objs.push_back(lk_id(_db));
+            result.push_back(asset_locked_balance(balance.asset_type,temp_locked_balance_objs));
          }
-         result.push_back(asset_locked_balance(account_balance_object.asset_id_type,temp_locked_balance_objs));
+
    }
    else
    {
       result.reserve(assets.size());
       
       std::transform(assets.begin(), assets.end(), std::back_inserter(result),
-                     [this, acnt](asset_id_type id) { return _db.get_locked_balance_ids(acnt, id)(_db); });
+                     [this, acnt](asset_id_type id) {
+                        vector <locked_balance_object> temp_locked_balance_objs;
+                        for(const auto & lk_id:_db.get_locked_balance_ids(acnt, id))
+                           temp_locked_balance_objs.push_back(lk_id(_db));
+                        return asset_locked_balance(id,temp_locked_balance_objs);
+                     });
    }
    
    return result;

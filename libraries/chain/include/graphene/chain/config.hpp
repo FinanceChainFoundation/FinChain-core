@@ -169,3 +169,12 @@
 ///@}
 
 #define GRAPHENE_FBA_STEALTH_DESIGNATED_ASSET (asset_id_type(743))
+
+//time
+#define FCC_INTEREST_DAY      3600*24
+#define FCC_INTEREST_MONTH    3600*24*30
+#define FCC_INTEREST_YEAR     3600*24*30*360
+
+//percent
+#define FCC_INTEREST_PERCENT      1000000000000
+

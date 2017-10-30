@@ -39,6 +39,17 @@ asset database::get_balance(account_id_type owner, asset_id_type asset_id) const
       return asset(0, asset_id);
    return itr->get_balance();
 }
+   vector<locked_balance_id_type > database::get_locked_balance_ids(account_id_type owner, asset_id_type asset_id)const
+{
+   vector<locked_balance_id_type> res;
+   auto& index = get_index_type<account_balance_index>().indices().get<by_account_asset>();
+   auto itr = index.find(boost::make_tuple(owner, asset_id));
+   if( itr == index.end() )
+      return res;
+   for(const auto &lk_id: itr->locked)
+      res.push_back(lk_id);
+   return res;
+}
 
 asset database::get_balance(const account_object& owner, const asset_object& asset_obj) const
 {

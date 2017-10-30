@@ -106,6 +106,21 @@ struct market_trade
    double                     amount;
    double                     value;
 };
+   
+struct locked_balance
+{
+   share_type                 balance;
+   uint32_t                   unlock_time;
+};
+   
+struct asset_locked_balance
+{
+   asset_locked_balance(asset_id_type _asset_id,vector<locked_balance_object> & _lockded_balances):
+                        asset_id(_asset_id),lockded_balances(_lockded_balances){}
+   asset_id_type                       asset_id;
+   vector<locked_balance_object>       lockded_balances;
+};
+
 
 /**
  * @brief The database_api class implements the RPC API for the chain database.
@@ -290,6 +305,8 @@ class database_api
        * @return Balances of the account
        */
       vector<asset> get_account_balances(account_id_type id, const flat_set<asset_id_type>& assets)const;
+   
+      vector<asset_locked_balance> get_account_locked_balances(account_id_type id, const flat_set<asset_id_type>& assets)const;
 
       /// Semantically equivalent to @ref get_account_balances, but takes a name instead of an ID.
       vector<asset> get_named_account_balances(const std::string& name, const flat_set<asset_id_type>& assets)const;
@@ -583,6 +600,8 @@ FC_REFLECT( graphene::app::order_book, (base)(quote)(bids)(asks) );
 FC_REFLECT( graphene::app::market_ticker, (base)(quote)(latest)(lowest_ask)(highest_bid)(percent_change)(base_volume)(quote_volume) );
 FC_REFLECT( graphene::app::market_volume, (base)(quote)(base_volume)(quote_volume) );
 FC_REFLECT( graphene::app::market_trade, (date)(price)(amount)(value) );
+FC_REFLECT( graphene::app::locked_balance,(balance)(unlock_time));
+FC_REFLECT( graphene::app::asset_locked_balance,(asset_id)(lockded_balances))
 
 FC_API(graphene::app::database_api,
    // Objects
@@ -623,6 +642,7 @@ FC_API(graphene::app::database_api,
 
    // Balances
    (get_account_balances)
+   (get_account_locked_balances)
    (get_named_account_balances)
    (get_balance_objects)
    (get_vested_balances)

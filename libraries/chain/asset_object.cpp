@@ -30,6 +30,24 @@
 
 using namespace graphene::chain;
 
+share_type asset_lock_data_object::get_profile(share_type tolocking_balance,uint32_t lock_period,const database &_db)const{
+   //set two years spence out interest pool
+   //FCC_INTEREST_YEAR
+   asset_object target_asset_obj=asset_id(_db);
+   share_type current_supply=target_asset_obj.dynamic_data(_db).current_supply;
+   share_type cal_locked_2years=(lock_coin_day/coin_day(FCC_INTEREST_YEAR*2)).value.to_uint64();
+   share_type max_to_deposit_balance_2years=current_supply-cal_locked_2years;
+   
+   double one_2years=1.0/(FCC_INTEREST_YEAR*2.0);
+   double profile_2years=double(interest_pool.value)/double(max_to_deposit_balance_2years.value);
+   double interest_per_day=pow(profile_2years,one_2years);
+   
+   uint32_t period_day=lock_period/FCC_INTEREST_DAY;
+   double reward=1+(lock_period-FCC_INTEREST_YEAR)/FCC_INTEREST_YEAR*reward_coefficient/100.0;
+   
+   double profile_ratio= pow(interest_per_day,period_day)* reward;
+   return share_type(profile_ratio*tolocking_balance.value);
+}
 share_type asset_bitasset_data_object::max_force_settlement_volume(share_type current_supply) const
 {
    if( options.maximum_force_settlement_volume == 0 )

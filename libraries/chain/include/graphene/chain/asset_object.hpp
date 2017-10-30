@@ -28,6 +28,7 @@
 #include <graphene/db/flat_index.hpp>
 #include <graphene/db/generic_index.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
+#include <math.h>
 
 /**
  * @defgroup prediction_market Prediction Market
@@ -79,17 +80,15 @@ namespace graphene { namespace chain {
          //using u128 =      boost::multiprecision::number<boost::multiprecision::cpp_int_backend<128, 128, boost::multiprecision::unsigned_magnitude, boost::multiprecision::unchecked, void>>;
          using coin_day=   safe<fc::uint128> ;
       
-         uint64_t    nominal_interest_rate; //
-         uint16_t    reward_coefficient;
-         share_type  interest_pool;
-         coin_day    lock_coin_day=0;
+         asset_id_type  asset_id;
+         uint64_t       nominal_interest_rate; //the nominal interest set by asset issuer
+         uint64_t       active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
+         uint16_t       reward_coefficient;
+         share_type     interest_pool;
+         coin_day       lock_coin_day=0;
       
-         uint64_t    get_interest(uint32_t lock_period)const{
-            //TODO calculate interest
-            return 0;
-            
-         }
-   
+         // return (1+interest)*FCC_INTEREST_PERCENT
+         uint64_t    get_current_interest(uint32_t lock_period,const database &_db)const;
       
    };
 
@@ -293,6 +292,7 @@ FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::o
                     (current_supply)(confidential_supply)(accumulated_fees)(fee_pool) (locked_balance))
 
 FC_REFLECT_DERIVED( graphene::chain::asset_lock_data_object, (graphene::db::object),
+                   (asset_id)
                    (nominal_interest_rate)(reward_coefficient)(interest_pool)(lock_coin_day) )
 
 FC_REFLECT_DERIVED( graphene::chain::asset_bitasset_data_object, (graphene::db::object),

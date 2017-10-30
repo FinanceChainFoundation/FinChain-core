@@ -40,6 +40,7 @@
 #include <graphene/chain/proposal_object.hpp>
 #include <graphene/chain/worker_object.hpp>
 #include <graphene/chain/witness_object.hpp>
+#include <graphene/chain/locked_balance_object.hpp>
 
 #include <graphene/market_history/market_history_plugin.hpp>
 

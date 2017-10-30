@@ -347,6 +347,16 @@ void database::init_genesis(const genesis_state_type& genesis_state)
    const asset_dynamic_data_object& dyn_asset =
       create<asset_dynamic_data_object>([&](asset_dynamic_data_object& a) {
          a.current_supply = GRAPHENE_MAX_SHARE_SUPPLY;
+         a.locked_balance=0;
+      });
+   const asset_lock_data_object& lock_data_asset =
+      create<asset_lock_data_object>([&](asset_lock_data_object& obj) {
+         obj.asset_id=asset_id_type();
+         obj.nominal_interest_rate=50;
+         obj.active_interest_rate=obj.nominal_interest_rate;
+         obj.reward_coefficient=45;
+         obj.interest_pool=300000000*100000;
+         obj.lock_coin_day=0;
       });
    const asset_object& core_asset =
      create<asset_object>( [&]( asset_object& a ) {
@@ -361,6 +371,7 @@ void database::init_genesis(const genesis_state_type& genesis_state)
          a.options.core_exchange_rate.quote.amount = 1;
          a.options.core_exchange_rate.quote.asset_id = asset_id_type(0);
          a.dynamic_asset_data_id = dyn_asset.id;
+         a.dynamic_asset_data_id = lock_data_asset.id;
       });
    assert( asset_id_type(core_asset.id) == asset().asset_id );
    assert( get_balance(account_id_type(), asset_id_type()) == asset(dyn_asset.current_supply) );

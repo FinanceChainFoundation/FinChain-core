@@ -91,6 +91,7 @@ class database_api_impl : public std::enable_shared_from_this<database_api_impl>
 
       // Balances
       vector<asset> get_account_balances(account_id_type id, const flat_set<asset_id_type>& assets)const;
+      vector<asset_locked_balance> get_account_locked_balances(account_id_type id, const flat_set<asset_id_type>& assets)const;
       vector<asset> get_named_account_balances(const std::string& name, const flat_set<asset_id_type>& assets)const;
       vector<balance_object> get_balance_objects( const vector<address>& addrs )const;
       vector<asset> get_vested_balances( const vector<balance_id_type>& objs )const;
@@ -803,6 +804,11 @@ vector<asset> database_api::get_account_balances(account_id_type id, const flat_
 {
    return my->get_account_balances( id, assets );
 }
+   
+vector<asset_locked_balance> database_api::get_account_locked_balances(account_id_type id, const flat_set<asset_id_type>& assets)const
+{
+   return my->get_account_locked_balances( id, assets );
+}
 
 vector<asset> database_api_impl::get_account_balances(account_id_type acnt, const flat_set<asset_id_type>& assets)const
 {
@@ -823,6 +829,40 @@ vector<asset> database_api_impl::get_account_balances(account_id_type acnt, cons
                      [this, acnt](asset_id_type id) { return _db.get_balance(acnt, id); });
    }
 
+   return result;
+}
+vector<asset_locked_balance> database_api_impl::get_account_locked_balances(account_id_type acnt, const flat_set<asset_id_type>& assets)const
+{
+   vector<asset_locked_balance> result;
+   if (assets.empty())
+   {
+      // if the caller passes in an empty list of assets, return balances for all assets the account owns
+      const account_balance_index& balance_index = _db.get_index_type<account_balance_index>();
+      auto range = balance_index.indices().get<by_account_asset>().equal_range(boost::make_tuple(acnt));
+      
+      for (const account_balance_object& balance : boost::make_iterator_range(range.first, range.second))
+         
+         if(balance.locked.size()){
+            vector <locked_balance_object> temp_locked_balance_objs;
+            for(const auto & lk_id:balance.locked )
+               temp_locked_balance_objs.push_back(lk_id(_db));
+            result.push_back(asset_locked_balance(balance.asset_type,temp_locked_balance_objs));
+         }
+
+   }
+   else
+   {
+      result.reserve(assets.size());
+      
+      std::transform(assets.begin(), assets.end(), std::back_inserter(result),
+                     [this, acnt](asset_id_type id) {
+                        vector <locked_balance_object> temp_locked_balance_objs;
+                        for(const auto & lk_id:_db.get_locked_balance_ids(acnt, id))
+                           temp_locked_balance_objs.push_back(lk_id(_db));
+                        return asset_locked_balance(id,temp_locked_balance_objs);
+                     });
+   }
+   
    return result;
 }
 

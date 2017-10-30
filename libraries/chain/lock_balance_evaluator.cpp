@@ -35,8 +35,6 @@ namespace graphene { namespace chain {
          const database& d = db();
          const asset_object&   asset_type       = op.amount.asset_id(d);
          const asset_lock_data_object & lock_data_obj=asset_type.lock_data(d);
-         const auto instrest=lock_data_obj.get_current_interest(op.period,d);
-         
          
          //const asset_lock_data_object lock_data = asset_type.lock_data(d);
 
@@ -47,7 +45,7 @@ namespace graphene { namespace chain {
                    "Insufficient Balance: unable to lock balance"
                    );
          
-         to_locking_balance=instrest*op.amount.amount;// TODO bug over flow
+         to_locking_balance=lock_data_obj.get_profile(op.amount.amount,op.period,d);
          bool insufficient_pool=asset_type.lock_data(d).interest_pool>=to_locking_balance;
          FC_ASSERT(insufficient_pool,
                    "Insufficient interest pool: unable to lock balance"

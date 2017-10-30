@@ -292,6 +292,8 @@ namespace graphene { namespace chain {
          asset get_balance(account_id_type owner, asset_id_type asset_id)const;
          /// This is an overloaded method.
          asset get_balance(const account_object& owner, const asset_object& asset_obj)const;
+      
+         vector<locked_balance_id_type > get_locked_balance_ids(account_id_type owner, asset_id_type asset_id)const;
 
          /**
           * @brief Adjust a particular account's balance in a given asset by a delta

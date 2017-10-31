@@ -159,6 +159,10 @@ struct lock_data_detail{
    share_type        interest_pool;
    coin_day          lock_coin_day=0;
 };
+<<<<<<< HEAD
+=======
+>>>>>>> develop
+>>>>>>> master
 
 /**
  * @brief The database_api class implements the RPC API for the chain database.

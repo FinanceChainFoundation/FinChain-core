@@ -114,14 +114,50 @@ struct locked_balance
    uint32_t                   unlock_time;
 };
    
+struct locked_balance_detail
+{
+   locked_balance_detail(const locked_balance_object& obj){
+      initial_lock_balance=obj.initial_lock_balance;
+      locked_balance=obj.locked_balance;
+      lock_time=obj.lock_time;
+      lock_period=obj.lock_period;
+      lock_type=obj.lock_type;
+      interest=obj.get_interest();
+   }
+   share_type                          initial_lock_balance;
+   share_type                          locked_balance;
+   uint32_t                            lock_time;
+   uint32_t                            lock_period;
+   locked_balance_object::LockType     lock_type;
+   uint64_t                            interest;
+};
+   
 struct asset_locked_balance
 {
-   asset_locked_balance(asset_id_type _asset_id,vector<locked_balance_object> & _lockded_balances):
-                        asset_id(_asset_id),lockded_balances(_lockded_balances){}
+   asset_locked_balance(asset_id_type _asset_id,vector<locked_balance_object> & _lockded_balances):asset_id(_asset_id){
+      for(const auto & lb:_lockded_balances)
+         lockded_balances.push_back(lb);
+   }
    asset_id_type                       asset_id;
-   vector<locked_balance_object>       lockded_balances;
+   vector<locked_balance_detail>       lockded_balances;
 };
 
+struct interest_detail{
+   interest_detail(){}
+   interest_detail(uint64_t _nominal,uint32_t _period_days,uint64_t _active_interest):nominal(_nominal),period_days(_period_days),active_interest(_active_interest) {}
+   uint64_t nominal;
+   uint32_t period_days;
+   uint64_t active_interest;
+};
+   
+struct lock_data_detail{
+   lock_data_detail() {}
+   asset_id_type     asset_id;
+   interest_detail   current_interest;
+   uint16_t          reward_coefficient;
+   share_type        interest_pool;
+   coin_day          lock_coin_day=0;
+};
 
 /**
  * @brief The database_api class implements the RPC API for the chain database.
@@ -589,7 +625,12 @@ class database_api
        *  @return the set of blinded balance objects by commitment ID
        */
       vector<blinded_balance_object> get_blinded_balances( const flat_set<commitment_type>& commitments )const;
-
+   
+      /**
+       *  @return asset`s lock data
+       */
+      lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
+   
    private:
       std::shared_ptr< database_api_impl > my;
 };
@@ -602,7 +643,10 @@ FC_REFLECT( graphene::app::market_ticker, (base)(quote)(latest)(lowest_ask)(high
 FC_REFLECT( graphene::app::market_volume, (base)(quote)(base_volume)(quote_volume) );
 FC_REFLECT( graphene::app::market_trade, (date)(price)(amount)(value) );
 FC_REFLECT( graphene::app::locked_balance,(balance)(unlock_time));
-FC_REFLECT( graphene::app::asset_locked_balance,(asset_id)(lockded_balances))
+FC_REFLECT( graphene::app::asset_locked_balance,(asset_id)(lockded_balances));
+FC_REFLECT( graphene::app::locked_balance_detail,(initial_lock_balance)(locked_balance)(lock_time)(lock_period)(lock_type)(interest));
+FC_REFLECT( graphene::app::lock_data_detail,(asset_id)(current_interest)(reward_coefficient)(interest_pool)(lock_coin_day));
+FC_REFLECT( graphene::app::interest_detail,(nominal)(period_days)(active_interest));
 
 FC_API(graphene::app::database_api,
    // Objects
@@ -697,4 +741,6 @@ FC_API(graphene::app::database_api,
 
    // Blinded balances
    (get_blinded_balances)
+       
+   (get_asset_lock_data)
 )

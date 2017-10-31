@@ -116,6 +116,7 @@ struct locked_balance
    
 struct asset_locked_balance
 {
+   asset_locked_balance(){};
    asset_locked_balance(asset_id_type _asset_id,vector<locked_balance_object> & _lockded_balances):
                         asset_id(_asset_id),lockded_balances(_lockded_balances){}
    asset_id_type                       asset_id;

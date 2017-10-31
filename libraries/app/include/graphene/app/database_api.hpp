@@ -138,6 +138,7 @@ struct asset_locked_balance
       for(const auto & lb:_lockded_balances)
          lockded_balances.push_back(lb);
    }
+
    asset_id_type                       asset_id;
    vector<locked_balance_detail>       lockded_balances;
 };

@@ -649,7 +649,6 @@ FC_REFLECT( graphene::app::locked_balance_detail,(initial_lock_balance)(locked_b
 FC_REFLECT( graphene::app::lock_data_detail,(asset_id)(current_interest)(reward_coefficient)(interest_pool)(lock_coin_day));
 FC_REFLECT( graphene::app::interest_detail,(nominal)(period_days)(active_interest));
 
-
 FC_API(graphene::app::database_api,
    // Objects
    (get_objects)

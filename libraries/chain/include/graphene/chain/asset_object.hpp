@@ -77,8 +77,7 @@ namespace graphene { namespace chain {
          static const uint8_t space_id = implementation_ids;
          static const uint8_t type_id  = impl_asset_lock_data_type;
       
-         //using u128 =      boost::multiprecision::number<boost::multiprecision::cpp_int_backend<128, 128, boost::multiprecision::unsigned_magnitude, boost::multiprecision::unchecked, void>>;
-         using coin_day=   safe<fc::uint128> ;
+         //using u128 =      boost::multiprecision::number<boost::multiprecision::cpp_int_backend<128, 128, boost::multiprecision::unsigned_magnitude, boost::multiprecision::unchecked, void>>
       
          asset_id_type  asset_id;
          uint64_t       nominal_interest_rate; //the nominal interest set by asset issuer
@@ -89,7 +88,8 @@ namespace graphene { namespace chain {
       
          // return tolocking_balance+profile;
          share_type    get_profile(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
-      
+         //
+         double        get_interest(uint32_t lock_period,const database &_db)const;
    };
 
    /**

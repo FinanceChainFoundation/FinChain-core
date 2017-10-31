@@ -53,12 +53,12 @@ namespace graphene { namespace chain {
       uint32_t    lock_period;
       LockType    lock_type;
       
-      uint64_t get_interest(){
+      uint64_t get_interest()const{
          share_type profile=(locked_balance-initial_lock_balance)/initial_lock_balance;
          return uint64_t(pow(double(profile.value),double(lock_period/(3600*24))));
       }
       
-      uint64_t get_unlock_time(){
+      uint64_t get_unlock_time()const {
          return lock_time+lock_period;
       }
    };

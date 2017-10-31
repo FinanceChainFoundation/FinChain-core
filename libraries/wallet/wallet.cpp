@@ -2800,6 +2800,13 @@ vector<asset> wallet_api::list_account_balances(const string& id)
       return my->_remote_db->get_account_balances(*real_id, flat_set<asset_id_type>());
    return my->_remote_db->get_account_balances(get_account(id).id, flat_set<asset_id_type>());
 }
+   
+vector<asset_locked_balance> wallet_api::list_account_lock_balances(const string& name)
+{
+   if( auto real_id = detail::maybe_id<account_id_type>(name) )
+      return my->_remote_db->get_account_locked_balances(*real_id, flat_set<asset_id_type>());
+   return my->_remote_db->get_account_locked_balances(get_account(name).id, flat_set<asset_id_type>());
+}
 
 vector<asset_object> wallet_api::list_assets(const string& lowerbound, uint32_t limit)const
 {

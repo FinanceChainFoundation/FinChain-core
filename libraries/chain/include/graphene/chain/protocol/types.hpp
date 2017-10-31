@@ -245,6 +245,7 @@ namespace graphene { namespace chain {
    typedef safe<int32_t>                                        TimeStamp;
    
    typedef safe<fc::uint128_t>                                  s_uint128_t;
+   typedef safe<fc::uint128>                                    coin_day;
 
    struct public_key_type
    {

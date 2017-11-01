@@ -162,6 +162,7 @@ namespace detail {
          {
             // https:/
             vector<string> seeds = {
+               "139.196.111.65:1888"
             };
             for( const string& endpoint_string : seeds )
             {

@@ -116,6 +116,7 @@ struct locked_balance
    
 struct locked_balance_detail
 {
+   locked_balance_detail(){};
    locked_balance_detail(const locked_balance_object& obj){
       initial_lock_balance=obj.initial_lock_balance;
       locked_balance=obj.locked_balance;
@@ -134,6 +135,7 @@ struct locked_balance_detail
    
 struct asset_locked_balance
 {
+   asset_locked_balance(){};
    asset_locked_balance(asset_id_type _asset_id,vector<locked_balance_object> & _lockded_balances):asset_id(_asset_id){
       for(const auto & lb:_lockded_balances)
          lockded_balances.push_back(lb);

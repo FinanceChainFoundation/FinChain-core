@@ -91,7 +91,7 @@ namespace graphene { namespace chain {
       };
       
       enum unlock_type{
-         expire，
+         expire,
          in_advance
       };
       
@@ -122,4 +122,9 @@ FC_REFLECT( graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(exten
 
 FC_REFLECT( graphene::chain::set_lock_data_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_rate)(reward_coefficient)(init_interest_pool)(extensions) )
+
+FC_REFLECT( graphene::chain::unlock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
+FC_REFLECT_ENUM(graphene::chain::unlock_balance_operation::unlock_type, (expire)(in_advance))
+FC_REFLECT( graphene::chain::unlock_balance_operation::unlock_detail, (locked_id)(type) )
+FC_REFLECT( graphene::chain::unlock_balance_operation, (fee)(issuer)(locked)(extensions) )
 

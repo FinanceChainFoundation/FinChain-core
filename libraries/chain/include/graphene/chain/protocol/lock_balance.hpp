@@ -82,6 +82,37 @@ namespace graphene { namespace chain {
       void            validate()const;
       share_type      calculate_fee(const fee_parameters_type& k)const;
    };
+   
+   struct unlock_balance_operation : public base_operation
+   {
+      struct fee_parameters_type {
+         uint64_t fee       = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
+         uint32_t price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
+      };
+      
+      enum unlock_type{
+         expire，
+         in_advance
+      };
+      
+      struct unlock_detail{
+         locked_balance_id_type  locked_id;
+         unlock_type             type;
+      };
+      
+      asset            fee;
+      /// Account that lock balance
+      account_id_type  issuer;
+      
+      /// The amount of asset to operation
+      vector<unlock_detail>            locked;
+      
+      extensions_type   extensions;
+      
+      account_id_type fee_payer()const { return issuer; }
+      void            validate()const;
+      share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
 
 
 }} // graphene::chain

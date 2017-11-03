@@ -56,6 +56,17 @@ void set_lock_data_operation::validate()const
    
 }
 
+share_type unlock_balance_operation::calculate_fee(const fee_parameters_type& schedule)const
+{
+	share_type core_fee_required = schedule.fee;
 
+	return core_fee_required;
+}
+
+
+void unlock_balance_operation::validate()const
+{
+	FC_ASSERT(fee.amount >= 0);
+}
 
 } } // graphene::chain

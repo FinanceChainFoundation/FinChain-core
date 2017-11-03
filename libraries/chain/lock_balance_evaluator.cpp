@@ -143,4 +143,24 @@ namespace graphene { namespace chain {
       return void_result();
    } FC_CAPTURE_AND_RETHROW( (o) ) }
 
+
+   void_result unlock_balance_evaluator::do_evaluate(const unlock_balance_operation & op)
+   {
+	   try {
+
+		   const database& d = db();
+		   
+	   }  FC_CAPTURE_AND_RETHROW((op))
+   }
+
+   void_result unlock_balance_evaluator::do_apply(const unlock_balance_operation& o)
+   {
+	   try {
+		   database& d = db();
+		   
+
+		   return void_result();
+	   } FC_CAPTURE_AND_RETHROW((o))
+   }
+
 } } // graphene::chain

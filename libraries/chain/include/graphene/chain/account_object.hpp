@@ -119,7 +119,8 @@ namespace graphene { namespace chain {
          }
       
          void unlock_balance(locked_balance_id_type id){
-            
+			 
+			FC_ASSERT(locked.count(id)==0, " max 50 lock balance per asset");
             locked.erase(id);
          }
    };

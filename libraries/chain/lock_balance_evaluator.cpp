@@ -61,13 +61,14 @@ namespace graphene { namespace chain {
          const asset_dynamic_data_object asset_dynamic_data_o=asset_type.dynamic_data(d);
          const asset_lock_data_object & lock_data_obj=asset_type.lock_data(d);
          
-         d.adjust_balance(o.issuer, -o.amount.amount);
+         d.adjust_balance(o.issuer, -o.amount);
          
          const auto new_locked_balance_o =d.create<locked_balance_object>([&](locked_balance_object &obj){
             obj.initial_lock_balance=o.amount.amount;
             obj.locked_balance=to_locking_balance;
             obj.lock_period=o.period;
             obj.lock_type=locked_balance_object::userSet;
+			obj.asset_id = o.amount.asset_id;
             obj.lock_time=d.get_dynamic_global_properties().time.sec_since_epoch();
          });
          
@@ -144,22 +145,60 @@ namespace graphene { namespace chain {
    } FC_CAPTURE_AND_RETHROW( (o) ) }
 
 
-   void_result unlock_balance_evaluator::do_evaluate(const unlock_balance_operation & op)
+   void_result unlock_balance_evaluator::do_evaluate(const unlock_balance_operation & o)
    {
 	   try {
-
 		   const database& d = db();
-		   
-	   }  FC_CAPTURE_AND_RETHROW((op))
+		   for (auto i = 0; i < o.locked.size();i++)
+		   {
+			   const locked_balance_object & item = o.locked[i].locked_id(d);
+			   FC_ASSERT(item.locked_balance  == 0,
+				   "Insufficient interest pool: unable to lock balance"
+				   );
+		   }
+	   }  FC_CAPTURE_AND_RETHROW((o))
    }
 
    void_result unlock_balance_evaluator::do_apply(const unlock_balance_operation& o)
    {
 	   try {
 		   database& d = db();
+		   auto& index = d.get_index_type<account_balance_index>().indices().get<by_account_asset>();
 		   
+		   for (auto  itr = o.locked.begin(); itr != o.locked.end(); itr++)
+		   {
+			   const locked_balance_object & item = itr->locked_id(d);
+			   const asset_lock_data_object & lock_data_obj = item.asset_id(d).lock_data(d);
 
-		   return void_result();
+			   auto find = index.find(boost::make_tuple(o.issuer, item.asset_id));
+
+			   FC_ASSERT(find != index.end(), "Insufficient Balance");
+			   FC_ASSERT(!item.finish, "already unlocked balance"); // check further
+			   
+			   d.adjust_balance(o.issuer, item.initial_lock_balance);
+
+			   if (itr->type == unlock_balance_operation::expire)
+			   {
+				   d.adjust_balance(o.issuer, item.locked_balance);
+			   }
+			   else
+			   {
+				   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
+					   obj.interest_pool += item.locked_balance;
+				   });
+			   }
+
+
+			   //update the lock_balance obj status to db.
+			   d.modify(item, [&](locked_balance_object & obj){
+				   obj.finish = true;
+			   });
+			   
+			   d.modify(*find, [&](account_balance_object & obj){
+				   obj.unlock_balance(item.id);
+			   });
+		   }
+
 	   } FC_CAPTURE_AND_RETHROW((o))
    }
 

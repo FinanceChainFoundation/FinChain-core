@@ -52,6 +52,8 @@ namespace graphene { namespace chain {
       uint32_t    lock_time;
       uint32_t    lock_period;
       LockType    lock_type;
+	  asset_id_type asset_id;
+	  bool		  finish = false;
       
       uint64_t get_interest()const{
          share_type profile=(locked_balance-initial_lock_balance)/initial_lock_balance;

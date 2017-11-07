@@ -175,11 +175,11 @@ namespace graphene { namespace chain {
 			   FC_ASSERT(find != index.end(), "Insufficient Balance");
 			   FC_ASSERT(!item.finish, "already unlocked balance"); // check further
 			   
-			   d.adjust_balance(o.issuer, item.initial_lock_balance);
+			   d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
 
 			   if (itr->type == unlock_balance_operation::expire)
 			   {
-				   d.adjust_balance(o.issuer, item.locked_balance);
+				   d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
 			   }
 			   else
 			   {

@@ -177,7 +177,7 @@ namespace graphene { namespace chain {
 			   
 			   d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
 
-			   if (itr->type == unlock_balance_operation::expire)
+			   if (itr->expired)
 			   {
 				   d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
 			   }

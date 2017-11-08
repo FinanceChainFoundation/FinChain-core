@@ -89,15 +89,10 @@ namespace graphene { namespace chain {
          uint64_t fee       = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
          uint32_t price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
       };
-      
-      enum unlock_type{
-         expire,
-         in_advance
-      };
-      
+            
       struct unlock_detail{
          locked_balance_id_type  locked_id;
-         unlock_type             type;
+		 bool             expired;
       };
       
       asset            fee;
@@ -117,14 +112,15 @@ namespace graphene { namespace chain {
 
 }} // graphene::chain
 
+
 FC_REFLECT( graphene::chain::lock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(extensions) )
 
 FC_REFLECT( graphene::chain::set_lock_data_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_rate)(reward_coefficient)(init_interest_pool)(extensions) )
 
+
 FC_REFLECT( graphene::chain::unlock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT_ENUM(graphene::chain::unlock_balance_operation::unlock_type, (expire)(in_advance))
-FC_REFLECT( graphene::chain::unlock_balance_operation::unlock_detail, (locked_id)(type) )
+FC_REFLECT(graphene::chain::unlock_balance_operation::unlock_detail, (locked_id)(expired))
 FC_REFLECT( graphene::chain::unlock_balance_operation, (fee)(issuer)(locked)(extensions) )
 

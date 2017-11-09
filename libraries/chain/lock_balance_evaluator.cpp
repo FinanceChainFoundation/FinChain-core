@@ -61,8 +61,6 @@ namespace graphene { namespace chain {
          const asset_dynamic_data_object asset_dynamic_data_o=asset_type.dynamic_data(d);
          const asset_lock_data_object & lock_data_obj=asset_type.lock_data(d);
          
-         d.adjust_balance(o.issuer, -o.amount);
-         
          const auto new_locked_balance_o =d.create<locked_balance_object>([&](locked_balance_object &obj){
             obj.initial_lock_balance=o.amount.amount;
             obj.locked_balance=to_locking_balance;
@@ -77,6 +75,8 @@ namespace graphene { namespace chain {
          auto itr = index.find(boost::make_tuple(o.issuer, o.amount.asset_id));
 
          FC_ASSERT( itr!=index.end(), "Insufficient Balance");
+
+		 d.adjust_balance(o.issuer, -o.amount);
          
          d.modify(*itr,[&](account_balance_object & obj){
             obj.add_lock_balance(new_locked_balance_o.id);
@@ -85,7 +85,7 @@ namespace graphene { namespace chain {
          d.modify(lock_data_obj,[&](asset_lock_data_object &obj){            
 			 fc::uint128_t locking_coin_day = fc::uint128_t(o.amount.amount.value) * fc::uint128_t(o.period);
             obj.interest_pool-=to_locking_balance;
-			FC_ASSERT(fc::uint128_t::max_value() - locking_coin_day < obj.lock_coin_day, "invalid locking balance and period");
+			FC_ASSERT(fc::uint128_t::max_value() - locking_coin_day > obj.lock_coin_day, "invalid locking balance and period");
 			obj.lock_coin_day += locking_coin_day;
          });
 
@@ -104,6 +104,17 @@ namespace graphene { namespace chain {
       
       const asset_object&   asset_type =op.init_interest_pool.asset_id(d);
 
+	  //if the pool is exist,will set failure
+	  auto& index = d.get_index_type<asset_index>().indices().get<by_id>();
+	  auto& itrs = index.find(op.init_interest_pool.asset_id);
+	  
+	  FC_ASSERT( itrs != index.end(), "asset id not exist");
+
+	  const asset_object& asset_obj = *itrs;
+
+	  FC_ASSERT(! asset_obj.lock_data_id, "lock data already created!");
+
+	//  if ()
       
       FC_ASSERT(asset_type.issuer==op.issuer,
                 "operation issuer ${op.issuer} is not asset issuer ${asset_type.issuer}"
@@ -123,7 +134,7 @@ namespace graphene { namespace chain {
    { try {
 	   database& d = db();
       
-	  FC_ASSERT(d.get_balance(o.issuer, o.init_interest_pool.asset_id) < o.init_interest_pool,
+	  FC_ASSERT(d.get_balance(o.issuer, o.init_interest_pool.asset_id) >= o.init_interest_pool,
 		  "No enough balance pay for pool");
 	       
 	  if (o.init_interest_pool.amount>0)
@@ -154,8 +165,8 @@ namespace graphene { namespace chain {
 		   for (auto i = 0; i < o.locked.size();i++)
 		   {
 			   const locked_balance_object & item = o.locked[i].locked_id(d);
-			   FC_ASSERT(item.locked_balance  == 0,
-				   "Insufficient interest pool: unable to lock balance"
+			   FC_ASSERT(item.locked_balance  > 0,
+				   "Insufficient interest pool: unable to unlock balance"
 				   );
 		   }
 	   }  FC_CAPTURE_AND_RETHROW((o))

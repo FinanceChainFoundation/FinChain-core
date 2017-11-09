@@ -36,6 +36,7 @@
 #include <graphene/chain/market_object.hpp>
 #include <graphene/chain/vesting_balance_object.hpp>
 #include <graphene/chain/witness_object.hpp>
+#include <graphene/chain/locked_balance_object.hpp>
 
 #include <graphene/utilities/tempdir.hpp>
 
@@ -154,13 +155,24 @@ void database_fixture::verify_asset_supplies( const database& db )
    const simple_index<account_statistics_object>& statistics_index = db.get_index_type<simple_index<account_statistics_object>>();
    const auto& balance_index = db.get_index_type<account_balance_index>().indices();
    const auto& settle_index = db.get_index_type<force_settlement_index>().indices();
+
    map<asset_id_type,share_type> total_balances;
    map<asset_id_type,share_type> total_debts;
    share_type core_in_orders;
    share_type reported_core_in_orders;
 
-   for( const account_balance_object& b : balance_index )
-      total_balances[b.asset_type] += b.balance;
+   for (const account_balance_object& b : balance_index){
+	   total_balances[b.asset_type] += b.balance;
+	   for (const auto & id : b.locked){
+		   auto & ob = id(db);
+		   if (!ob.finish)
+		   {
+			   total_balances[b.asset_type] += ob.locked_balance + ob.initial_lock_balance;
+		   }
+			   
+	   }
+   }
+
    for( const force_settlement_object& s : settle_index )
       total_balances[s.balance.asset_id] += s.balance.amount;
    for( const account_statistics_object& a : statistics_index )
@@ -193,6 +205,11 @@ void database_fixture::verify_asset_supplies( const database& db )
          total_balances[bad.options.short_backing_asset] += bad.settlement_fund;
       }
       total_balances[asset_obj.id] += dasset_obj.confidential_supply.value;
+
+	  if (asset_obj.lock_data_id)
+	  {
+		  total_balances[asset_obj.id] += asset_obj.lock_data(db).interest_pool;
+	  }
    }
    for( const vesting_balance_object& vbo : db.get_index_type< vesting_balance_index >().indices() )
       total_balances[ vbo.balance.asset_id ] += vbo.balance.amount;
@@ -487,11 +504,11 @@ const asset_object& database_fixture::create_prediction_market(
 void database_fixture::create_lock_able_asset()
 {
 	set_lock_data_operation creator;
-	creator.issuer = account_id_type();
+	creator.issuer = account_id_type(3);
 	creator.fee = asset();
 	creator.nominal_interest_rate = 100;
 	creator.reward_coefficient = 10;
-	creator.init_interest_pool = asset(10000000);
+	creator.init_interest_pool = asset(88888);
 	
 	trx.operations.push_back(std::move(creator));
 	trx.validate();

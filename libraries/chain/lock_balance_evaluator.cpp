@@ -121,11 +121,14 @@ namespace graphene { namespace chain {
    
    void_result set_lock_data_evaluator::do_apply( const set_lock_data_operation& o )
    { try {
-      if(o.init_interest_pool.amount>0)
-         db().adjust_balance( o.issuer, -o.init_interest_pool);
+	   database& d = db();
       
-      
-      database& d = db();
+	  FC_ASSERT(d.get_balance(o.issuer, o.init_interest_pool.asset_id) < o.init_interest_pool,
+		  "No enough balance pay for pool");
+	       
+	  if (o.init_interest_pool.amount>0)
+		  d.adjust_balance(o.issuer, -o.init_interest_pool);
+
       const auto new_lock_data_o = d.create<asset_lock_data_object>([&](asset_lock_data_object& obj){
          obj.interest_pool=o.init_interest_pool.amount;
          obj.nominal_interest_rate=o.nominal_interest_rate;

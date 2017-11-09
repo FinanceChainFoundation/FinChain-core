@@ -483,6 +483,25 @@ const asset_object& database_fixture::create_prediction_market(
    return db.get<asset_object>(ptx.operation_results[0].get<object_id_type>());
 } FC_CAPTURE_AND_RETHROW( (name)(flags) ) }
 
+
+void database_fixture::create_lock_able_asset()
+{
+	set_lock_data_operation creator;
+	creator.issuer = account_id_type();
+	creator.fee = asset();
+	creator.nominal_interest_rate = 100;
+	creator.reward_coefficient = 10;
+	creator.init_interest_pool = asset(10000000);
+	
+	trx.operations.push_back(std::move(creator));
+	trx.validate();
+	processed_transaction ptx = db.push_transaction(trx, ~0);
+	trx.operations.clear();
+	generate_block();
+}
+
+
+
 const asset_object& database_fixture::create_user_issued_asset( const string& name )
 {
    asset_create_operation creator;

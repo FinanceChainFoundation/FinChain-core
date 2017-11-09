@@ -45,6 +45,58 @@ using namespace graphene::chain::test;
 
 BOOST_FIXTURE_TEST_SUITE( operation_tests, database_fixture )
 
+
+BOOST_AUTO_TEST_CASE(lock_balance_test)
+{
+	try {
+		ACTORS((dan));
+		const auto& core = asset_id_type()(db);
+		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 0);
+		transfer(committee_account, dan_id, asset(10000));
+		create_lock_able_asset();
+		{
+			lock_balance_operation op;
+			op.fee = asset();
+			op.issuer = dan_id;
+			op.amount = asset(1000);
+			op.period = 3600 * 24;
+			trx.operations.push_back(op);
+	
+			sign(trx, dan_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+		}
+		generate_block();
+		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 10000 - 1000);
+
+		{
+			unlock_balance_operation op;
+			op.fee = asset();
+			op.issuer = dan_id;
+			auto & ids = db.get_locked_balance_ids(dan_id, asset_id_type());
+			FC_ASSERT(ids.size() == 0, "dan didn't has locked balance!");
+
+			unlock_balance_operation::unlock_detail one;
+			one.locked_id = ids.at(0);
+			one.expired = false;
+			op.locked.push_back(one);
+			trx.operations.push_back(op);
+
+			sign(trx, dan_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+		}
+		generate_block();
+
+		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 10000);
+
+	}
+	catch (fc::exception& e) {
+		edump((e.to_detail_string()));
+		throw;
+	}
+}
+
 BOOST_AUTO_TEST_CASE( feed_limit_logic_test )
 {
    try {

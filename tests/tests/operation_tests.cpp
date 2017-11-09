@@ -51,8 +51,11 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 	try {
 		ACTORS((dan));
 		const auto& core = asset_id_type()(db);
+		auto total = get_balance(committee_account, asset_id_type());
+		auto total3 = get_balance(account_id_type(3), asset_id_type());
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 0);
 		transfer(committee_account, dan_id, asset(10000));
+		transfer(committee_account, account_id_type(3), asset(100000000));
 		create_lock_able_asset();
 		{
 			lock_balance_operation op;
@@ -68,13 +71,13 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 		}
 		generate_block();
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 10000 - 1000);
-
+#if 1
 		{
 			unlock_balance_operation op;
 			op.fee = asset();
 			op.issuer = dan_id;
 			auto & ids = db.get_locked_balance_ids(dan_id, asset_id_type());
-			FC_ASSERT(ids.size() == 0, "dan didn't has locked balance!");
+			FC_ASSERT(ids.size() > 0, "dan didn't has locked balance!");
 
 			unlock_balance_operation::unlock_detail one;
 			one.locked_id = ids.at(0);
@@ -89,7 +92,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 		generate_block();
 
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 10000);
-
+#endif
 	}
 	catch (fc::exception& e) {
 		edump((e.to_detail_string()));

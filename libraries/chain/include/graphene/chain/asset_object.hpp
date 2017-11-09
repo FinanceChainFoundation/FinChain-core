@@ -84,7 +84,7 @@ namespace graphene { namespace chain {
          uint64_t       active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
          uint16_t       reward_coefficient;
          share_type     interest_pool;
-		 fc::uint128_t       lock_coin_day = 0;
+         fc::uint128_t       lock_coin_day = 0;
       
          // return tolocking_balance+profile;
          share_type    get_profile(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;

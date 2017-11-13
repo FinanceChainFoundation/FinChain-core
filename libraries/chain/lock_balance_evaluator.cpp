@@ -106,7 +106,7 @@ namespace graphene { namespace chain {
 
 	  //if the pool is exist,will set failure
 	  auto& index = d.get_index_type<asset_index>().indices().get<by_id>();
-	  auto& itrs = index.find(op.init_interest_pool.asset_id);
+	  const auto& itrs = index.find(op.init_interest_pool.asset_id);
 	  
 	  FC_ASSERT( itrs != index.end(), "asset id not exist");
 
@@ -229,7 +229,7 @@ namespace graphene { namespace chain {
 	   try {
 		   database& d = db();
 		   auto& index = d.get_index_type<asset_index>().indices().get<by_id>();
-		   auto& itrs = index.find(o.amount.asset_id);
+		   const auto& itrs = index.find(o.amount.asset_id);
 		   FC_ASSERT(itrs != index.end(), "asset id not exist");
 		   const asset_lock_data_object & lock_data_obj = itrs->lock_data(d);
 

@@ -358,7 +358,7 @@ void database::init_genesis(const genesis_state_type& genesis_state)
          obj.nominal_interest_rate=50;
          obj.active_interest_rate=obj.nominal_interest_rate;
          obj.reward_coefficient=45;
-         obj.interest_pool=300000000*100000;
+         obj.interest_pool=0ll;
          obj.lock_coin_day=0;
       });
    const asset_object& core_asset =

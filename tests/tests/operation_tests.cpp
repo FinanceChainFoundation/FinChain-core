@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 			unlock_balance_operation op;
 			op.fee = asset();
 			op.issuer = dan_id;
-			auto & ids = db.get_locked_balance_ids(dan_id, asset_id_type());
+			const auto & ids = db.get_locked_balance_ids(dan_id, asset_id_type());
 			FC_ASSERT(ids.size() > 0, "dan didn't has locked balance!");
 
 			unlock_balance_operation::unlock_detail one;

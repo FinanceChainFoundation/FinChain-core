@@ -56,7 +56,8 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 0);
 		transfer(committee_account, dan_id, asset(10000));
 		transfer(committee_account, account_id_type(3), asset(100000000));
-		create_lock_able_asset();
+
+		create_lock_able_asset(committee_account,asset_id_type(0),50,45,300000000LL*100000LL);
 		{
 			lock_balance_operation op;
 			op.fee = asset();

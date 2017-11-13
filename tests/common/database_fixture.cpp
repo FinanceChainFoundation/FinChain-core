@@ -501,14 +501,14 @@ const asset_object& database_fixture::create_prediction_market(
 } FC_CAPTURE_AND_RETHROW( (name)(flags) ) }
 
 
-void database_fixture::create_lock_able_asset()
+void database_fixture::create_lock_able_asset(account_id_type isser,asset_id_type asset_id,uint64_t nominal_interest_rate,uint64_t reward_coefficient,uint64_t init_interest_pool)
 {
 	set_lock_data_operation creator;
-	creator.issuer = account_id_type(3);
+	creator.issuer = isser;
 	creator.fee = asset();
-	creator.nominal_interest_rate = 100;
-	creator.reward_coefficient = 10;
-	creator.init_interest_pool = asset(88888);
+	creator.nominal_interest_rate = nominal_interest_rate;
+	creator.reward_coefficient = reward_coefficient;
+	creator.init_interest_pool = asset(init_interest_pool,asset_id);
 	
 	trx.operations.push_back(std::move(creator));
 	trx.validate();

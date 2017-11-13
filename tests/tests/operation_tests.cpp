@@ -93,6 +93,23 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 10000);
 #endif
+
+#if 1
+		{
+			donation_balance_operation op;
+			op.fee = asset();
+			op.issuer = dan_id;
+			op.amount = asset(999);
+			
+			trx.operations.push_back(op);
+
+			sign(trx, dan_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+		}
+		generate_block();
+		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 10000 - 999);
+#endif
 	}
 	catch (fc::exception& e) {
 		edump((e.to_detail_string()));

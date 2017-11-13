@@ -167,7 +167,7 @@ void database_fixture::verify_asset_supplies( const database& db )
 		   auto & ob = id(db);
 		   if (!ob.finish)
 		   {
-			   total_balances[b.asset_type] += ob.locked_balance + ob.initial_lock_balance;
+			   total_balances[b.asset_type] += (ob.locked_balance + ob.initial_lock_balance);
 		   }
 			   
 	   }
@@ -206,7 +206,7 @@ void database_fixture::verify_asset_supplies( const database& db )
       }
       total_balances[asset_obj.id] += dasset_obj.confidential_supply.value;
 
-	  if (asset_obj.lock_data_id)
+	  if (asset_obj.lock_data_id.valid())
 	  {
 		  total_balances[asset_obj.id] += asset_obj.lock_data(db).interest_pool;
 	  }

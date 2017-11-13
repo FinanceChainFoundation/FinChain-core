@@ -182,6 +182,7 @@ void database::initialize_evaluators()
    register_evaluator<lock_balance_evaluator>();
    register_evaluator<set_lock_data_evaluator>();
    register_evaluator<unlock_balance_evaluator>();
+   register_evaluator<donation_balance_evaluator>();
 }
 
 void database::initialize_indexes()

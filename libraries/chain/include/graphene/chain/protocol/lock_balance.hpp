@@ -109,7 +109,27 @@ namespace graphene { namespace chain {
       share_type      calculate_fee(const fee_parameters_type& k)const;
    };
 
+   struct donation_balance_operation : public base_operation
+   {
+	   struct fee_parameters_type {
+		   uint64_t fee = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
+		   uint32_t price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
+	   };
 
+	   asset            fee;
+	   /// Account that lock balance
+	   account_id_type  issuer;
+
+	   /// The amount of asset to operation
+	   asset            amount;
+
+	   extensions_type   extensions;
+
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+   
 }} // graphene::chain
 
 
@@ -124,3 +144,5 @@ FC_REFLECT( graphene::chain::unlock_balance_operation::fee_parameters_type, (fee
 FC_REFLECT(graphene::chain::unlock_balance_operation::unlock_detail, (locked_id)(expired))
 FC_REFLECT( graphene::chain::unlock_balance_operation, (fee)(issuer)(locked)(extensions) )
 
+FC_REFLECT(graphene::chain::donation_balance_operation::fee_parameters_type, (fee)(price_per_kbyte))
+FC_REFLECT(graphene::chain::donation_balance_operation, (fee)(issuer)(amount)(extensions))

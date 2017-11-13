@@ -52,8 +52,16 @@ namespace graphene { namespace chain {
    public:
 	   typedef unlock_balance_operation operation_type;
 
-	   share_type  to_unlock_balance = 0;
 	   void_result do_evaluate(const unlock_balance_operation& o);
 	   void_result do_apply(const unlock_balance_operation& o);
+   };
+
+   class donation_balance_evaluator : public evaluator<donation_balance_evaluator>
+   {
+   public:
+	   typedef donation_balance_operation operation_type;
+
+	   void_result do_evaluate(const donation_balance_operation& o);
+	   void_result do_apply(const donation_balance_operation& o);
    };
 } } // graphene::chain

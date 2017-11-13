@@ -112,7 +112,7 @@ namespace graphene { namespace chain {
 
 	  const asset_object& asset_obj = *itrs;
 
-	  FC_ASSERT(! asset_obj.lock_data_id, "lock data already created!");
+	  FC_ASSERT(!asset_obj.lock_data_id.valid(), "lock data already created!");
 
 	//  if ()
       
@@ -211,6 +211,32 @@ namespace graphene { namespace chain {
 				   obj.unlock_balance(item.id);
 			   });
 		   }
+
+	   } FC_CAPTURE_AND_RETHROW((o))
+   }
+
+   void_result donation_balance_evaluator::do_evaluate(const donation_balance_operation & o)
+   {
+	   try {
+		   const database& d = db();
+		   FC_ASSERT(d.get_balance(o.issuer, o.amount.asset_id) >= o.amount,"no enough balance");
+	
+	   }  FC_CAPTURE_AND_RETHROW((o))
+   }
+
+   void_result donation_balance_evaluator::do_apply(const donation_balance_operation& o)
+   {
+	   try {
+		   database& d = db();
+		   auto& index = d.get_index_type<asset_index>().indices().get<by_id>();
+		   auto& itrs = index.find(o.amount.asset_id);
+		   FC_ASSERT(itrs != index.end(), "asset id not exist");
+		   const asset_lock_data_object & lock_data_obj = itrs->lock_data(d);
+
+		   d.adjust_balance(o.issuer, -o.amount);
+		   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
+			   obj.interest_pool += o.amount.amount;
+		   });
 
 	   } FC_CAPTURE_AND_RETHROW((o))
    }

@@ -165,7 +165,7 @@ namespace graphene { namespace chain {
 		   for (auto i = 0; i < o.locked.size();i++)
 		   {
 			   const locked_balance_object & item = o.locked[i].locked_id(d);
-			   FC_ASSERT(item.locked_balance  > 0,
+			   FC_ASSERT(item.locked_balance  >= 0,
 				   "Insufficient interest pool: unable to unlock balance"
 				   );
 		   }

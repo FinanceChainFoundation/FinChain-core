@@ -1507,6 +1507,35 @@ class wallet_api
          
       order_book get_order_book( const string& base, const string& quote, unsigned limit = 50);
 
+
+	  lock_data_detail   get_lock_data(string asset_symbol, string period = "");
+	  signed_transaction set_lock_data(string account_name,
+							  	  string asset_symbol,
+                                  string nominal_interest_rate,
+                                  string reward_coefficient,
+                                  string init_interest_pool,
+                                  bool broadcast = false);
+
+	  map<locked_balance_id_type, locked_balance_object>  get_account_locked_data(string account_name, string asset_symbol);
+
+	  signed_transaction donation_balance(string account_name,
+                                  string amount,
+                                  string asset_symbol,
+                                  bool broadcast = false);
+
+	  signed_transaction lock_balance(string account_name,
+                                  string amount,
+                                  string asset_symbol,
+								  string period,
+                                  bool broadcast = false);
+
+	  signed_transaction unlock_balance(string account_name,
+                                  string asset_symbol,
+                                  string locked_id,
+								  string expired,
+                                  bool broadcast = false);
+	  
+
       void dbg_make_uia(string creator, string symbol);
       void dbg_make_mia(string creator, string symbol);
       void dbg_push_blocks( std::string src_filename, uint32_t count );
@@ -1710,4 +1739,10 @@ FC_API( graphene::wallet::wallet_api,
         (blind_history)
         (receive_blind_transfer)
         (get_order_book)
+		(set_lock_data)
+		(get_lock_data)
+		(get_account_locked_data)
+		(donation_balance)
+		(lock_balance)
+		(unlock_balance)		
       )

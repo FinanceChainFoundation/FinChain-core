@@ -2421,6 +2421,135 @@ public:
       return sign_transaction(tx, broadcast);
    }
 
+   signed_transaction set_lock_data(string account_name,
+	   string asset_symbol,
+	   string nominal_interest_rate,
+	   string reward_coefficient,
+	   string init_interest_pool,
+	   bool broadcast = false)
+   {
+	   try {
+		   FC_ASSERT(!self.is_locked());
+		   fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
+		   FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
+
+		   account_object from_account = get_account(account_name);
+		   account_id_type from_id = from_account.id;
+
+		   set_lock_data_operation  xfer_op;
+
+		   xfer_op.issuer = from_id;
+		   xfer_op.nominal_interest_rate = fc::to_uint64(nominal_interest_rate);
+		   xfer_op.reward_coefficient = fc::to_uint64(reward_coefficient);
+		   xfer_op.init_interest_pool = asset(fc::to_uint64(init_interest_pool), asset_obj->get_id());
+
+		  
+		   signed_transaction tx;
+		   tx.operations.push_back(xfer_op);
+		   set_operation_fees(tx, _remote_db->get_global_properties().parameters.current_fees);
+		   tx.validate();
+
+		   return sign_transaction(tx, broadcast);
+	   } FC_CAPTURE_AND_RETHROW((account_name)(asset_symbol)(nominal_interest_rate)(reward_coefficient)(init_interest_pool)(broadcast))
+   }
+
+   //map<string, locked_balance_id_type> get_account_locked_balance(string account_name, string asset_symbol);
+
+   signed_transaction donation_balance(string account_name,
+	   string amount,
+	   string asset_symbol,
+	   bool broadcast = false)
+   {
+	   try {
+		   FC_ASSERT(!self.is_locked());
+		   fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
+		   FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
+
+		   account_object from_account = get_account(account_name);
+		   account_id_type from_id = from_account.id;
+
+		   donation_balance_operation  xfer_op;
+
+		   xfer_op.issuer = from_id;
+		   xfer_op.amount = asset(fc::to_uint64(amount), asset_obj->get_id());
+		  
+		   signed_transaction tx;
+		   tx.operations.push_back(xfer_op);
+		   set_operation_fees(tx, _remote_db->get_global_properties().parameters.current_fees);
+		   tx.validate();
+
+		   return sign_transaction(tx, broadcast);
+	   } FC_CAPTURE_AND_RETHROW((account_name)(amount)(asset_symbol)(broadcast))
+   }
+
+   signed_transaction lock_balance(string account_name,
+	   string amount,
+	   string asset_symbol,
+	   string period,
+	   bool broadcast = false)
+   {
+	   try {
+		   FC_ASSERT(!self.is_locked());
+		   fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
+		   FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
+
+		   account_object from_account = get_account(account_name);
+		   account_id_type from_id = from_account.id;
+
+		   lock_balance_operation  xfer_op;
+
+		   xfer_op.issuer = from_id;
+		   xfer_op.amount = asset(fc::to_uint64(amount), asset_obj->get_id());
+		   xfer_op.period = fc::to_uint64(period);
+
+		   signed_transaction tx;
+		   tx.operations.push_back(xfer_op);
+		   set_operation_fees(tx, _remote_db->get_global_properties().parameters.current_fees);
+		   tx.validate();
+
+		   return sign_transaction(tx, broadcast);
+	   } FC_CAPTURE_AND_RETHROW((account_name)(amount)(asset_symbol)(period)(broadcast))
+   }
+
+   signed_transaction unlock_balance(string account_name,
+	   string asset_symbol,
+	   string locked_id,
+	   string expired,
+	   bool broadcast = false)
+   {
+	   try {
+		   FC_ASSERT(!self.is_locked());
+		   fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
+		   FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
+
+		   
+
+		   fc::optional<locked_balance_id_type> l_id = detail::maybe_id<locked_balance_id_type>(locked_id);
+		   
+		   FC_ASSERT(!l_id.valid());
+
+		   account_object from_account = get_account(account_name);
+		   account_id_type from_id = from_account.id;
+
+		   unlock_balance_operation  xfer_op;
+		   unlock_balance_operation::unlock_detail one;
+		   one.locked_id = *l_id;
+		   one.expired = fc::to_int64(expired);
+		   xfer_op.issuer = from_id;
+
+		   xfer_op.locked.push_back(one);
+
+		   signed_transaction tx;
+		   tx.operations.push_back(xfer_op);
+		   set_operation_fees(tx, _remote_db->get_global_properties().parameters.current_fees);
+		   tx.validate();
+
+		   return sign_transaction(tx, broadcast);
+	   } FC_CAPTURE_AND_RETHROW((account_name)(asset_symbol)(locked_id)(broadcast))
+   }
+
+
+
    void dbg_make_uia(string creator, string symbol)
    {
       asset_options opts;
@@ -4352,8 +4481,65 @@ vector<blind_receipt> wallet_api::blind_history( string key_or_account )
 
 order_book wallet_api::get_order_book( const string& base, const string& quote, unsigned limit )
 {
-   return( my->_remote_db->get_order_book( base, quote, limit ) );
+   return ( my->_remote_db->get_order_book( base, quote, limit ) );
 }
+
+
+
+lock_data_detail   wallet_api::get_lock_data(string asset_symbol,string period)
+{
+	asset_id_type    id = get_asset_id(asset_symbol);
+	optional<uint32_t> nPeriod;
+	if (!period.empty())
+		nPeriod = fc::to_uint64(period);
+
+	return (my->_remote_db->get_asset_lock_data(id, nPeriod));
+}
+
+signed_transaction wallet_api::set_lock_data(string account_name,
+	string asset_symbol,
+	string nominal_interest_rate,
+	string reward_coefficient,
+	string init_interest_pool,
+	bool broadcast/* = false*/)
+{
+	return my->set_lock_data(account_name, asset_symbol, nominal_interest_rate, reward_coefficient, init_interest_pool, broadcast);
+}
+
+map<locked_balance_id_type, locked_balance_object> wallet_api::get_account_locked_data(string account_name, string asset_symbol)
+{
+	account_id_type account_id = get_account(account_name).id;
+	asset_id_type  asset_id = get_asset_id(asset_symbol);
+	
+	return my->_remote_db->get_account_locked_data(account_id, asset_id);
+}
+
+signed_transaction wallet_api::donation_balance(string account_name,
+	string amount,
+	string asset_symbol,
+	bool broadcast/* = false*/)
+{
+	return my->donation_balance(account_name, amount, asset_symbol, broadcast);
+}
+
+signed_transaction wallet_api::lock_balance(string account_name,
+	string amount,
+	string asset_symbol,
+	string period,
+	bool broadcast/* = false*/)
+{
+	return my->lock_balance(account_name, amount,asset_symbol,period, broadcast);
+}
+
+signed_transaction wallet_api::unlock_balance(string account_name,
+	string asset_symbol,
+	string locked_id,
+	string expired,
+	bool broadcast/* = false*/)
+{
+	return my->unlock_balance(account_name, asset_symbol, locked_id, expired, broadcast);
+}
+
 
 signed_block_with_info::signed_block_with_info( const signed_block& block )
    : signed_block( block )

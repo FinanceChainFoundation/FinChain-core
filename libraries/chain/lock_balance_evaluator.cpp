@@ -190,7 +190,7 @@ namespace graphene { namespace chain {
 			   
 			   d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
 
-			   if (itr->expired)
+			   if (itr->expired && (d.head_block_time() >= time_point_sec(item.get_unlock_time())))
 			   {
 				   d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
 			   }

@@ -60,7 +60,7 @@ namespace graphene { namespace chain {
          return uint64_t(pow(double(profile.value),double(lock_period/(3600*24))));
       }
       
-      uint64_t get_unlock_time()const {
+      uint32_t get_unlock_time()const {
          return lock_time+lock_period;
       }
    };

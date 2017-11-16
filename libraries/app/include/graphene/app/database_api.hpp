@@ -162,6 +162,8 @@ struct lock_data_detail{
    coin_day          lock_coin_day=0;
 };
 
+
+
 /**
  * @brief The database_api class implements the RPC API for the chain database.
  *
@@ -633,7 +635,7 @@ class database_api
        *  @return asset`s lock data
        */
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
-   
+	  map<locked_balance_id_type, locked_balance_object> get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const;   
    private:
       std::shared_ptr< database_api_impl > my;
 };
@@ -746,4 +748,5 @@ FC_API(graphene::app::database_api,
    (get_blinded_balances)
        
    (get_asset_lock_data)
+   (get_account_locked_data)
 )

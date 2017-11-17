@@ -120,8 +120,8 @@ struct locked_balance_detail
    locked_balance_detail(const locked_balance_object& obj){
       initial_lock_balance=obj.initial_lock_balance;
       locked_balance=obj.locked_balance;
-      lock_time=obj.lock_time;
-      lock_period=obj.lock_period;
+      lock_time=obj.lock_time.value;
+      lock_period=obj.lock_period.value;
       lock_type=obj.lock_type;
       interest=obj.get_interest();
    }

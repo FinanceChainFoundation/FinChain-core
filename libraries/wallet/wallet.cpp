@@ -2526,7 +2526,7 @@ public:
 
 		   fc::optional<locked_balance_id_type> l_id = detail::maybe_id<locked_balance_id_type>(locked_id);
 		   
-		   FC_ASSERT(!l_id.valid());
+		   FC_ASSERT(l_id.valid());
 
 		   account_object from_account = get_account(account_name);
 		   account_id_type from_id = from_account.id;

@@ -49,7 +49,7 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    
    uint64_t reward=period_day*reward_coefficient/FCC_INTEREST_YEAR;
    uint64_t reduce;//todo reduce 
-   asset res_asset(uint128_t(tmp_asset.amount.value)*reward/GRAPHENE_100_PERCENT,tmp_asset.asset_id);
+   asset res_asset(uint64_t(uint128_t(tmp_asset.amount.value)*uint128_t(reward)/GRAPHENE_100_PERCENT),tmp_asset.asset_id);
    return Interest(base_asset,res_asset);
 }
 

@@ -501,12 +501,12 @@ const asset_object& database_fixture::create_prediction_market(
 } FC_CAPTURE_AND_RETHROW( (name)(flags) ) }
 
 
-void database_fixture::create_lock_able_asset(account_id_type isser,asset_id_type asset_id,uint64_t nominal_interest_rate,uint64_t reward_coefficient,uint64_t init_interest_pool)
+void database_fixture::create_lock_able_asset(account_id_type isser, asset_id_type asset_id, uint64_t nominal_interest_perday, uint64_t reward_coefficient, uint64_t init_interest_pool)
 {
 	set_lock_data_operation creator;
 	creator.issuer = isser;
 	creator.fee = asset();
-	creator.nominal_interest_rate = nominal_interest_rate;
+	creator.nominal_interest_perday = nominal_interest_perday;
 	creator.reward_coefficient = reward_coefficient;
 	creator.init_interest_pool = asset(init_interest_pool,asset_id);
 	

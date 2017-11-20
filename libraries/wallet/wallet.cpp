@@ -2439,7 +2439,7 @@ public:
 		   set_lock_data_operation  xfer_op;
 
 		   xfer_op.issuer = from_id;
-		   xfer_op.nominal_interest_rate = fc::to_uint64(nominal_interest_rate);
+		   xfer_op.nominal_interest_perday = fc::to_uint64(nominal_interest_rate);
 		   xfer_op.reward_coefficient = fc::to_uint64(reward_coefficient);
 		   xfer_op.init_interest_pool = asset(fc::to_uint64(init_interest_pool), asset_obj->get_id());
 

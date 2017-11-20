@@ -180,6 +180,9 @@ void database::initialize_evaluators()
    register_evaluator<blind_transfer_evaluator>();
    register_evaluator<asset_claim_fees_evaluator>();
    register_evaluator<lock_balance_evaluator>();
+   register_evaluator<set_lock_data_evaluator>();
+   register_evaluator<unlock_balance_evaluator>();
+   register_evaluator<donation_balance_evaluator>();
 }
 
 void database::initialize_indexes()
@@ -355,7 +358,7 @@ void database::init_genesis(const genesis_state_type& genesis_state)
          obj.nominal_interest_perday=Interest();
          obj.active_interest_rate=obj.nominal_interest_perday;
          obj.reward_coefficient=45;
-         obj.interest_pool=300000000*100000;
+         obj.interest_pool=0ll;
          obj.lock_coin_day=0;
       });
    const asset_object& core_asset =
@@ -371,7 +374,7 @@ void database::init_genesis(const genesis_state_type& genesis_state)
          a.options.core_exchange_rate.quote.amount = 1;
          a.options.core_exchange_rate.quote.asset_id = asset_id_type(0);
          a.dynamic_asset_data_id = dyn_asset.id;
-         a.dynamic_asset_data_id = lock_data_asset.id;
+         a.lock_data_id = lock_data_asset.id;
       });
    assert( asset_id_type(core_asset.id) == asset().asset_id );
    assert( get_balance(account_id_type(), asset_id_type()) == asset(dyn_asset.current_supply) );

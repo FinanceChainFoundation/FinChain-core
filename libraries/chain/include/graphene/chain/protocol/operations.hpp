@@ -94,7 +94,9 @@ namespace graphene { namespace chain {
             asset_claim_fees_operation,
             fba_distribute_operation,       // VIRTUAL
             lock_balance_operation,
-            set_lock_data_operation
+            set_lock_data_operation,
+			unlock_balance_operation,
+			donation_balance_operation
          > operation;
 
    /// @} // operations group

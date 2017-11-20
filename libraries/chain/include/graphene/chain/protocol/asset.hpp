@@ -94,6 +94,7 @@ namespace graphene { namespace chain {
          FC_ASSERT( precision < 19 );
          return scaled_precision_lut[ precision ];
       }
+   
    };
 
    /**
@@ -146,6 +147,19 @@ namespace graphene { namespace chain {
    bool  operator != ( const price& a, const price& b );
    asset operator *  ( const asset& a, const price& b );
 
+   
+   typedef price Interest;
+   
+   struct Interests{
+      
+      Interests() {}
+      Interests(const vector <uint64_t>& _rates,uint64_t base_amount=10000000000LL,asset_id_type base_id=asset_id_type(), asset_id_type quote = asset_id_type()){
+         for(auto rate:_rates)
+            rates.push_back(price(asset(base_amount,base_id),asset(rate,quote)));
+      }
+      vector<Interest> rates;
+   };
+   
    /**
     *  @class price_feed
     *  @brief defines market parameters for margin positions

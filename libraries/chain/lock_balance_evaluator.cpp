@@ -46,7 +46,7 @@ namespace graphene { namespace chain {
                    );
          
          to_locking_balance=lock_data_obj.get_profile(op.amount.amount,op.period,d);
-         bool insufficient_pool=asset_type.lock_data(d).interest_pool>=to_locking_balance;
+         bool insufficient_pool=(asset_type.lock_data(d).interest_pool>=to_locking_balance-op.amount.amount);
          FC_ASSERT(insufficient_pool,
                    "Insufficient interest pool: unable to lock balance"
                    );
@@ -193,11 +193,15 @@ namespace graphene { namespace chain {
 			   if (itr->expired && (d.head_block_time() >= time_point_sec(item.get_unlock_time())))
 			   {
 				   d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
+				   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
+					   obj.lock_coin_day -= fc::uint128_t(item.initial_lock_balance.value) * fc::uint128_t(item.lock_period.value);
+				   });
 			   }
 			   else
 			   {
 				   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
 					   obj.interest_pool += item.locked_balance;
+					   obj.lock_coin_day -= fc::uint128_t(item.initial_lock_balance.value) * fc::uint128_t(item.lock_period.value);
 				   });
 			   }
 

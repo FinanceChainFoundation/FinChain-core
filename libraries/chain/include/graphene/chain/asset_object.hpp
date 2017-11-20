@@ -79,17 +79,19 @@ namespace graphene { namespace chain {
       
          //using u128 =      boost::multiprecision::number<boost::multiprecision::cpp_int_backend<128, 128, boost::multiprecision::unsigned_magnitude, boost::multiprecision::unchecked, void>>
       
-         asset_id_type  asset_id;
-         uint64_t       nominal_interest_rate; //the nominal interest set by asset issuer
-         uint64_t       active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
-         uint16_t       reward_coefficient;
-         share_type     interest_pool;
-         coin_day       lock_coin_day=0;
+         asset_id_type        asset_id;
+         Interest             nominal_interest_perday; //the nominal interest set by asset issuer
+         Interest             active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
+         uint16_t             reward_coefficient;
+         share_type           interest_pool;
+         coin_day             lock_coin_day=0;
       
-         // return tolocking_balance+profile;
          share_type    get_profile(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
-         //
-         double        get_interest(uint32_t lock_period,const database &_db)const;
+
+         Interest      _get_interest(uint32_t lock_period,const database &_db)const;
+      
+         double        get_interest(uint32_t lock_period,const database &_db)const{_get_interest(lock_period,_db).to_real();}
+
    };
 
    /**
@@ -293,7 +295,7 @@ FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::o
 
 FC_REFLECT_DERIVED( graphene::chain::asset_lock_data_object, (graphene::db::object),
                    (asset_id)
-                   (nominal_interest_rate)(reward_coefficient)(interest_pool)(lock_coin_day) )
+                   (nominal_interest_perday)(reward_coefficient)(interest_pool)(lock_coin_day) )
 
 FC_REFLECT_DERIVED( graphene::chain::asset_bitasset_data_object, (graphene::db::object),
                     (feeds)

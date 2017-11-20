@@ -24,34 +24,35 @@
 #include <graphene/chain/asset_object.hpp>
 #include <graphene/chain/database.hpp>
 
-#include <fc/uint128.hpp>
-
-#include <cmath>
-
 using namespace graphene::chain;
+using namespace boost::multiprecision;
 
 share_type asset_lock_data_object::get_profile(share_type tolocking_balance,uint32_t lock_period,const database &_db)const
 {
-   double profile_ratio= get_interest(lock_period,_db);
-   return share_type(profile_ratio*tolocking_balance.value);
+   return (asset(tolocking_balance,asset_id)*_get_interest(lock_period,_db)).amount;
 }
-double asset_lock_data_object::get_interest(uint32_t lock_period,const database &_db)const{
-   //set two years spence out interest pool
-   //FCC_INTEREST_YEAR
+
+Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const database &_db)const{
+   
    asset_object target_asset_obj=asset_id(_db);
    share_type current_supply=target_asset_obj.dynamic_data(_db).current_supply;
-   share_type cal_locked_2years=(lock_coin_day/coin_day(FCC_INTEREST_YEAR*2)).value.to_uint64();
-   share_type max_to_deposit_balance_2years=current_supply-cal_locked_2years;
-   
-   double one_2years=1.0/(FCC_INTEREST_YEAR*2.0);
-   double profile_2years=double(interest_pool.value)/double(max_to_deposit_balance_2years.value);
-   double interest_per_day=pow(profile_2years,one_2years);
+   share_type cal_locked_year=(lock_coin_day/coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
+   share_type max_to_deposit_balance_year=current_supply-cal_locked_year;
    
    uint32_t period_day=lock_period/FCC_INTEREST_DAY;
-   double reward=1+(lock_period-FCC_INTEREST_YEAR)/FCC_INTEREST_YEAR*reward_coefficient/100.0;
    
-   return pow(interest_per_day,period_day)* reward;
+   asset base_asset(FCC_INTEREST_BASE_SUPPLY,asset_id);
+   auto tmp_asset=base_asset;
+   for(uint32_t i=0;i<period_day;i++){
+      tmp_asset=tmp_asset*nominal_interest_perday;
+   }
+   
+   uint64_t reward=period_day*reward_coefficient/FCC_INTEREST_YEAR;
+   uint64_t reduce;//todo reduce 
+   asset res_asset(uint128_t(tmp_asset.amount.value)*reward/GRAPHENE_100_PERCENT,tmp_asset.asset_id);
+   return Interest(base_asset,res_asset);
 }
+
 share_type asset_bitasset_data_object::max_force_settlement_volume(share_type current_supply) const
 {
    if( options.maximum_force_settlement_volume == 0 )

@@ -352,8 +352,8 @@ void database::init_genesis(const genesis_state_type& genesis_state)
    const asset_lock_data_object& lock_data_asset =
       create<asset_lock_data_object>([&](asset_lock_data_object& obj) {
          obj.asset_id=asset_id_type();
-         obj.nominal_interest_rate=50;
-         obj.active_interest_rate=obj.nominal_interest_rate;
+         obj.nominal_interest_perday=Interest();
+         obj.active_interest_rate=obj.nominal_interest_perday;
          obj.reward_coefficient=45;
          obj.interest_pool=300000000*100000;
          obj.lock_coin_day=0;

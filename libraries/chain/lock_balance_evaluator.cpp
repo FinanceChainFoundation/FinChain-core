@@ -28,6 +28,8 @@
 #include <graphene/chain/locked_balance_object.hpp>
 
 namespace graphene { namespace chain {
+   using namespace boost::multiprecision;
+   
    void_result lock_balance_evaluator::do_evaluate( const lock_balance_operation & op )
    {
       try {
@@ -128,7 +130,8 @@ namespace graphene { namespace chain {
       database& d = db();
       const auto new_lock_data_o = d.create<asset_lock_data_object>([&](asset_lock_data_object& obj){
          obj.interest_pool=o.init_interest_pool.amount;
-         obj.nominal_interest_rate=o.nominal_interest_rate;
+         auto asset_id=o.init_interest_pool.asset_id;
+         obj.nominal_interest_perday=Interest(asset(FCC_INTEREST_BASE_SUPPLY,asset_id),asset(o.nominal_interest_perday,asset_id));
          obj.reward_coefficient=o.reward_coefficient;
          obj.lock_coin_day=0;
       });

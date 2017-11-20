@@ -202,6 +202,7 @@ class database_api_impl : public std::enable_shared_from_this<database_api_impl>
       void on_objects_removed(const vector<object_id_type>& ids, const vector<const object*>& objs, const flat_set<account_id_type>& impacted_accounts);
       void on_applied_block();
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
+	  map<locked_balance_id_type, locked_balance_object> get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const;
    
       bool _notify_remove_create = false;
       mutable fc::bloom_filter _subscribe_filter;
@@ -2024,6 +2025,11 @@ void database_api_impl::on_applied_block()
 lock_data_detail database_api::get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const{
    return my->get_asset_lock_data( asset_id,period );
 }
+
+map<locked_balance_id_type, locked_balance_object> database_api::get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const
+{
+	return my->get_account_locked_data(account_id, asset_id);
+}
    
 lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const{
    
@@ -2040,4 +2046,21 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    res.lock_coin_day=lock_data_obj.lock_coin_day;
    return res;
 }
+
+map<locked_balance_id_type, locked_balance_object> database_api_impl::get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const
+{
+	map<locked_balance_id_type, locked_balance_object>  res;
+	const asset_object & asset_obj = asset_id(_db);
+	const asset_lock_data_object & lock_data_obj = asset_obj.lock_data(_db);
+	
+	auto& index = _db.get_index_type<account_balance_index>().indices().get<by_account_asset>();
+	auto find = index.find(boost::make_tuple(account_id, asset_id));
+	if (find == index.end())
+		return res;
+	const account_balance_object& a_b_obj= *find;
+	for (auto const & id:a_b_obj.locked)
+		res[id] = id(_db);
+	return res;
+}
+
 } } // graphene::app

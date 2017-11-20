@@ -82,13 +82,67 @@ namespace graphene { namespace chain {
       void            validate()const;
       share_type      calculate_fee(const fee_parameters_type& k)const;
    };
+   
+   struct unlock_balance_operation : public base_operation
+   {
+      struct fee_parameters_type {
+         uint64_t fee       = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
+         uint32_t price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
+      };
+            
+      struct unlock_detail{
+         locked_balance_id_type  locked_id;
+		 bool             expired;
+      };
+      
+      asset            fee;
+      /// Account that lock balance
+      account_id_type  issuer;
+      
+      /// The amount of asset to operation
+      vector<unlock_detail>            locked;
+      
+      extensions_type   extensions;
+      
+      account_id_type fee_payer()const { return issuer; }
+      void            validate()const;
+      share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
 
+   struct donation_balance_operation : public base_operation
+   {
+	   struct fee_parameters_type {
+		   uint64_t fee = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
+		   uint32_t price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
+	   };
 
+	   asset            fee;
+	   /// Account that lock balance
+	   account_id_type  issuer;
+
+	   /// The amount of asset to operation
+	   asset            amount;
+
+	   extensions_type   extensions;
+
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+   
 }} // graphene::chain
 
+
 FC_REFLECT( graphene::chain::lock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT( graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(extensions) )
+FC_REFLECT(graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(period)(extensions))
 
 FC_REFLECT( graphene::chain::set_lock_data_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_perday)(reward_coefficient)(init_interest_pool)(extensions) )
 
+
+FC_REFLECT( graphene::chain::unlock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
+FC_REFLECT(graphene::chain::unlock_balance_operation::unlock_detail, (locked_id)(expired))
+FC_REFLECT( graphene::chain::unlock_balance_operation, (fee)(issuer)(locked)(extensions) )
+
+FC_REFLECT(graphene::chain::donation_balance_operation::fee_parameters_type, (fee)(price_per_kbyte))
+FC_REFLECT(graphene::chain::donation_balance_operation, (fee)(issuer)(amount)(extensions))

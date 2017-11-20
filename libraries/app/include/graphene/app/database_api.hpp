@@ -116,11 +116,12 @@ struct locked_balance
    
 struct locked_balance_detail
 {
+   locked_balance_detail(){};
    locked_balance_detail(const locked_balance_object& obj){
       initial_lock_balance=obj.initial_lock_balance;
       locked_balance=obj.locked_balance;
-      lock_time=obj.lock_time;
-      lock_period=obj.lock_period;
+      lock_time=obj.lock_time.value;
+      lock_period=obj.lock_period.value;
       lock_type=obj.lock_type;
       interest=obj.get_interest();
    }
@@ -134,6 +135,7 @@ struct locked_balance_detail
    
 struct asset_locked_balance
 {
+   asset_locked_balance(){};
    asset_locked_balance(asset_id_type _asset_id,vector<locked_balance_object> & _lockded_balances):asset_id(_asset_id){
       for(const auto & lb:_lockded_balances)
          lockded_balances.push_back(lb);
@@ -159,6 +161,8 @@ struct lock_data_detail{
    share_type        interest_pool;
    coin_day          lock_coin_day=0;
 };
+
+
 
 /**
  * @brief The database_api class implements the RPC API for the chain database.
@@ -631,7 +635,7 @@ class database_api
        *  @return asset`s lock data
        */
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
-   
+	  map<locked_balance_id_type, locked_balance_object> get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const;   
    private:
       std::shared_ptr< database_api_impl > my;
 };
@@ -744,4 +748,5 @@ FC_API(graphene::app::database_api,
    (get_blinded_balances)
        
    (get_asset_lock_data)
+   (get_account_locked_data)
 )

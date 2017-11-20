@@ -134,7 +134,7 @@ namespace graphene { namespace chain {
 
 
 FC_REFLECT( graphene::chain::lock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT( graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(extensions) )
+FC_REFLECT(graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(period)(extensions))
 
 FC_REFLECT( graphene::chain::set_lock_data_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_rate)(reward_coefficient)(init_interest_pool)(extensions) )

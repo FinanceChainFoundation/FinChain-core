@@ -37,7 +37,7 @@ void lock_balance_operation::validate()const
 {
    FC_ASSERT( fee.amount >= 0 );
    FC_ASSERT( amount.amount > 0 );
-   FC_ASSERT( (period >= 3600*24) && (period <= 3600*24*365*2),"lock period should longer than one day and short than 2 years");
+   FC_ASSERT( (period >= FCC_INTEREST_DAY) && (period <= FCC_INTEREST_YEAR),"lock period should longer than one day and short than 2 years");
 }
    
 share_type set_lock_data_operation::calculate_fee( const fee_parameters_type& schedule )const

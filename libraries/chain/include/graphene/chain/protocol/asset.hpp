@@ -129,6 +129,7 @@ namespace graphene { namespace chain {
       price min()const { return price::min( base.asset_id, quote.asset_id ); }
 
       double to_real()const { return double(base.amount.value)/double(quote.amount.value); }
+      double to_real2()const { return double(quote.amount.value)/double(base.amount.value); }
 
       bool is_null()const;
       void validate()const;

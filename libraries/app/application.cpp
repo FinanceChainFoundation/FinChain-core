@@ -164,20 +164,21 @@ namespace detail {
             vector<string> seeds = {
                "139.196.111.65:1888"
             };
-            for( const string& endpoint_string : seeds )
-            {
-               try {
-                  std::vector<fc::ip::endpoint> endpoints = resolve_string_to_ip_endpoints(endpoint_string);
-                  for (const fc::ip::endpoint& endpoint : endpoints)
-                  {
-                     ilog("Adding seed node ${endpoint}", ("endpoint", endpoint));
-                     _p2p_network->add_node(endpoint);
+            if(!_options->at("private").as<bool>())
+               for( const string& endpoint_string : seeds )
+               {
+                  try {
+                     std::vector<fc::ip::endpoint> endpoints = resolve_string_to_ip_endpoints(endpoint_string);
+                     for (const fc::ip::endpoint& endpoint : endpoints)
+                     {
+                        ilog("Adding seed node ${endpoint}", ("endpoint", endpoint));
+                        _p2p_network->add_node(endpoint);
+                     }
+                  } catch( const fc::exception& e ) {
+                     wlog( "caught exception ${e} while adding seed node ${endpoint}",
+                              ("e", e.to_detail_string())("endpoint", endpoint_string) );
                   }
-               } catch( const fc::exception& e ) {
-                  wlog( "caught exception ${e} while adding seed node ${endpoint}",
-                           ("e", e.to_detail_string())("endpoint", endpoint_string) );
                }
-            }
          }
 
          if( _options->count("p2p-endpoint") )
@@ -964,6 +965,7 @@ void application::set_program_options(boost::program_options::options_descriptio
          ("resync-blockchain", "Delete all blocks and re-sync with network from scratch")
          ("force-validate", "Force validation of all transactions")
          ("genesis-timestamp", bpo::value<uint32_t>(), "Replace timestamp from genesis.json with current time plus this many seconds (experts only!)")
+         ("private", bpo::value<bool>()->implicit_value(true), "private network")
          ;
    command_line_options.add(_cli_options);
    configuration_file_options.add(_cfg_options);

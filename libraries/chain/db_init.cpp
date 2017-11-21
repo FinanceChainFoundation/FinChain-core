@@ -355,11 +355,12 @@ void database::init_genesis(const genesis_state_type& genesis_state)
    const asset_lock_data_object& lock_data_asset =
       create<asset_lock_data_object>([&](asset_lock_data_object& obj) {
          obj.asset_id=asset_id_type();
-         //real real_interest_perday=1.0011269264
-         uint64_t interest_perday=1001126926400LL;//real_interest_perday*
+         //real_interest_perday=1.0011269264
+         uint64_t interest_perday=1001126926400LL;//real_interest_perday*FCC_INTEREST_BASE_SUPPLY
          obj.nominal_interest_perday=Interest(asset(FCC_INTEREST_BASE_SUPPLY),asset(interest_perday));
          obj.active_interest_rate=obj.nominal_interest_perday;
-         obj.reward_coefficient=45;
+         //real_reward_coefficient=0.45
+         obj.reward_coefficient=4500;//real_reward_coefficient*10000
          obj.interest_pool=0ll;
          obj.lock_coin_day=0;
       });

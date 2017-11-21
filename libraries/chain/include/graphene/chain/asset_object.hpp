@@ -90,7 +90,7 @@ namespace graphene { namespace chain {
 
          Interest      _get_interest(uint32_t lock_period,const database &_db)const;
       
-         double        get_interest(uint32_t lock_period,const database &_db)const{ return _get_interest(lock_period,_db).to_real();}
+         double        get_interest(uint32_t lock_period,const database &_db)const{ return _get_interest(lock_period,_db).to_real2();}
 
    };
 

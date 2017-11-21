@@ -86,7 +86,7 @@ namespace graphene { namespace chain {
          share_type           interest_pool;
          coin_day             lock_coin_day=0;
       
-         share_type    get_profile(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
+         share_type    get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
 
          Interest      _get_interest(uint32_t lock_period,const database &_db)const;
       

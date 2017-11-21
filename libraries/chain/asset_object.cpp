@@ -27,9 +27,9 @@
 using namespace graphene::chain;
 using namespace boost::multiprecision;
 
-share_type asset_lock_data_object::get_profile(share_type tolocking_balance,uint32_t lock_period,const database &_db)const
+share_type asset_lock_data_object::get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const
 {
-   return (asset(tolocking_balance,asset_id)*_get_interest(lock_period,_db)).amount;
+   return (asset(tolocking_balance,asset_id)*_get_interest(lock_period,_db)-asset(tolocking_balance,asset_id)).amount;
 }
 
 Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const database &_db)const{

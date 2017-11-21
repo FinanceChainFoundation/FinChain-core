@@ -47,8 +47,10 @@ namespace graphene { namespace chain {
                    "Insufficient Balance: unable to lock balance"
                    );
          
-         to_locking_balance=lock_data_obj.get_profile(op.amount.amount,op.period,d);
-         bool insufficient_pool=(asset_type.lock_data(d).interest_pool>=to_locking_balance-op.amount.amount);
+         profit=lock_data_obj.get_profit(op.amount.amount,op.period,d);
+         to_locked_balance=profit+op.amount.amount;
+         bool insufficient_pool=(asset_type.lock_data(d).interest_pool>=profit);
+
          FC_ASSERT(insufficient_pool,
                    "Insufficient interest pool: unable to lock balance"
                    );
@@ -65,7 +67,7 @@ namespace graphene { namespace chain {
          
          const auto new_locked_balance_o =d.create<locked_balance_object>([&](locked_balance_object &obj){
             obj.initial_lock_balance=o.amount.amount;
-            obj.locked_balance=to_locking_balance;
+            obj.locked_balance=to_locked_balance;
             obj.lock_period=o.period;
             obj.lock_type=locked_balance_object::userSet;
 			obj.asset_id = o.amount.asset_id;
@@ -86,14 +88,14 @@ namespace graphene { namespace chain {
          
          d.modify(lock_data_obj,[&](asset_lock_data_object &obj){            
 			 fc::uint128_t locking_coin_day = fc::uint128_t(o.amount.amount.value) * fc::uint128_t(o.period);
-            obj.interest_pool-=to_locking_balance;
+            obj.interest_pool-=profit;
 			FC_ASSERT(fc::uint128_t::max_value() - locking_coin_day > obj.lock_coin_day, "invalid locking balance and period");
 			obj.lock_coin_day += locking_coin_day;
          });
 
          
          d.modify(asset_dynamic_data_o, [&](asset_dynamic_data_object &obj){
-            obj.locked_balance+=to_locking_balance;
+            obj.locked_balance+=to_locked_balance;
          });
 
       return void_result();

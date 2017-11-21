@@ -191,9 +191,8 @@ namespace graphene { namespace chain {
 			   auto find = index.find(boost::make_tuple(o.issuer, item.asset_id));
 
 			   FC_ASSERT(find != index.end(), "Insufficient Balance");
-			   FC_ASSERT(!item.finish, "already unlocked balance"); // check further
+			   FC_ASSERT(!item.finish, "already unlocked balance"); // check further		   
 			   
-			   d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
 
 			   if (itr->expired && (d.head_block_time() >= time_point_sec(item.get_unlock_time())))
 			   {
@@ -204,8 +203,9 @@ namespace graphene { namespace chain {
 			   }
 			   else
 			   {
+				   d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
 				   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
-					   obj.interest_pool += item.locked_balance;
+					   obj.interest_pool += item.locked_balance - item.initial_lock_balance;
 					   obj.lock_coin_day -= fc::uint128_t(item.initial_lock_balance.value) * fc::uint128_t(item.lock_period.value);
 				   });
 			   }

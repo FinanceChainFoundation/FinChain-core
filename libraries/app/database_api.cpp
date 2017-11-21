@@ -2038,9 +2038,9 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    const auto & lock_data_obj=asset_obj.lock_data(_db);
    uint32_t days=*period/FCC_INTEREST_DAY;
    uint32_t _period=period?*period:0;
-   uint64_t interest=lock_data_obj.get_interest(_period,_db);
+   double interest=lock_data_obj.get_interest(_period,_db);
    res.asset_id=asset_id;
-   res.current_interest=interest_detail(lock_data_obj.nominal_interest_perday.base.amount.value,_period,interest);
+   res.current_interest=interest_detail(lock_data_obj.nominal_interest_perday.to_real2(),_period,interest);
    res.reward_coefficient=lock_data_obj.reward_coefficient;
    res.interest_pool=lock_data_obj.interest_pool;
    res.lock_coin_day=lock_data_obj.lock_coin_day;

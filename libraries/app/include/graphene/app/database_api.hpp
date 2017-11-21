@@ -147,10 +147,10 @@ struct asset_locked_balance
 
 struct interest_detail{
    interest_detail(){}
-   interest_detail(uint64_t _nominal,uint32_t _period_days,uint64_t _active_interest):nominal(_nominal),period_days(_period_days),active_interest(_active_interest) {}
-   uint64_t nominal;
+   interest_detail(double _nominal,uint32_t _period_days,double _active_interest):nominal(_nominal),period_days(_period_days),active_interest(_active_interest) {}
+   double nominal;
    uint32_t period_days;
-   uint64_t active_interest;
+   double active_interest;
 };
    
 struct lock_data_detail{

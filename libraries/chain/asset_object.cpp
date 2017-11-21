@@ -39,7 +39,7 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    share_type cal_locked_year=(lock_coin_day/coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
    share_type max_to_deposit_balance_year=current_supply-cal_locked_year;
    
-   uint32_t period_day=lock_period/FCC_INTEREST_DAY;
+   int32_t period_day=lock_period/FCC_INTEREST_DAY;
    
    asset base_asset(FCC_INTEREST_BASE_SUPPLY,asset_id);
    auto tmp_asset=base_asset;
@@ -47,9 +47,14 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
       tmp_asset=tmp_asset*nominal_interest_perday;
    }
    
-   uint64_t reward=period_day*reward_coefficient/FCC_INTEREST_YEAR;
-   uint64_t reduce;//todo reduce 
-   asset res_asset(uint64_t(uint128_t(tmp_asset.amount.value)*uint128_t(reward)/GRAPHENE_100_PERCENT),tmp_asset.asset_id);
+   int32_t reward_rate=(period_day-FCC_INTEREST_DAYS_YEAR)*GRAPHENE_100_PERCENT/FCC_INTEREST_DAYS_YEAR;
+
+   int64_t reward=GRAPHENE_100_PERCENT+reward_rate *reward_coefficient/GRAPHENE_100_PERCENT;
+   uint64_t reduce;//todo reduce
+   
+   uint128_t profile_amount=uint128_t((tmp_asset-base_asset).amount.value)*uint128_t(reward)/GRAPHENE_100_PERCENT;
+
+   asset res_asset=base_asset+asset(uint64_t(profile_amount),asset_id);
    return Interest(base_asset,res_asset);
 }
 

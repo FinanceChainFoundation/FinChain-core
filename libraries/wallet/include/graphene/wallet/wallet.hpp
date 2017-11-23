@@ -1516,7 +1516,7 @@ class wallet_api
                                   string init_interest_pool,
                                   bool broadcast = false);
 
-	  map<locked_balance_id_type, locked_balance_object>  get_account_locked_data(string account_name, string asset_symbol);
+	  map<locked_balance_id_type, locked_balance_object>  get_account_locked_balances(string account_name, string asset_symbol);
 
 	  signed_transaction donation_balance(string account_name,
                                   string amount,
@@ -1741,7 +1741,7 @@ FC_API( graphene::wallet::wallet_api,
         (get_order_book)
 		(set_lock_data)
 		(get_lock_data)
-		(get_account_locked_data)
+		//(get_account_locked_data)
 		(donation_balance)
 		(lock_balance)
 		(unlock_balance)		

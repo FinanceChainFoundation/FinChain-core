@@ -118,15 +118,15 @@ struct locked_balance_detail
 {
    locked_balance_detail(){};
    locked_balance_detail(const locked_balance_object& obj){
-      initial_lock_balance=obj.initial_lock_balance;
-      locked_balance=obj.locked_balance;
+      initial_lock_balance=asset(obj.initial_lock_balance,obj.asset_id);
+	  locked_balance = asset(obj.locked_balance,obj.asset_id);
       lock_time=obj.lock_time.value;
       lock_period=obj.lock_period.value;
       lock_type=obj.lock_type;
       interest=obj.get_interest();
    }
-   share_type                          initial_lock_balance;
-   share_type                          locked_balance;
+   asset							   initial_lock_balance;
+   asset							   locked_balance;
    uint32_t                            lock_time;
    uint32_t                            lock_period;
    locked_balance_object::LockType     lock_type;
@@ -158,7 +158,7 @@ struct lock_data_detail{
    asset_id_type     asset_id;
    interest_detail   current_interest;
    uint16_t          reward_coefficient;
-   share_type        interest_pool;
+   asset			 interest_pool;
    coin_day          lock_coin_day=0;
 };
 
@@ -635,7 +635,7 @@ class database_api
        *  @return asset`s lock data
        */
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
-	  map<locked_balance_id_type, locked_balance_object> get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const;   
+	//  map<locked_balance_id_type, locked_balance_object> get_account_locked_balances(account_id_type account_id, asset_id_type asset_id)const;
    private:
       std::shared_ptr< database_api_impl > my;
 };
@@ -748,5 +748,5 @@ FC_API(graphene::app::database_api,
    (get_blinded_balances)
        
    (get_asset_lock_data)
-   (get_account_locked_data)
+ //  (get_account_locked_data)
 )

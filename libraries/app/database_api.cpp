@@ -202,7 +202,7 @@ class database_api_impl : public std::enable_shared_from_this<database_api_impl>
       void on_objects_removed(const vector<object_id_type>& ids, const vector<const object*>& objs, const flat_set<account_id_type>& impacted_accounts);
       void on_applied_block();
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
-	  map<locked_balance_id_type, locked_balance_object> get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const;
+	 // map<locked_balance_id_type, locked_balance_object> get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const;
    
       bool _notify_remove_create = false;
       mutable fc::bloom_filter _subscribe_filter;
@@ -2026,11 +2026,13 @@ lock_data_detail database_api::get_asset_lock_data(asset_id_type asset_id,option
    return my->get_asset_lock_data( asset_id,period );
 }
 
-map<locked_balance_id_type, locked_balance_object> database_api::get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const
+/*
+map<locked_balance_id_type, locked_balance_object> database_api::get_account_locked_balances(account_id_type account_id, asset_id_type asset_id)const
 {
-	return my->get_account_locked_data(account_id, asset_id);
+	return my->get_account_locked_balances(account_id, asset_id);
 }
-   
+  */
+
 lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const{
    
    lock_data_detail res;
@@ -2042,11 +2044,11 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    res.asset_id=asset_id;
    res.current_interest=interest_detail(lock_data_obj.nominal_interest_perday.to_real2(),_period,interest);
    res.reward_coefficient=lock_data_obj.reward_coefficient;
-   res.interest_pool=lock_data_obj.interest_pool;
+   res.interest_pool = asset(lock_data_obj.interest_pool, asset_obj.get_id());
    res.lock_coin_day=lock_data_obj.lock_coin_day;
    return res;
 }
-
+/*
 map<locked_balance_id_type, locked_balance_object> database_api_impl::get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const
 {
 	map<locked_balance_id_type, locked_balance_object>  res;
@@ -2062,5 +2064,5 @@ map<locked_balance_id_type, locked_balance_object> database_api_impl::get_accoun
 		res[id] = id(_db);
 	return res;
 }
-
+*/
 } } // graphene::app

@@ -29,32 +29,45 @@ using namespace boost::multiprecision;
 
 share_type asset_lock_data_object::get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const
 {
-   return (asset(tolocking_balance,asset_id)*_get_interest(lock_period,_db)-asset(tolocking_balance,asset_id)).amount;
+	return (asset(tolocking_balance, asset_id)*_get_interest(lock_period, _db) - asset(tolocking_balance, asset_id)).amount;
 }
 
 Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const database &_db)const{
    
    asset_object target_asset_obj=asset_id(_db);
-   share_type current_supply=target_asset_obj.dynamic_data(_db).current_supply;
-   share_type cal_locked_year=(lock_coin_day/coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
-   share_type max_to_deposit_balance_year=current_supply-cal_locked_year;
+   int32_t lock_days=lock_period/FCC_INTEREST_DAY;   
+   share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply - (lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
+   asset  base_asset(FCC_INTEREST_BASE_SUPPLY, asset_id);
+
+   static Interest top_of_interest = Interest();
+
+   if (top_of_interest == Interest()) // yet not calculated
+   {
+	   asset result = base_asset;
+	   for (uint32_t i = 0; i<FCC_INTEREST_YEAR; i++)
+	   {
+		   result = result*nominal_interest_perday;
+	   }
+	   top_of_interest = Interest(base_asset, result);
+   }
+
    
-   int32_t period_day=lock_period/FCC_INTEREST_DAY;
-   
-   asset base_asset(FCC_INTEREST_BASE_SUPPLY,asset_id);
-   auto tmp_asset=base_asset;
-   for(uint32_t i=0;i<period_day;i++){
-      tmp_asset=tmp_asset*nominal_interest_perday;
+   auto result = base_asset;
+   for (uint32_t i = 0; i<lock_days; i++)
+   {
+	   result = result*nominal_interest_perday;
    }
    
-   int32_t reward_rate=(period_day-FCC_INTEREST_DAYS_YEAR)*GRAPHENE_100_PERCENT/FCC_INTEREST_DAYS_YEAR;
+   int32_t pecent_of_year = (lock_days - FCC_INTEREST_DAYS_YEAR)*GRAPHENE_100_PERCENT / FCC_INTEREST_DAYS_YEAR;
 
-   int64_t reward=GRAPHENE_100_PERCENT+reward_rate *reward_coefficient/GRAPHENE_100_PERCENT;
-   uint64_t reduce;//todo reduce
+   int64_t reward_rate = GRAPHENE_100_PERCENT + pecent_of_year * reward_coefficient / GRAPHENE_100_PERCENT;
    
-   uint128_t profile_amount=uint128_t((tmp_asset-base_asset).amount.value)*uint128_t(reward)/GRAPHENE_100_PERCENT;
+   uint128_t pre_profile = uint128_t((result - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
 
-   asset res_asset=base_asset+asset(uint64_t(profile_amount),asset_id);
+   auto actual_profile = pre_profile * interest_pool.value / (asset(max_to_deposit_balance_year, asset_id) * top_of_interest).amount.value;
+
+   asset res_asset = asset(actual_profile.convert_to<uint64_t>(), asset_id) + base_asset;
+
    return Interest(base_asset,res_asset);
 }
 

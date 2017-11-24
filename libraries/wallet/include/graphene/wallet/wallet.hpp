@@ -340,7 +340,7 @@ class wallet_api
        * @param name the name or id of the account whose balances you want
        * @returns a list of the given account's lock balances
        */
-      vector<asset_locked_balance> list_account_lock_balances(const string& name);
+      vector<asset_locked_balance> list_account_locked_balances(const string& name);
       /** Lists all assets registered on the blockchain.
        * 
        * To list all assets, pass the empty string \c "" for the lowerbound to start
@@ -1508,15 +1508,13 @@ class wallet_api
       order_book get_order_book( const string& base, const string& quote, unsigned limit = 50);
 
 
-	  lock_data_detail   get_lock_data(string asset_symbol, string period = "");
+	  lock_data_detail   get_lock_data(string asset_symbol, string period = "0");
 	  signed_transaction set_lock_data(string account_name,
 							  	  string asset_symbol,
                                   string nominal_interest_rate,
                                   string reward_coefficient,
                                   string init_interest_pool,
                                   bool broadcast = false);
-
-	  map<locked_balance_id_type, locked_balance_object>  get_account_locked_data(string account_name, string asset_symbol);
 
 	  signed_transaction donation_balance(string account_name,
                                   string amount,
@@ -1646,7 +1644,7 @@ FC_API( graphene::wallet::wallet_api,
         (list_my_accounts)
         (list_accounts)
         (list_account_balances)
-        (list_account_lock_balances)
+        (list_account_locked_balances)
         (list_assets)
         (import_key)
         (import_accounts)
@@ -1741,7 +1739,7 @@ FC_API( graphene::wallet::wallet_api,
         (get_order_book)
 		(set_lock_data)
 		(get_lock_data)
-		(get_account_locked_data)
+		//(get_account_locked_data)
 		(donation_balance)
 		(lock_balance)
 		(unlock_balance)		

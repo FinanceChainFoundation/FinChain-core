@@ -664,8 +664,10 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
                     [&](const account_balance_object& balance) {
                        acnt.balances.emplace_back(balance);
                        // add fix balance
+                       vector<locked_balance_object> asset_fix_balances;
                        for(auto id:balance.lockeds)
-                          acnt.fix_balances.emplace_back(id(_db));
+                          asset_fix_balances.emplace_back(id(_db));
+                       acnt.fix_balances[balance.asset_type]=asset_fix_balances;
                     });
       
       // Add the account's vesting balances

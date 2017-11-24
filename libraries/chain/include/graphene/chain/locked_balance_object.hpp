@@ -49,8 +49,8 @@ namespace graphene { namespace chain {
       
       share_type  initial_lock_balance;
       share_type  locked_balance;
-	  TimeStamp   lock_time;
-	  TimeStamp   lock_period;
+      TimeStamp   lock_time;
+      TimeStamp   lock_period;
       LockType    lock_type;
 	  asset_id_type asset_id;
 	  bool		  finish = false;

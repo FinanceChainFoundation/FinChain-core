@@ -2471,7 +2471,7 @@ public:
 		   donation_balance_operation  xfer_op;
 
 		   xfer_op.issuer = from_id;
-		   xfer_op.amount = asset(fc::to_uint64(amount), asset_obj->get_id());
+		   xfer_op.amount = asset_obj->amount_from_string(amount);
 		  
 		   signed_transaction tx;
 		   tx.operations.push_back(xfer_op);
@@ -2499,7 +2499,7 @@ public:
 		   lock_balance_operation  xfer_op;
 
 		   xfer_op.issuer = from_id;
-		   xfer_op.amount = asset(fc::to_uint64(amount), asset_obj->get_id());
+		   xfer_op.amount = asset_obj->amount_from_string(amount);
 		   xfer_op.period = fc::to_uint64(period)*FCC_INTEREST_DAY;
 
 		   signed_transaction tx;
@@ -2930,7 +2930,7 @@ vector<asset> wallet_api::list_account_balances(const string& id)
    return my->_remote_db->get_account_balances(get_account(id).id, flat_set<asset_id_type>());
 }
    
-vector<asset_locked_balance> wallet_api::list_account_lock_balances(const string& name)
+vector<asset_locked_balance> wallet_api::list_account_locked_balances(const string& name)
 {
    if( auto real_id = detail::maybe_id<account_id_type>(name) )
       return my->_remote_db->get_account_locked_balances(*real_id, flat_set<asset_id_type>());
@@ -4504,14 +4504,6 @@ signed_transaction wallet_api::set_lock_data(string account_name,
 	bool broadcast/* = false*/)
 {
 	return my->set_lock_data(account_name, asset_symbol, nominal_interest_rate, reward_coefficient, init_interest_pool, broadcast);
-}
-
-map<locked_balance_id_type, locked_balance_object> wallet_api::get_account_locked_data(string account_name, string asset_symbol)
-{
-	account_id_type account_id = get_account(account_name).id;
-	asset_id_type  asset_id = get_asset_id(asset_symbol);
-	
-	return my->_remote_db->get_account_locked_data(account_id, asset_id);
 }
 
 signed_transaction wallet_api::donation_balance(string account_name,

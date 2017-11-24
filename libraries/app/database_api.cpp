@@ -2040,21 +2040,4 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    res.lock_coin_day=lock_data_obj.lock_coin_day;
    return res;
 }
-
-map<locked_balance_id_type, locked_balance_object> database_api_impl::get_account_locked_data(account_id_type account_id, asset_id_type asset_id)const
-{
-	map<locked_balance_id_type, locked_balance_object>  res;
-	const asset_object & asset_obj = asset_id(_db);
-	const asset_lock_data_object & lock_data_obj = asset_obj.lock_data(_db);
-	
-	auto& index = _db.get_index_type<account_balance_index>().indices().get<by_account_asset>();
-	auto find = index.find(boost::make_tuple(account_id, asset_id));
-	if (find == index.end())
-		return res;
-	const account_balance_object& a_b_obj= *find;
-	for (auto const & id:a_b_obj.lockeds)
-		res[id] = id(_db);
-	return res;
-}
-
 } } // graphene::app

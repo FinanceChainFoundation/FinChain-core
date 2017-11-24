@@ -844,9 +844,9 @@ vector<asset_locked_balance> database_api_impl::get_account_locked_balances(acco
       
       for (const account_balance_object& balance : boost::make_iterator_range(range.first, range.second))
          
-         if(balance.locked.size()){
+         if(balance.lockeds.size()){
             vector <locked_balance_object> temp_locked_balance_objs;
-            for(const auto & lk_id:balance.locked )
+            for(const auto & lk_id:balance.lockeds )
                temp_locked_balance_objs.push_back(lk_id(_db));
             result.push_back(asset_locked_balance(balance.asset_type,temp_locked_balance_objs));
          }
@@ -2058,7 +2058,7 @@ map<locked_balance_id_type, locked_balance_object> database_api_impl::get_accoun
 	if (find == index.end())
 		return res;
 	const account_balance_object& a_b_obj= *find;
-	for (auto const & id:a_b_obj.locked)
+	for (auto const & id:a_b_obj.lockeds)
 		res[id] = id(_db);
 	return res;
 }

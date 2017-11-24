@@ -163,7 +163,7 @@ void database_fixture::verify_asset_supplies( const database& db )
 
    for (const account_balance_object& b : balance_index){
 	   total_balances[b.asset_type] += b.balance;
-	   for (const auto & id : b.locked){
+	   for (const auto & id : b.lockeds){
 		   auto & ob = id(db);
 		   if (!ob.finish)
 		   {

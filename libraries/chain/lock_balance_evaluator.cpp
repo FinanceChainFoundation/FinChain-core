@@ -167,9 +167,9 @@ namespace graphene { namespace chain {
    {
 	   try {
 		   const database& d = db();
-		   for (auto i = 0; i < o.locked.size();i++)
+		   for (auto i = 0; i < o.lockeds.size();i++)
 		   {
-			   const locked_balance_object & item = o.locked[i].locked_id(d);
+			   const locked_balance_object & item = o.lockeds[i].locked_id(d);
 			   FC_ASSERT(item.locked_balance  >= 0,
 				   "Insufficient interest pool: unable to unlock balance"
 				   );
@@ -183,7 +183,7 @@ namespace graphene { namespace chain {
 		   database& d = db();
 		   auto& index = d.get_index_type<account_balance_index>().indices().get<by_account_asset>();
 		   
-		   for (auto  itr = o.locked.begin(); itr != o.locked.end(); itr++)
+		   for (auto  itr = o.lockeds.begin(); itr != o.lockeds.end(); itr++)
 		   {
 			   const locked_balance_object & item = itr->locked_id(d);
 			   const asset_lock_data_object & lock_data_obj = item.asset_id(d).lock_data(d);

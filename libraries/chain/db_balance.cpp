@@ -46,7 +46,7 @@ asset database::get_balance(account_id_type owner, asset_id_type asset_id) const
    auto itr = index.find(boost::make_tuple(owner, asset_id));
    if( itr == index.end() )
       return res;
-   for(const auto &lk_id: itr->locked)
+   for(const auto &lk_id: itr->lockeds)
       res.push_back(lk_id);
    return res;
 }

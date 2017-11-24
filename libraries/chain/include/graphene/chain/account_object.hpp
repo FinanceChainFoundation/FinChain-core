@@ -107,21 +107,21 @@ namespace graphene { namespace chain {
          account_id_type               owner;
          asset_id_type                 asset_type;
          share_type                    balance;
-         set<locked_balance_id_type>   locked;
+         set<locked_balance_id_type>   lockeds;
          //locked_balance    locked;
          asset get_balance()const { return asset(balance, asset_type); }
          void  adjust_balance(const asset& delta);
       
          void  add_lock_balance(locked_balance_id_type id){
             
-            FC_ASSERT(locked.size()<50," max 50 lock balance per asset");
-            locked.insert(id);
+            FC_ASSERT(lockeds.size()<50," max 50 lock balance per asset");
+            lockeds.insert(id);
          }
       
          void unlock_balance(locked_balance_id_type id){
 			 
-			FC_ASSERT(locked.count(id)>0, "can't find the locked balance id");
-            locked.erase(id);
+			FC_ASSERT(lockeds.count(id)>0, "can't find the locked balance id");
+            lockeds.erase(id);
          }
    };
 
@@ -396,7 +396,7 @@ FC_REFLECT_DERIVED( graphene::chain::account_object,
 
 FC_REFLECT_DERIVED( graphene::chain::account_balance_object,
                     (graphene::db::object),
-                    (owner)(asset_type)(balance)(locked))
+                    (owner)(asset_type)(balance)(lockeds))
 
 FC_REFLECT_DERIVED( graphene::chain::account_statistics_object,
                     (graphene::chain::object),

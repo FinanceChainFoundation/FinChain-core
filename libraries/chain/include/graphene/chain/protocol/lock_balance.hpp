@@ -100,7 +100,7 @@ namespace graphene { namespace chain {
       account_id_type  issuer;
       
       /// The amount of asset to operation
-      vector<unlock_detail>            locked;
+      vector<unlock_detail>            lockeds;
       
       extensions_type   extensions;
       
@@ -142,7 +142,7 @@ FC_REFLECT( graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_inte
 
 FC_REFLECT( graphene::chain::unlock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT(graphene::chain::unlock_balance_operation::unlock_detail, (locked_id)(expired))
-FC_REFLECT( graphene::chain::unlock_balance_operation, (fee)(issuer)(locked)(extensions) )
+FC_REFLECT( graphene::chain::unlock_balance_operation, (fee)(issuer)(lockeds)(extensions) )
 
 FC_REFLECT(graphene::chain::donation_balance_operation::fee_parameters_type, (fee)(price_per_kbyte))
 FC_REFLECT(graphene::chain::donation_balance_operation, (fee)(issuer)(amount)(extensions))

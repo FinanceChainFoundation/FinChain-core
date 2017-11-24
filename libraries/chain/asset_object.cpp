@@ -44,7 +44,7 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    if (top_of_interest == Interest()) // yet not calculated
    {
 	   asset result = base_asset;
-	   for (uint32_t i = 0; i<FCC_INTEREST_YEAR; i++)
+	   for (uint32_t i = 0; i<FCC_INTEREST_DAYS_YEAR; i++)
 	   {
 		   result = result*nominal_interest_perday;
 	   }

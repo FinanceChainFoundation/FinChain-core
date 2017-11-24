@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 			unlock_balance_operation::unlock_detail one;
 			one.locked_id = ids.at(0);
 			one.expired = false;
-			op.locked.push_back(one);
+			op.lockeds.push_back(one);
 			trx.operations.push_back(op);
 
 			sign(trx, dan_private_key);

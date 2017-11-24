@@ -661,10 +661,13 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
       auto balance_range = _db.get_index_type<account_balance_index>().indices().get<by_account_asset>().equal_range(boost::make_tuple(account->id));
       //vector<account_balance_object> balances;
       std::for_each(balance_range.first, balance_range.second,
-                    [&acnt](const account_balance_object& balance) {
+                    [&](const account_balance_object& balance) {
                        acnt.balances.emplace_back(balance);
+                       // add fix balance
+                       for(auto id:balance.lockeds)
+                          acnt.fix_balances.emplace_back(id(_db));
                     });
-
+      
       // Add the account's vesting balances
       auto vesting_range = _db.get_index_type<vesting_balance_index>().indices().get<by_account>().equal_range(account->id);
       std::for_each(vesting_range.first, vesting_range.second,
@@ -702,7 +705,6 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
                     [&acnt] (const withdraw_permission_object& withdraw) {
                        acnt.withdraws.emplace_back(withdraw);
                     });
-
 
       results[account_name_or_id] = acnt;
    }

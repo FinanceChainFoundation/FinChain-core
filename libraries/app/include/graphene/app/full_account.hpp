@@ -48,7 +48,7 @@ namespace graphene { namespace app {
       vector<proposal_object>          proposals;
       vector<asset_id_type>            assets;
       vector<withdraw_permission_object> withdraws;
-      map<asset_id_type,vector<locked_balance_object>>    fix_balances;
+      optional<map<asset_id_type,vector<locked_balance_object>>>    fix_balances;
    };
 
 } }

@@ -133,6 +133,8 @@ namespace graphene { namespace chain {
 
       bool is_null()const;
       void validate()const;
+      
+      asset div(asset divisor);
    };
 
    price operator / ( const asset& base, const asset& quote );

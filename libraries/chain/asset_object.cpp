@@ -64,7 +64,7 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    
    uint128_t pre_profile = uint128_t((result - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
 
-   auto actual_profile = pre_profile * interest_pool.value / (asset(max_to_deposit_balance_year, asset_id) * top_of_interest).amount.value;
+   auto actual_profile = pre_profile * interest_pool.value / (asset(max_to_deposit_balance_year / 10, asset_id) * top_of_interest).amount.value /10;
 
    asset res_asset = asset(actual_profile.convert_to<uint64_t>(), asset_id) + base_asset;
 

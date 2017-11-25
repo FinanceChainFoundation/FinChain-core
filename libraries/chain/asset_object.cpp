@@ -63,8 +63,19 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    int64_t reward_rate = GRAPHENE_100_PERCENT + pecent_of_year * reward_coefficient / GRAPHENE_100_PERCENT;
    
    uint128_t pre_profile = uint128_t((result - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
+   
+   uint128_t max_need_pool;
+   {
+      uint128_t quote=uint128_t(top_of_interest.quote.amount.value);
+      uint128_t base=uint128_t(top_of_interest.base.amount.value);
+      uint128_t max_to_deposit=uint128_t(max_to_deposit_balance_year.value);
+      
+      FC_ASSERT(quote>=base," year interest  must >1");       // quote>base ,don`t worry overflow
 
-   auto actual_profile = pre_profile * interest_pool.value / (asset(max_to_deposit_balance_year, asset_id) * top_of_interest).amount.value;
+      max_need_pool=(quote*max_to_deposit)/base-max_to_deposit;
+   }
+
+   auto actual_profile = pre_profile * uint128_t(interest_pool.value) / max_need_pool;
 
    asset res_asset = asset(actual_profile.convert_to<uint64_t>(), asset_id) + base_asset;
 

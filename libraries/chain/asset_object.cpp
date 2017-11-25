@@ -32,37 +32,42 @@ share_type asset_lock_data_object::get_profit(share_type tolocking_balance,uint3
 	return (asset(tolocking_balance, asset_id)*_get_interest(lock_period, _db) - asset(tolocking_balance, asset_id)).amount;
 }
 
+Interest fast_pow_of_interest(Interest in, uint32_t pow)
+{
+	Interest cur_base = in;
+	Interest result = Interest(asset(1, in.base.asset_id), asset(1, in.quote.asset_id)); //start from 1:1 price
+	auto multiply_of_interest = [&](Interest a, Interest b)
+	{
+		uint128_t result = uint128_t(FCC_INTEREST_BASE_SUPPLY) * uint128_t(a.quote.amount.value) / uint128_t(a.base.amount.value)  * uint128_t(b.quote.amount.value) / uint128_t(b.base.amount.value);
+		return Interest(asset(FCC_INTEREST_BASE_SUPPLY, a.base.asset_id), asset(result.convert_to<uint64_t>(), b.quote.asset_id));
+	};
+
+	while (pow)
+	{
+		if (pow & 0x01)
+			result = multiply_of_interest(result,cur_base);
+		
+		cur_base = multiply_of_interest(cur_base,cur_base);
+
+		pow >>= 1;
+	}
+	return result;
+}
+
 Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const database &_db)const{
    
    asset_object target_asset_obj=asset_id(_db);
    int32_t lock_days=lock_period/FCC_INTEREST_DAY;   
    share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply - (lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
    asset  base_asset(FCC_INTEREST_BASE_SUPPLY, asset_id);
-
-   static Interest top_of_interest = Interest();
-
-   if (top_of_interest == Interest()) // yet not calculated
-   {
-	   asset result = base_asset;
-	   for (uint32_t i = 0; i<FCC_INTEREST_DAYS_YEAR; i++)
-	   {
-		   result = result*nominal_interest_perday;
-	   }
-	   top_of_interest = Interest(base_asset, result);
-   }
-
    
-   auto result = base_asset;
-   for (uint32_t i = 0; i<lock_days; i++)
-   {
-	   result = result*nominal_interest_perday;
-   }
+   Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, FCC_INTEREST_DAYS_YEAR);
    
    int32_t pecent_of_year = (lock_days - FCC_INTEREST_DAYS_YEAR)*GRAPHENE_100_PERCENT / FCC_INTEREST_DAYS_YEAR;
 
    int64_t reward_rate = GRAPHENE_100_PERCENT + pecent_of_year * reward_coefficient / GRAPHENE_100_PERCENT;
    
-   uint128_t pre_profile = uint128_t((result - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
+   uint128_t pre_profile = uint128_t((base_asset * fast_pow_of_interest(nominal_interest_perday,lock_days) - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
    
    uint128_t max_need_pool;
    {

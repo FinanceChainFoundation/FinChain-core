@@ -100,6 +100,13 @@ namespace graphene { namespace chain {
 
       price price::max( asset_id_type base, asset_id_type quote ) { return asset( share_type(GRAPHENE_MAX_SHARE_SUPPLY), base ) / asset( share_type(1), quote); }
       price price::min( asset_id_type base, asset_id_type quote ) { return asset( 1, base ) / asset( GRAPHENE_MAX_SHARE_SUPPLY, quote); }
+   
+      asset price::div(asset divisor){
+         FC_ASSERT( divisor.asset_id ==quote.asset_id );
+         uint128_t result = (uint128_t(divisor.amount.value) * base.amount.value)/quote.amount.value;
+         FC_ASSERT( result <= GRAPHENE_MAX_SHARE_SUPPLY );
+         return asset( result.convert_to<int64_t>(), base.asset_id );
+      }
 
       /**
        *  The black swan price is defined as debt/collateral, we want to perform a margin call

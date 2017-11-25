@@ -660,6 +660,7 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
       // Add the account's balances
       auto balance_range = _db.get_index_type<account_balance_index>().indices().get<by_account_asset>().equal_range(boost::make_tuple(account->id));
       //vector<account_balance_object> balances;
+      map<asset_id_type,vector<locked_balance_object>> fix_balances;
       std::for_each(balance_range.first, balance_range.second,
                     [&](const account_balance_object& balance) {
                        acnt.balances.emplace_back(balance);
@@ -667,8 +668,12 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
                        vector<locked_balance_object> asset_fix_balances;
                        for(auto id:balance.lockeds)
                           asset_fix_balances.emplace_back(id(_db));
-                       acnt.fix_balances[balance.asset_type]=asset_fix_balances;
+                       if(asset_fix_balances.size())
+                          fix_balances[balance.asset_type]=asset_fix_balances;
                     });
+      
+      if(fix_balances.size())
+         acnt.fix_balances=fix_balances;
       
       // Add the account's vesting balances
       auto vesting_range = _db.get_index_type<vesting_balance_index>().indices().get<by_account>().equal_range(account->id);

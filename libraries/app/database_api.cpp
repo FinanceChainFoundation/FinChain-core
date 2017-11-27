@@ -660,7 +660,7 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
       // Add the account's balances
       auto balance_range = _db.get_index_type<account_balance_index>().indices().get<by_account_asset>().equal_range(boost::make_tuple(account->id));
       //vector<account_balance_object> balances;
-      map<asset_id_type,vector<locked_balance_object>> fix_balances;
+      vector<full_account::FixBalance>                       fix_balances;
       std::for_each(balance_range.first, balance_range.second,
                     [&](const account_balance_object& balance) {
                        acnt.balances.emplace_back(balance);
@@ -669,7 +669,7 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
                        for(auto id:balance.lockeds)
                           asset_fix_balances.emplace_back(id(_db));
                        if(asset_fix_balances.size())
-                          fix_balances[balance.asset_type]=asset_fix_balances;
+                          fix_balances.emplace_back(full_account::FixBalance(balance.asset_type,asset_fix_balances));
                     });
       
       if(fix_balances.size())
@@ -2039,8 +2039,8 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    lock_data_detail res;
    const auto & asset_obj=asset_id(_db);
    const auto & lock_data_obj=asset_obj.lock_data(_db);
-   uint32_t days=*period/FCC_INTEREST_DAY;
    uint32_t _period=period?*period:0;
+   uint32_t days=_period/FCC_INTEREST_DAY;
    double interest=lock_data_obj.get_interest(_period,_db);
    res.asset_id=asset_id;
    res.current_interest=interest_detail(lock_data_obj.nominal_interest_perday.to_real2(),_period,interest);

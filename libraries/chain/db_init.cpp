@@ -361,7 +361,7 @@ void database::init_genesis(const genesis_state_type& genesis_state)
          obj.active_interest_rate=obj.nominal_interest_perday;
          //real_reward_coefficient=0.45
          obj.reward_coefficient=4500;//real_reward_coefficient*10000
-         obj.interest_pool=0ll;
+         obj.interest_pool=0ll;  //must be zero in genesis status,or the current_supply and total_balances should be wrong.
          obj.lock_coin_day=0;
       });
    const asset_object& core_asset =

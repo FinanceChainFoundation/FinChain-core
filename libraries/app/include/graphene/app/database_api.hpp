@@ -124,6 +124,7 @@ struct locked_balance_detail
       lock_period=obj.lock_period.value;
       lock_type=obj.lock_type;
       interest=obj.get_interest();
+	  locked_id = obj.id;
    }
    share_type  						   initial_lock_balance;
    share_type  						   locked_balance;
@@ -131,6 +132,7 @@ struct locked_balance_detail
    uint32_t                            lock_period;
    locked_balance_object::LockType     lock_type;
    uint64_t                            interest;
+   locked_balance_id_type			   locked_id;
 };
    
 struct asset_locked_balance
@@ -138,7 +140,7 @@ struct asset_locked_balance
    asset_locked_balance(){};
    asset_locked_balance(asset_id_type _asset_id,vector<locked_balance_object> & _lockded_balances):asset_id(_asset_id){
       for(const auto & lb:_lockded_balances)
-         lockded_balances.push_back(lb);
+		  lockded_balances.push_back(locked_balance_detail(lb));
    }
 
    asset_id_type                       asset_id;
@@ -648,7 +650,7 @@ FC_REFLECT( graphene::app::market_volume, (base)(quote)(base_volume)(quote_volum
 FC_REFLECT( graphene::app::market_trade, (date)(price)(amount)(value) );
 FC_REFLECT( graphene::app::locked_balance,(balance)(unlock_time));
 FC_REFLECT( graphene::app::asset_locked_balance,(asset_id)(lockded_balances));
-FC_REFLECT( graphene::app::locked_balance_detail,(initial_lock_balance)(locked_balance)(lock_time)(lock_period)(lock_type)(interest));
+FC_REFLECT(graphene::app::locked_balance_detail, (initial_lock_balance)(locked_balance)(lock_time)(lock_period)(lock_type)(interest)(locked_id));
 FC_REFLECT( graphene::app::lock_data_detail,(asset_id)(current_interest)(reward_coefficient)(interest_pool)(lock_coin_day));
 FC_REFLECT( graphene::app::interest_detail,(nominal)(period_days)(active_interest));
 

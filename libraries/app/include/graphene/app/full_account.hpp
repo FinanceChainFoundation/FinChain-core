@@ -33,6 +33,13 @@ namespace graphene { namespace app {
 
    struct full_account
    {
+      struct FixBalance{
+         FixBalance() {}
+         FixBalance(asset_id_type asset_type,const vector<locked_balance_object> &locked_objects):
+         asset_type(asset_type),locked_objects(locked_objects){}
+         asset_id_type                 asset_type;
+         vector<locked_balance_object> locked_objects;
+      };
       account_object                   account;
       account_statistics_object        statistics;
       string                           registrar_name;
@@ -48,7 +55,7 @@ namespace graphene { namespace app {
       vector<proposal_object>          proposals;
       vector<asset_id_type>            assets;
       vector<withdraw_permission_object> withdraws;
-      optional<map<asset_id_type,vector<locked_balance_object>>>    fix_balances;
+      optional<vector<FixBalance>>     fix_balances;
    };
 
 } }
@@ -71,3 +78,7 @@ FC_REFLECT( graphene::app::full_account,
             (withdraws)
             (fix_balances)
           )
+FC_REFLECT( graphene::app::full_account::FixBalance,
+           (asset_type)
+           (locked_objects)
+           )

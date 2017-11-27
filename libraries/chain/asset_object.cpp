@@ -80,7 +80,9 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
       max_need_pool=(quote*max_to_deposit)/base-max_to_deposit;
    }
 
+
    auto actual_profile = pre_profile * uint128_t(interest_pool.value) / max_need_pool;
+
 
    asset res_asset = asset(actual_profile.convert_to<uint64_t>(), asset_id) + base_asset;
 

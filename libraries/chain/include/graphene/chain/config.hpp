@@ -177,7 +177,7 @@
 #define FCC_INTEREST_DAY            (3600*24)
 #define FCC_INTEREST_MONTH          (3600*24*30)
 #define FCC_INTEREST_DAYS_YEAR      360
-#define FCC_INTEREST_YEAR           (3600*24*30*FCC_INTEREST_DAYS_YEAR)
+#define FCC_INTEREST_YEAR           (3600*24*FCC_INTEREST_DAYS_YEAR)
 
 
 //percent

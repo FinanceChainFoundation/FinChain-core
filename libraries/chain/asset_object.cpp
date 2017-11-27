@@ -57,8 +57,9 @@ Interest fast_pow_of_interest(Interest in, uint32_t pow)
 Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const database &_db)const{
    
    asset_object target_asset_obj=asset_id(_db);
-   int32_t lock_days=lock_period/FCC_INTEREST_DAY;   
-   share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply - (lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
+   int32_t lock_days=lock_period/FCC_INTEREST_DAY;
+   
+   share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply -interest_pool- (lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
    asset  base_asset(FCC_INTEREST_BASE_SUPPLY, asset_id);
    
    Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, FCC_INTEREST_DAYS_YEAR);

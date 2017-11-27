@@ -161,7 +161,7 @@ struct lock_data_detail{
    interest_detail   current_interest;
    uint16_t          reward_coefficient;
    share_type  		 interest_pool;
-   coin_day          lock_coin_day=0;
+   fc::string        lock_coin_day="0";
 };
 
 

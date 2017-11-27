@@ -2046,7 +2046,7 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    res.current_interest=interest_detail(lock_data_obj.nominal_interest_perday.to_real2(),_period,interest);
    res.reward_coefficient=lock_data_obj.reward_coefficient;
    res.interest_pool = lock_data_obj.interest_pool;
-   res.lock_coin_day=lock_data_obj.lock_coin_day;
+   res.lock_coin_day = lock_data_obj.lock_coin_day.value.operator fc::string();
    return res;
 }
 } } // graphene::app

@@ -54,14 +54,64 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 		const auto& core = asset_id_type()(db);
 		const auto & core_lock = core.lock_data(db);
 		auto total = get_balance(committee_account, asset_id_type());
-		uint64_t UNIT = GRAPHENE_MAX_SHARE_SUPPLY / 100;
-		
+		uint64_t UNIT = GRAPHENE_MAX_SHARE_SUPPLY / 10;
+		uint64_t dan_balance;
+		BOOST_CHECK_EQUAL(total, GRAPHENE_MAX_SHARE_SUPPLY);
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), 0);
 		transfer(committee_account, dan_id, asset(UNIT * 7));
 		transfer(committee_account, nathan_id, asset(UNIT * 2));
 		transfer(committee_account, account_id_type(3), asset(UNIT));
+
+		auto lock_balance = [&](asset amount, uint32_t period)
+		{
+			lock_balance_operation op;
+			op.fee = asset();
+			op.issuer = dan_id;
+			op.amount = amount;
+			op.period = period;
+			trx.operations.push_back(op);
+			set_expiration(db, trx);
+			sign(trx, dan_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+			generate_block();
+			verify_asset_supplies(db);
+		};
+
+		auto unlock_balance = [&](int64_t current_balance,bool expired,bool has_interest)
+		{
+			int64_t result = 0;
+			unlock_balance_operation op;
+			op.fee = asset();
+			op.issuer = dan_id;
+			const auto & ids = db.get_locked_balance_ids(dan_id, asset_id_type());
+			FC_ASSERT(ids.size() > 0, "dan didn't has locked balance!");
+
+			unlock_balance_operation::unlock_detail one;
+			one.locked_id = ids.at(0);
+			one.expired = expired;
+			op.locked = one;
+			trx.operations.push_back(op);
+			set_expiration(db, trx);
+			sign(trx, dan_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+
+			const locked_balance_object & b_obj = one.locked_id(db);
+			generate_block();
+			if (has_interest)
+			{ 
+				BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), int64_t(current_balance + b_obj.locked_balance.value));
+				result = b_obj.locked_balance.value - b_obj.initial_lock_balance.value;
+			}
+			else
+			{
+				BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), int64_t(current_balance + b_obj.initial_lock_balance.value));
+			}
+			verify_asset_supplies(db);
+			return result;
+		};
 		//create_lock_able_asset(committee_account,asset_id_type(0),50,45,300000000LL*100000LL);
-#if 1
 		{
 			donation_balance_operation op;
 			op.fee = asset();
@@ -73,62 +123,39 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 			sign(trx, dan_private_key);
 			db.push_transaction(trx);
 			trx.clear();
+			generate_block();
 		}
-		generate_block();
-		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), UNIT * 2);
+		dan_balance = UNIT * 2;
+		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), dan_balance);
 		BOOST_CHECK_EQUAL(core_lock.interest_pool.value, UNIT * 5);
 
 		verify_asset_supplies(db);
 
-#endif		
-		{
-			lock_balance_operation op;
-			op.fee = asset();
-			op.issuer = dan_id;
-			op.amount = asset(UNIT);
-			op.period = 1 * FCC_INTEREST_DAY;
-			trx.operations.push_back(op);
-	
-			sign(trx, dan_private_key);
-			db.push_transaction(trx);
-			trx.clear();
-		}
-		generate_block();
-		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), UNIT);
-		verify_asset_supplies(db);
-		auto now = db.head_block_time().sec_since_epoch();
-		generate_blocks(30000);
-#if 1
-		{
-			unlock_balance_operation op;
-			op.fee = asset();
-			op.issuer = dan_id;
-			const auto & ids = db.get_locked_balance_ids(dan_id, asset_id_type());
-			FC_ASSERT(ids.size() > 0, "dan didn't has locked balance!");
-
-			unlock_balance_operation::unlock_detail one;
-			one.locked_id = ids.at(0);
-			one.expired = true;
-			op.lockeds.push_back(one);
-			trx.operations.push_back(op);
-			set_expiration(db, trx);
-			sign(trx, dan_private_key);
-			db.push_transaction(trx);
-			trx.clear();
-
-			const locked_balance_object & b_obj = one.locked_id(db);
-			generate_block();
-
-			BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), int64_t(UNIT + b_obj.locked_balance.value));
-			/*char msg[256;
-			sprintf(msg, "%ld ", core_lock.interest_pool.value);
-			BOOST_TEST_MESSAGE("pool " << msg);*/
-			verify_asset_supplies(db);
-		}
+		lock_balance(asset(UNIT), FCC_INTEREST_DAY);
+		dan_balance -= UNIT;
 		
-#endif
+		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), dan_balance);
+		verify_asset_supplies(db);
+		generate_block(~0, generate_private_key("null_key"), 28800);
+		dan_balance += unlock_balance(UNIT, true, true);
 
+		lock_balance(asset(UNIT), FCC_INTEREST_DAY);
+		unlock_balance(dan_balance, false, false);
+		
 
+		lock_balance(asset(UNIT), FCC_INTEREST_DAY);
+		generate_block(~0, generate_private_key("null_key"), 28801);
+		unlock_balance(dan_balance, false, false);
+
+		lock_balance(asset(UNIT), 720 * FCC_INTEREST_DAY);
+		generate_block(~0, generate_private_key("null_key"), 1000);
+		unlock_balance(dan_balance, true, false);
+		
+		lock_balance(asset(UNIT), 720 * FCC_INTEREST_DAY);		
+		generate_block(~0,generate_private_key("null_key"),28800 * 720);
+		unlock_balance(dan_balance, true, true);
+		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), dan_balance);
+		
 	}
 	catch (fc::exception& e) {
 		edump((e.to_detail_string()));

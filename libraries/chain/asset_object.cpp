@@ -59,12 +59,12 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    asset_object target_asset_obj=asset_id(_db);
    int32_t lock_days=lock_period/FCC_INTEREST_DAY;
    
-   share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply -interest_pool- (lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
+   share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply - interest_pool;// -(lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
    asset  base_asset(FCC_INTEREST_BASE_SUPPLY, asset_id);
    
-   Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, FCC_INTEREST_DAYS_YEAR);
+   Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, max_period);
    
-   int32_t pecent_of_year = (lock_days - FCC_INTEREST_DAYS_YEAR)*GRAPHENE_100_PERCENT / FCC_INTEREST_DAYS_YEAR;
+   int32_t pecent_of_year = (lock_days - max_period / 2)*GRAPHENE_100_PERCENT / (max_period / 2);
 
    int64_t reward_rate = GRAPHENE_100_PERCENT + pecent_of_year * reward_coefficient / GRAPHENE_100_PERCENT;
    
@@ -72,13 +72,13 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    
    uint128_t max_need_pool;
    {
-      uint128_t quote=uint128_t(top_of_interest.quote.amount.value);
+	   uint128_t quote = uint128_t(top_of_interest.quote.amount.value);
       uint128_t base=uint128_t(top_of_interest.base.amount.value);
       uint128_t max_to_deposit=uint128_t(max_to_deposit_balance_year.value);
       
       FC_ASSERT(quote>=base," year interest  must >1");       // quote>base ,don`t worry overflow
 
-      max_need_pool=(quote*max_to_deposit)/base-max_to_deposit;
+	  max_need_pool = ((quote*max_to_deposit) / base - max_to_deposit) * uint128_t(reward_coefficient + GRAPHENE_100_PERCENT) / GRAPHENE_100_PERCENT;
    }
 
 

@@ -167,7 +167,7 @@ void database_fixture::verify_asset_supplies( const database& db )
 		   auto & ob = id(db);
 		   if (!ob.finish)
 		   {
-			   total_balances[b.asset_type] += (ob.locked_balance + ob.initial_lock_balance);
+			   total_balances[b.asset_type] += ob.locked_balance;
 		   }
 			   
 	   }

@@ -54,6 +54,7 @@ void set_lock_data_operation::validate()const
    FC_ASSERT(nominal_interest_perday>0);
    FC_ASSERT(init_interest_pool.amount>=0);
    FC_ASSERT(reward_coefficient <= GRAPHENE_100_PERCENT);   
+   FC_ASSERT(max_period >= 2); // minimum 2 days 
 }
 
 share_type unlock_balance_operation::calculate_fee(const fee_parameters_type& schedule)const

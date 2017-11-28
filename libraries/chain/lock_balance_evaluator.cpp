@@ -87,10 +87,10 @@ namespace graphene { namespace chain {
          });
          
          d.modify(lock_data_obj,[&](asset_lock_data_object &obj){            
-			 fc::uint128_t locking_coin_day = fc::uint128_t(o.amount.amount.value) * fc::uint128_t(o.period);
+			 //fc::uint128_t locking_coin_day = fc::uint128_t(o.amount.amount.value) * fc::uint128_t(o.period);
             obj.interest_pool-=profit;
-			FC_ASSERT(fc::uint128_t::max_value() - locking_coin_day > obj.lock_coin_day, "invalid locking balance and period");
-			obj.lock_coin_day += locking_coin_day;
+			//FC_ASSERT(fc::uint128_t::max_value() - locking_coin_day > obj.lock_coin_day, "invalid locking balance and period");
+			//obj.max_period += locking_coin_day;
          });
 
          
@@ -140,6 +140,7 @@ namespace graphene { namespace chain {
       
 	  FC_ASSERT(d.get_balance(o.issuer, o.init_interest_pool.asset_id) >= o.init_interest_pool,
 		  "No enough balance pay for pool");
+
 	       
 	  if (o.init_interest_pool.amount>0)
 		  d.adjust_balance(o.issuer, -o.init_interest_pool);
@@ -149,7 +150,7 @@ namespace graphene { namespace chain {
          auto asset_id=o.init_interest_pool.asset_id;
          obj.nominal_interest_perday=Interest(asset(FCC_INTEREST_BASE_SUPPLY,asset_id),asset(o.nominal_interest_perday,asset_id));
          obj.reward_coefficient=o.reward_coefficient;
-         obj.lock_coin_day=0;
+		 obj.max_period = o.max_period;
       });
       
       const asset_object&   asset_type =o.init_interest_pool.asset_id(d);
@@ -197,16 +198,12 @@ namespace graphene { namespace chain {
 			   if (itr->expired && (d.head_block_time() >= time_point_sec(item.get_unlock_time())))
 			   {
 				   d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
-				   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
-					   obj.lock_coin_day -= fc::uint128_t(item.initial_lock_balance.value) * fc::uint128_t(item.lock_period.value);
-				   });
 			   }
 			   else
 			   {
 				   d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
 				   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
 					   obj.interest_pool += item.locked_balance - item.initial_lock_balance;
-					   obj.lock_coin_day -= fc::uint128_t(item.initial_lock_balance.value) * fc::uint128_t(item.lock_period.value);
 				   });
 			   }
 

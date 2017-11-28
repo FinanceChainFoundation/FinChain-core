@@ -84,7 +84,7 @@ namespace graphene { namespace chain {
          Interest             active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
          uint16_t             reward_coefficient;
          share_type           interest_pool;
-         coin_day             lock_coin_day=0;
+		 uint32_t             max_period = 2 * FCC_INTEREST_DAYS_YEAR; // as days
       
          share_type    get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
 
@@ -295,7 +295,7 @@ FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::o
 
 FC_REFLECT_DERIVED( graphene::chain::asset_lock_data_object, (graphene::db::object),
                    (asset_id)
-                   (nominal_interest_perday)(reward_coefficient)(interest_pool)(lock_coin_day) )
+				   (nominal_interest_perday)(reward_coefficient)(interest_pool)(max_period))
 
 FC_REFLECT_DERIVED( graphene::chain::asset_bitasset_data_object, (graphene::db::object),
                     (feeds)

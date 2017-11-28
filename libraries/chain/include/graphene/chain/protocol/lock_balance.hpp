@@ -76,6 +76,7 @@ namespace graphene { namespace chain {
       uint64_t          nominal_interest_perday; //
       uint16_t          reward_coefficient;
       asset             init_interest_pool;
+	  uint32_t			max_period;
       extensions_type   extensions;
       
       account_id_type fee_payer()const { return issuer; }
@@ -137,7 +138,7 @@ FC_REFLECT( graphene::chain::lock_balance_operation::fee_parameters_type, (fee)(
 FC_REFLECT(graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(period)(extensions))
 
 FC_REFLECT( graphene::chain::set_lock_data_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT( graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_perday)(reward_coefficient)(init_interest_pool)(extensions) )
+FC_REFLECT(graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_perday)(reward_coefficient)(init_interest_pool)(max_period)(extensions))
 
 
 FC_REFLECT( graphene::chain::unlock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )

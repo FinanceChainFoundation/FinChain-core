@@ -2537,7 +2537,7 @@ public:
 		   one.expired = fc::to_int64(expired);
 		   xfer_op.issuer = from_id;
 
-		   xfer_op.lockeds.push_back(one);
+		   xfer_op.locked=one;
 
 		   signed_transaction tx;
 		   tx.operations.push_back(xfer_op);

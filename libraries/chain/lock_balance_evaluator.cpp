@@ -168,13 +168,12 @@ namespace graphene { namespace chain {
    {
 	   try {
 		   const database& d = db();
-		   for (auto i = 0; i < o.lockeds.size();i++)
-		   {
-			   const locked_balance_object & item = o.lockeds[i].locked_id(d);
-			   FC_ASSERT(item.locked_balance  >= 0,
-				   "Insufficient interest pool: unable to unlock balance"
-				   );
-		   }
+
+         const locked_balance_object & item = o.locked.locked_id(d);
+         FC_ASSERT(item.locked_balance  >= 0,
+            "Insufficient interest pool: unable to unlock balance"
+            );
+
 	   }  FC_CAPTURE_AND_RETHROW((o))
    }
 
@@ -184,39 +183,37 @@ namespace graphene { namespace chain {
 		   database& d = db();
 		   auto& index = d.get_index_type<account_balance_index>().indices().get<by_account_asset>();
 		   
-		   for (auto  itr = o.lockeds.begin(); itr != o.lockeds.end(); itr++)
-		   {
-			   const locked_balance_object & item = itr->locked_id(d);
-			   const asset_lock_data_object & lock_data_obj = item.asset_id(d).lock_data(d);
+         const locked_balance_object & item = o.locked.locked_id(d);
+         const asset_lock_data_object & lock_data_obj = item.asset_id(d).lock_data(d);
 
-			   auto find = index.find(boost::make_tuple(o.issuer, item.asset_id));
+         auto find = index.find(boost::make_tuple(o.issuer, item.asset_id));
 
-			   FC_ASSERT(find != index.end(), "Insufficient Balance");
-			   FC_ASSERT(!item.finish, "already unlocked balance"); // check further		   
-			   
+         FC_ASSERT(find != index.end(), "Insufficient Balance");
+         FC_ASSERT(!item.finish, "already unlocked balance"); // check further		   
+         
 
-			   if (itr->expired && (d.head_block_time() >= time_point_sec(item.get_unlock_time())))
-			   {
-				   d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
-			   }
-			   else
-			   {
-				   d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
-				   d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
-					   obj.interest_pool += item.locked_balance - item.initial_lock_balance;
-				   });
-			   }
+         if (o.locked.expired && (d.head_block_time() >= time_point_sec(item.get_unlock_time())))
+         {
+            d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
+         }
+         else
+         {
+            d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
+            d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
+               obj.interest_pool += item.locked_balance - item.initial_lock_balance;
+            });
+         }
 
 
-			   //update the lock_balance obj status to db.
-			   d.modify(item, [&](locked_balance_object & obj){
-				   obj.finish = true;
-			   });
-			   
-			   d.modify(*find, [&](account_balance_object & obj){
-				   obj.unlock_balance(item.id);
-			   });
-		   }
+         //update the lock_balance obj status to db.
+         d.modify(item, [&](locked_balance_object & obj){
+            obj.finish = true;
+         });
+         
+         d.modify(*find, [&](account_balance_object & obj){
+            obj.unlock_balance(item.id);
+         });
+
 
 	   } FC_CAPTURE_AND_RETHROW((o))
    }

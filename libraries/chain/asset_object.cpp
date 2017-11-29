@@ -32,14 +32,14 @@ share_type asset_lock_data_object::get_profit(share_type tolocking_balance,uint3
 	return (asset(tolocking_balance, asset_id)*_get_interest(lock_period, _db) - asset(tolocking_balance, asset_id)).amount;
 }
 
-Interest fast_pow_of_interest(Interest in, uint32_t pow)
+Interest fast_pow_of_interest(Interest in, uint32_t pow,uint64_t precision)
 {
 	Interest cur_base = in;
 	Interest result = Interest(asset(1, in.base.asset_id), asset(1, in.quote.asset_id)); //start from 1:1 price
 	auto multiply_of_interest = [&](Interest a, Interest b)
 	{
-		uint128_t result = uint128_t(FCC_INTEREST_BASE_SUPPLY) * uint128_t(a.quote.amount.value) / uint128_t(a.base.amount.value)  * uint128_t(b.quote.amount.value) / uint128_t(b.base.amount.value);
-		return Interest(asset(FCC_INTEREST_BASE_SUPPLY, a.base.asset_id), asset(result.convert_to<uint64_t>(), b.quote.asset_id));
+		uint128_t result = uint128_t(FCC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision) * uint128_t(a.quote.amount.value) / uint128_t(a.base.amount.value)  * uint128_t(b.quote.amount.value) / uint128_t(b.base.amount.value);
+		return Interest(asset(FCC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision, a.base.asset_id), asset(result.convert_to<uint64_t>(), b.quote.asset_id));
 	};
 
 	while (pow)
@@ -57,18 +57,19 @@ Interest fast_pow_of_interest(Interest in, uint32_t pow)
 Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const database &_db)const{
    
    asset_object target_asset_obj=asset_id(_db);
+   uint64_t precision = pow(10,target_asset_obj.precision);
    int32_t lock_days=lock_period/FCC_INTEREST_DAY;
    
    share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply - interest_pool;// -(lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
-   asset  base_asset(FCC_INTEREST_BASE_SUPPLY, asset_id);
+   asset  base_asset(FCC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision, asset_id);
    
-   Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, max_period);
+   Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, max_period, precision);
    
    int32_t pecent_of_year = int32_t(lock_days - int32_t(max_period) / 2)*GRAPHENE_100_PERCENT / (int32_t(max_period) / 2);
 
    int64_t reward_rate = GRAPHENE_100_PERCENT + pecent_of_year * reward_coefficient / GRAPHENE_100_PERCENT;
    
-   uint128_t pre_profile = uint128_t((base_asset * fast_pow_of_interest(nominal_interest_perday,lock_days) - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
+   uint128_t pre_profile = uint128_t((base_asset * fast_pow_of_interest(nominal_interest_perday, lock_days, precision) - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
    
    uint128_t max_need_pool;
    {

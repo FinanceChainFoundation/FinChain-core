@@ -225,7 +225,7 @@ struct database_fixture {
                                        account_id_type issuer = GRAPHENE_WITNESS_ACCOUNT,
                                        uint16_t market_fee_percent = 100 /*1%*/,
                                        uint16_t flags = charge_market_fee);
-   void create_lock_able_asset(account_id_type isser,asset_id_type asset_id,uint64_t nominal_interest_rate,uint64_t reward_coefficient,uint64_t init_interest_pool);
+   void create_lock_able_asset(account_id_type isser, asset_id_type asset_id, uint64_t nominal_interest_rate, uint64_t reward_coefficient, uint64_t init_interest_pool, uint32_t max_period);
    const asset_object& create_user_issued_asset( const string& name );
    const asset_object& create_user_issued_asset( const string& name,
                                                  const account_object& issuer,

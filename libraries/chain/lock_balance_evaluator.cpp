@@ -106,7 +106,7 @@ namespace graphene { namespace chain {
       
       const database& d = db();
       
-      const asset_object&   asset_type =op.init_interest_pool.asset_id(d);
+    //  const asset_object&   obj =op.init_interest_pool.asset_id(d);
 
 	  //if the pool is exist,will set failure
 	  auto& index = d.get_index_type<asset_index>().indices().get<by_id>();
@@ -116,11 +116,11 @@ namespace graphene { namespace chain {
 
 	  const asset_object& asset_obj = *itrs;
 
-	  FC_ASSERT(!asset_obj.lock_data_id.valid(), "lock data already created!");
+	  FC_ASSERT(!asset_obj.lock_data_id, "lock data already created!");
 
 	//  if ()
       
-      FC_ASSERT(asset_type.issuer==op.issuer,
+	  FC_ASSERT(asset_obj.issuer == op.issuer,
                 "operation issuer ${op.issuer} is not asset issuer ${asset_type.issuer}"
       );
       
@@ -147,8 +147,8 @@ namespace graphene { namespace chain {
 
       const auto new_lock_data_o = d.create<asset_lock_data_object>([&](asset_lock_data_object& obj){
          obj.interest_pool=o.init_interest_pool.amount;
-         auto asset_id=o.init_interest_pool.asset_id;
-         obj.nominal_interest_perday=Interest(asset(FCC_INTEREST_BASE_SUPPLY,asset_id),asset(o.nominal_interest_perday,asset_id));
+		 obj.asset_id = o.init_interest_pool.asset_id;
+		 obj.nominal_interest_perday = Interest(asset(FCC_INTEREST_BASE_SUPPLY, obj.asset_id), asset(o.nominal_interest_perday, obj.asset_id));
          obj.reward_coefficient=o.reward_coefficient;
 		 obj.max_period = o.max_period;
       });

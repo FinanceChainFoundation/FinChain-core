@@ -501,7 +501,7 @@ const asset_object& database_fixture::create_prediction_market(
 } FC_CAPTURE_AND_RETHROW( (name)(flags) ) }
 
 
-void database_fixture::create_lock_able_asset(account_id_type isser, asset_id_type asset_id, uint64_t nominal_interest_perday, uint64_t reward_coefficient, uint64_t init_interest_pool)
+void database_fixture::create_lock_able_asset(account_id_type isser, asset_id_type asset_id, uint64_t nominal_interest_perday, uint64_t reward_coefficient, uint64_t init_interest_pool, uint32_t max_period)
 {
 	set_lock_data_operation creator;
 	creator.issuer = isser;
@@ -509,11 +509,12 @@ void database_fixture::create_lock_able_asset(account_id_type isser, asset_id_ty
 	creator.nominal_interest_perday = nominal_interest_perday;
 	creator.reward_coefficient = reward_coefficient;
 	creator.init_interest_pool = asset(init_interest_pool,asset_id);
+	creator.max_period = max_period;
 	
-	trx.operations.push_back(std::move(creator));
+	trx.operations.push_back(creator);
 	trx.validate();
 	processed_transaction ptx = db.push_transaction(trx, ~0);
-	trx.operations.clear();
+	trx.clear();
 	generate_block();
 }
 

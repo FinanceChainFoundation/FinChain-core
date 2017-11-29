@@ -39,8 +39,8 @@ namespace graphene { namespace chain {
    class locked_balance_object : public abstract_object<locked_balance_object>
    {
    public:
-      static const uint8_t space_id = implementation_ids;
-      static const uint8_t type_id  = impl_locked_balance_object_type;
+      static const uint8_t space_id = protocol_ids;
+      static const uint8_t type_id  = locked_balance_object_type;
       
       enum LockType{
          genesis,

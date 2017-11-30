@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 #if 1
 		verify_asset_supplies(db);
 
-		lock_balance(asset(UNIT), FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT), JRC_INTEREST_DAY);
 		dan_balance -= UNIT;
 
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), dan_balance);
@@ -138,19 +138,19 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 		generate_block(~0, generate_private_key("null_key"), 28800);
 		dan_balance += unlock_balance(UNIT, true, true);
 
-		lock_balance(asset(UNIT), FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT), JRC_INTEREST_DAY);
 		unlock_balance(dan_balance, false, false);
 
 
-		lock_balance(asset(UNIT), FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT), JRC_INTEREST_DAY);
 		generate_block(~0, generate_private_key("null_key"), 28801);
 		unlock_balance(dan_balance, false, false);
 
-		lock_balance(asset(UNIT), 720 * FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT), 720 * JRC_INTEREST_DAY);
 		generate_block(~0, generate_private_key("null_key"), 1000);
 		unlock_balance(dan_balance, true, false);
 
-		lock_balance(asset(UNIT), 720 * FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT), 720 * JRC_INTEREST_DAY);
 		generate_block(~0, generate_private_key("null_key"), 28800 * 720);
 		unlock_balance(dan_balance, true, true);
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), dan_balance);
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test2)
 		
 		verify_asset_supplies(db);
 
-		lock_balance(asset(UNIT, ast_id), FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT, ast_id), JRC_INTEREST_DAY);
 		dan_balance -= UNIT;
 		
 		BOOST_CHECK_EQUAL(get_balance(dan_id, ast_id), dan_balance);
@@ -273,19 +273,19 @@ BOOST_AUTO_TEST_CASE(lock_balance_test2)
 		generate_block(~0, generate_private_key("null_key"), 28800);
 		dan_balance += unlock_balance(UNIT, true, true);
 
-		lock_balance(asset(UNIT, ast_id), FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT, ast_id), JRC_INTEREST_DAY);
 		unlock_balance(dan_balance, false, false);
 		
 
-		lock_balance(asset(UNIT, ast_id), FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT, ast_id), JRC_INTEREST_DAY);
 		generate_block(~0, generate_private_key("null_key"), 28801);
 		unlock_balance(dan_balance, false, false);
 
-		lock_balance(asset(UNIT, ast_id), 720 * FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT, ast_id), 720 * JRC_INTEREST_DAY);
 		generate_block(~0, generate_private_key("null_key"), 1000);
 		unlock_balance(dan_balance, true, false);
 		
-		lock_balance(asset(UNIT, ast_id), 100 * FCC_INTEREST_DAY);
+		lock_balance(asset(UNIT, ast_id), 100 * JRC_INTEREST_DAY);
 		generate_block(~0,generate_private_key("null_key"),28800 * 100);
 		unlock_balance(dan_balance, true, true);
 		BOOST_CHECK_EQUAL(get_balance(dan_id, ast_id), dan_balance);

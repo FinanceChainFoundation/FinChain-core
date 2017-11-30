@@ -1,12 +1,12 @@
 {
-  "initial_timestamp": "2017-10-20T03:18:00",
+  "initial_timestamp": "2017-11-30T03:18:00",
   "max_core_supply": "1000000000000000000",
   "initial_parameters": {
     "current_fees": {
       "parameters": [[
           0,{
             "fee": 100000000,
-            "price_per_kbyte": 1000000000
+            "price_per_kbyte": 100000000
           }
         ],[
           1,{
@@ -247,65 +247,65 @@
   },
   "initial_accounts": [{
       "name": "init0",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init1",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init2",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init3",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init4",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init5",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init6",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init7",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init8",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "init9",
-      "owner_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
       "is_lifetime_member": true
     },{
       "name": "pl",
-      "owner_key": "FCC5ux4xyYsF51Y2dUdheRnwVhwgybuitZiMLj53kmeEYVbtSgyDp",
-      "active_key": "FCC5ux4xyYsF51Y2dUdheRnwVhwgybuitZiMLj53kmeEYVbtSgyDp",
+      "owner_key": "JRC5ux4xyYsF51Y2dUdheRnwVhwgybuitZiMLj53kmeEYVbtSgyDp",
+      "active_key": "JRC5ux4xyYsF51Y2dUdheRnwVhwgybuitZiMLj53kmeEYVbtSgyDp",
       "is_lifetime_member": true
     }
   ],
   "initial_assets": [],
   "initial_balances": [{
-      "owner": "FCCHxNYwUQ2kbeUQp6Wn368eJKnMRxE2ERBV",
-      "asset_symbol": "FCC",
+      "owner": "JRCHxNYwUQ2kbeUQp6Wn368eJKnMRxE2ERBV",
+      "asset_symbol": "JRC",
       "amount": "1000000000000000000"
     }
   ],
@@ -313,25 +313,25 @@
   "initial_active_witnesses": 7,
   "initial_witness_candidates": [{
       "owner_name": "init0",
-      "block_signing_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
     },{
       "owner_name": "init1",
-      "block_signing_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
     },{
       "owner_name": "init2",
-      "block_signing_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
     },{
       "owner_name": "init3",
-      "block_signing_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
     },{
       "owner_name": "init4",
-      "block_signing_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
     },{
       "owner_name": "init5",
-      "block_signing_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
     },{
       "owner_name": "init6",
-      "block_signing_key": "FCC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
     }
   ],
   "initial_committee_candidates": [{

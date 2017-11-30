@@ -148,7 +148,7 @@ namespace graphene { namespace chain {
       const auto new_lock_data_o = d.create<asset_lock_data_object>([&](asset_lock_data_object& obj){
          obj.interest_pool=o.init_interest_pool.amount;
 		 obj.asset_id = o.init_interest_pool.asset_id;
-		 obj.nominal_interest_perday = Interest(asset(FCC_INTEREST_BASE_SUPPLY, obj.asset_id), asset(o.nominal_interest_perday, obj.asset_id));
+		 obj.nominal_interest_perday = Interest(asset(JRC_INTEREST_BASE_SUPPLY, obj.asset_id), asset(o.nominal_interest_perday, obj.asset_id));
          obj.reward_coefficient=o.reward_coefficient;
 		 obj.max_period = o.max_period;
       });

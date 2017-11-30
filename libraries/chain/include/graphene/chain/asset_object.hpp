@@ -84,7 +84,7 @@ namespace graphene { namespace chain {
          Interest             active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
          uint16_t             reward_coefficient;
          share_type           interest_pool;
-		 uint32_t             max_period = 2 * FCC_INTEREST_DAYS_YEAR; // as days
+		 uint32_t             max_period = 2 * JRC_INTEREST_DAYS_YEAR; // as days
       
          share_type    get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
 

@@ -195,22 +195,22 @@
         ],[
           45,{
             "fee": 100000000,
-            "price_per_kbyte": 10000
+            "price_per_kbyte": 1000000
           }
         ],[
           46,{
             "fee": 100000000,
-            "price_per_kbyte": 10000
+            "price_per_kbyte": 1000000
           }
         ],[
           47,{
             "fee": 100000000,
-            "price_per_kbyte": 10000
+            "price_per_kbyte": 1000000
           }
         ],[
           48,{
             "fee": 100000000,
-            "price_per_kbyte": 10000
+            "price_per_kbyte": 1000000
           }
         ]
       ],

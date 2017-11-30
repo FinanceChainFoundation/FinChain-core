@@ -2500,7 +2500,7 @@ public:
 
 		   xfer_op.issuer = from_id;
 		   xfer_op.amount = asset_obj->amount_from_string(amount);
-		   xfer_op.period = fc::to_uint64(period)*FCC_INTEREST_DAY;
+		   xfer_op.period = fc::to_uint64(period)*JRC_INTEREST_DAY;
 
 		   signed_transaction tx;
 		   tx.operations.push_back(xfer_op);
@@ -4491,7 +4491,7 @@ lock_data_detail   wallet_api::get_lock_data(string asset_symbol,string period)
 	asset_id_type    id = get_asset_id(asset_symbol);
 	optional<uint32_t> nPeriod;
 	if (!period.empty())
-		nPeriod = fc::to_uint64(period)*FCC_INTEREST_DAY;
+		nPeriod = fc::to_uint64(period)*JRC_INTEREST_DAY;
 
 	return (my->_remote_db->get_asset_lock_data(id, nPeriod));
 }

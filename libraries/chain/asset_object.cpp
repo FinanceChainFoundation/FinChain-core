@@ -38,8 +38,8 @@ Interest fast_pow_of_interest(Interest in, uint32_t pow,uint64_t precision)
 	Interest result = Interest(asset(1, in.base.asset_id), asset(1, in.quote.asset_id)); //start from 1:1 price
 	auto multiply_of_interest = [&](Interest a, Interest b)
 	{
-		uint128_t result = uint128_t(FCC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision) * uint128_t(a.quote.amount.value) / uint128_t(a.base.amount.value)  * uint128_t(b.quote.amount.value) / uint128_t(b.base.amount.value);
-		return Interest(asset(FCC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision, a.base.asset_id), asset(result.convert_to<uint64_t>(), b.quote.asset_id));
+		uint128_t result = uint128_t(JRC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision) * uint128_t(a.quote.amount.value) / uint128_t(a.base.amount.value)  * uint128_t(b.quote.amount.value) / uint128_t(b.base.amount.value);
+		return Interest(asset(JRC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision, a.base.asset_id), asset(result.convert_to<uint64_t>(), b.quote.asset_id));
 	};
 
 	while (pow)
@@ -58,10 +58,10 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    
    asset_object target_asset_obj=asset_id(_db);
    uint64_t precision = pow(10,target_asset_obj.precision);
-   int32_t lock_days=lock_period/FCC_INTEREST_DAY;
+   int32_t lock_days=lock_period/JRC_INTEREST_DAY;
    
    share_type max_to_deposit_balance_year = target_asset_obj.dynamic_data(_db).current_supply - interest_pool;// -(lock_coin_day / coin_day(FCC_INTEREST_YEAR)).value.to_uint64();
-   asset  base_asset(FCC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision, asset_id);
+   asset  base_asset(JRC_INTEREST_BASE_SUPPLY / GRAPHENE_BLOCKCHAIN_PRECISION * precision, asset_id);
    
    Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, max_period, precision);
    

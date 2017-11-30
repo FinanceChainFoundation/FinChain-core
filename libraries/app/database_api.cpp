@@ -2040,7 +2040,7 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    const auto & asset_obj=asset_id(_db);
    const auto & lock_data_obj=asset_obj.lock_data(_db);
    uint32_t _period=period?*period:0;
-   uint32_t days=_period/FCC_INTEREST_DAY;
+   uint32_t days=_period/JRC_INTEREST_DAY;
    double interest=lock_data_obj.get_interest(_period,_db);
    res.asset_id=asset_id;
    res.current_interest=interest_detail(lock_data_obj.nominal_interest_perday.to_real2(),_period,interest);

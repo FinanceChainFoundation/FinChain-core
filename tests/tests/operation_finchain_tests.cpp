@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 		dan_balance = UNIT * 2;
 		BOOST_CHECK_EQUAL(get_balance(dan_id, asset_id_type()), dan_balance);
 		BOOST_CHECK_EQUAL(core_lock.interest_pool.value, UNIT * 5);
-#if 0
+#if 1
 		verify_asset_supplies(db);
 
 		lock_balance(asset(UNIT), FCC_INTEREST_DAY);

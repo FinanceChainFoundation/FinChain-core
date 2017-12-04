@@ -33,6 +33,8 @@ share_type asset_lock_data_object::get_profit(share_type tolocking_balance,uint3
 }
 
 uint32_t asset_lock_data_object::get_bird_reward(){
+   if(total_consume_pool.value==0)
+      return max_bird_reward_times;
    uint128_t pre_times=uint128_t(interest_pool.value)*uint128_t(GRAPHENE_100_PERCENT)/uint128_t(total_consume_pool.value);
    if(pre_times>uint128_t(max_bird_reward_times))
       return max_bird_reward_times;

@@ -89,6 +89,7 @@ namespace graphene { namespace chain {
          d.modify(lock_data_obj,[&](asset_lock_data_object &obj){            
 			 //fc::uint128_t locking_coin_day = fc::uint128_t(o.amount.amount.value) * fc::uint128_t(o.period);
             obj.interest_pool-=profit;
+            obj.total_consume_pool+=profit;
 			//FC_ASSERT(fc::uint128_t::max_value() - locking_coin_day > obj.lock_coin_day, "invalid locking balance and period");
 			//obj.max_period += locking_coin_day;
          });
@@ -200,7 +201,10 @@ namespace graphene { namespace chain {
          {
             d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
             d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
-               obj.interest_pool += item.locked_balance - item.initial_lock_balance;
+               
+               auto profit=item.locked_balance - item.initial_lock_balance;
+               obj.total_consume_pool-=profit;
+               obj.interest_pool += profit;
             });
          }
 

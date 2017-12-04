@@ -32,6 +32,15 @@ share_type asset_lock_data_object::get_profit(share_type tolocking_balance,uint3
 	return (asset(tolocking_balance, asset_id)*_get_interest(lock_period, _db) - asset(tolocking_balance, asset_id)).amount;
 }
 
+uint32_t asset_lock_data_object::get_bird_reward(){
+   uint128_t pre_times=uint128_t(interest_pool.value)*uint128_t(GRAPHENE_100_PERCENT)/uint128_t(total_consume_pool.value);
+   if(pre_times>uint128_t(max_bird_reward_times))
+      return max_bird_reward_times;
+   else if(pre_times<uint128_t(GRAPHENE_100_PERCENT))
+      return GRAPHENE_100_PERCENT;
+   return pre_times.convert_to<uint32_t>();
+}
+
 Interest fast_pow_of_interest(Interest in, uint32_t pow,uint64_t precision)
 {
 	Interest cur_base = in;
@@ -65,7 +74,7 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    
    Interest		top_of_interest = fast_pow_of_interest(nominal_interest_perday, max_period, precision);
    
-   int32_t pecent_of_year = int32_t(lock_days - int32_t(max_period) / 2)*GRAPHENE_100_PERCENT / (int32_t(max_period) / 2);
+   int32_t pecent_of_year = int32_t(lock_days - int32_t(reward_middle))*GRAPHENE_100_PERCENT / (int32_t(max_period) / 2);
 
    int64_t reward_rate = GRAPHENE_100_PERCENT + pecent_of_year * reward_coefficient / GRAPHENE_100_PERCENT;
    

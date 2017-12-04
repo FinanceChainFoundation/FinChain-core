@@ -84,14 +84,22 @@ namespace graphene { namespace chain {
          Interest             active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
          uint16_t             reward_coefficient;
          share_type           interest_pool;
-		 uint32_t             max_period = 2 * JRC_INTEREST_DAYS_YEAR; // as days
+         share_type           total_consume_pool=0;
+      
+         uint16_t             max_bird_reward_times;
+
+         uint32_t             reward_middle=JRC_INTEREST_DAYS_YEAR;
+         uint32_t             min_period = 30; // as days
+         uint32_t             max_period = 2 * JRC_INTEREST_DAYS_YEAR; // as days
       
          share_type    get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
 
          Interest      _get_interest(uint32_t lock_period,const database &_db)const;
       
          double        get_interest(uint32_t lock_period,const database &_db)const{ return _get_interest(lock_period,_db).to_real2();}
-
+      
+      private:
+         uint32_t get_bird_reward();
    };
 
    /**
@@ -295,7 +303,14 @@ FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::o
 
 FC_REFLECT_DERIVED( graphene::chain::asset_lock_data_object, (graphene::db::object),
                    (asset_id)
-				   (nominal_interest_perday)(reward_coefficient)(interest_pool)(max_period))
+                   (nominal_interest_perday)
+                   (reward_coefficient)
+                   (interest_pool)
+                   (total_consume_pool)
+                   (max_bird_reward_times)
+                   (reward_middle)
+                   (min_period)
+                   (max_period))
 
 FC_REFLECT_DERIVED( graphene::chain::asset_bitasset_data_object, (graphene::db::object),
                     (feeds)

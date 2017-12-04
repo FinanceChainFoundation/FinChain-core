@@ -42,4 +42,5 @@ object_database/*
 *.pyc
 *.pyo
 
+config.ini
 build/

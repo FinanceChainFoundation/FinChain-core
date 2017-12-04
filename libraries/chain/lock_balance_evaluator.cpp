@@ -89,7 +89,6 @@ namespace graphene { namespace chain {
          d.modify(lock_data_obj,[&](asset_lock_data_object &obj){            
 			 //fc::uint128_t locking_coin_day = fc::uint128_t(o.amount.amount.value) * fc::uint128_t(o.period);
             obj.interest_pool-=profit;
-            obj.total_consume_pool+=profit;
 			//FC_ASSERT(fc::uint128_t::max_value() - locking_coin_day > obj.lock_coin_day, "invalid locking balance and period");
 			//obj.max_period += locking_coin_day;
          });
@@ -152,6 +151,8 @@ namespace graphene { namespace chain {
 		 obj.nominal_interest_perday = Interest(asset(JRC_INTEREST_BASE_SUPPLY, obj.asset_id), asset(o.nominal_interest_perday, obj.asset_id));
          obj.reward_coefficient=o.reward_coefficient;
 		 obj.max_period = o.max_period;
+		 obj.profile_scale_percent = o.profile_scale_percent;
+		 obj.profile_receive_percent = o.profile_receive_percent;		 
       });
       
       const asset_object&   asset_type =o.init_interest_pool.asset_id(d);
@@ -201,10 +202,7 @@ namespace graphene { namespace chain {
          {
             d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
             d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
-               
-               auto profit=item.locked_balance - item.initial_lock_balance;
-               obj.total_consume_pool-=profit;
-               obj.interest_pool += profit;
+               obj.interest_pool += item.locked_balance - item.initial_lock_balance;
             });
          }
 

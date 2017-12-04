@@ -37,7 +37,7 @@ void lock_balance_operation::validate()const
 {
    FC_ASSERT( fee.amount >= 0 );
    FC_ASSERT( amount.amount > 0 );
-   FC_ASSERT( (period >= JRC_INTEREST_DAY) && (period <= 2*JRC_INTEREST_YEAR),"lock period should longer than one day and short than 2 years");
+   FC_ASSERT( period >= JRC_INTEREST_DAY,"lock period should longer than one day");
 }
    
 share_type set_lock_data_operation::calculate_fee( const fee_parameters_type& schedule )const
@@ -55,6 +55,8 @@ void set_lock_data_operation::validate()const
    FC_ASSERT(init_interest_pool.amount>=0);
    FC_ASSERT(reward_coefficient <= GRAPHENE_100_PERCENT);   
    FC_ASSERT(max_period >= 2); // minimum 2 days 
+   FC_ASSERT(profile_scale_percent > 0);   
+   FC_ASSERT(profile_receive_percent <= GRAPHENE_100_PERCENT);      
 }
 
 share_type unlock_balance_operation::calculate_fee(const fee_parameters_type& schedule)const

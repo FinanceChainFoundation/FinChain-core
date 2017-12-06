@@ -510,6 +510,7 @@ void database_fixture::create_lock_able_asset(account_id_type isser, asset_id_ty
 	creator.reward_coefficient = reward_coefficient;
 	creator.init_interest_pool = asset(init_interest_pool,asset_id);
 	creator.max_period = max_period;
+	creator.can_unlock_not_expired = false;
 	
 	trx.operations.push_back(creator);
 	trx.validate();

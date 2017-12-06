@@ -2426,6 +2426,10 @@ public:
 	   string nominal_interest_rate,
 	   string reward_coefficient,
 	   string init_interest_pool,
+	   string max_period,
+	   string profile_scale_percent,
+	   string profile_receive_percent,
+	   bool	  can_unlock_not_expired,
 	   bool broadcast = false)
    {
 	   try {
@@ -2442,6 +2446,11 @@ public:
 		   xfer_op.nominal_interest_perday = fc::to_uint64(nominal_interest_rate);
 		   xfer_op.reward_coefficient = fc::to_uint64(reward_coefficient);
 		   xfer_op.init_interest_pool = asset(fc::to_uint64(init_interest_pool), asset_obj->get_id());
+		   xfer_op.reward_coefficient = fc::to_uint64(reward_coefficient);
+		   xfer_op.max_period = fc::to_uint64(max_period);
+		   xfer_op.profile_scale_percent = fc::to_uint64(profile_scale_percent);
+		   xfer_op.profile_receive_percent = fc::to_uint64(profile_receive_percent);
+		   xfer_op.can_unlock_not_expired= can_unlock_not_expired;
 
 		  
 		   signed_transaction tx;
@@ -4501,9 +4510,13 @@ signed_transaction wallet_api::set_lock_data(string account_name,
 	string nominal_interest_rate,
 	string reward_coefficient,
 	string init_interest_pool,
+	string max_period,
+	string profile_scale_percent,
+	string profile_receive_percent,
+	bool	 can_unlock_not_expired,
 	bool broadcast/* = false*/)
 {
-	return my->set_lock_data(account_name, asset_symbol, nominal_interest_rate, reward_coefficient, init_interest_pool, broadcast);
+	return my->set_lock_data(account_name, asset_symbol, nominal_interest_rate, reward_coefficient, init_interest_pool, max_period, profile_scale_percent, profile_receive_percent, can_unlock_not_expired, broadcast);
 }
 
 signed_transaction wallet_api::donation_balance(string account_name,

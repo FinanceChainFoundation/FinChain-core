@@ -153,6 +153,7 @@ namespace graphene { namespace chain {
 		 obj.max_period = o.max_period;
 		 obj.profile_scale_percent = o.profile_scale_percent;
 		 obj.profile_receive_percent = o.profile_receive_percent;		 
+		 obj.can_unlock_not_expired = o.can_unlock_not_expired;		 
       });
       
       const asset_object&   asset_type =o.init_interest_pool.asset_id(d);
@@ -198,7 +199,11 @@ namespace graphene { namespace chain {
          {
             d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
          }
-         else
+         else if(!lock_data_obj.can_unlock_not_expired)
+     	 {
+     	 	FC_THROW_EXCEPTION( fc::assert_exception, "ASSET can't unlock balance if not expired!");
+     	 }
+		 else
          {
             d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
             d.modify(lock_data_obj, [&](asset_lock_data_object &obj){

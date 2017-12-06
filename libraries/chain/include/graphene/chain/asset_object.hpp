@@ -87,7 +87,7 @@ namespace graphene { namespace chain {
 		 uint32_t             max_period = 2 * JRC_INTEREST_DAYS_YEAR; // as days
 		 uint16_t			  profile_scale_percent = GRAPHENE_100_PERCENT;// to fit the profile as user wanted at early beginning when interest pool is not enough.
 		 uint16_t			  profile_receive_percent = GRAPHENE_100_PERCENT;// if the interest pool can't pay for locking balance,user will get the percent of pool balance.
-		 
+		 bool				  can_unlock_not_expired = true;
       
          share_type    get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
 
@@ -298,7 +298,7 @@ FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::o
 
 FC_REFLECT_DERIVED( graphene::chain::asset_lock_data_object, (graphene::db::object),
                    (asset_id)
-				   (nominal_interest_perday)(reward_coefficient)(interest_pool)(max_period)(profile_scale_percent)(profile_receive_percent))
+				   (nominal_interest_perday)(reward_coefficient)(interest_pool)(max_period)(profile_scale_percent)(profile_receive_percent)(can_unlock_not_expired))
 
 FC_REFLECT_DERIVED( graphene::chain::asset_bitasset_data_object, (graphene::db::object),
                     (feeds)

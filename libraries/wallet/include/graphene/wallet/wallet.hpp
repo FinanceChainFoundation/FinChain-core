@@ -1514,6 +1514,10 @@ class wallet_api
                                   string nominal_interest_rate,
                                   string reward_coefficient,
                                   string init_interest_pool,
+                                  string max_period,
+								  string profile_scale_percent,
+								  string profile_receive_percent,
+								  bool	 can_unlock_not_expired = true,
                                   bool broadcast = false);
 
 	  signed_transaction donation_balance(string account_name,

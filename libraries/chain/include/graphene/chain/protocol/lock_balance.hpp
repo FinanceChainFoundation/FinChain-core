@@ -74,11 +74,11 @@ namespace graphene { namespace chain {
       /// Account that lock balance
       account_id_type   issuer;
       uint64_t          nominal_interest_perday; //
-      uint16_t          reward_coefficient;
+	  uint32_t          reward_coefficient;
       asset             init_interest_pool;
 	  uint32_t			max_period;
-	  uint16_t		    profile_scale_percent = GRAPHENE_100_PERCENT;
-	  uint16_t			profile_receive_percent = GRAPHENE_100_PERCENT;
+	  uint32_t		    profile_scale_percent = GRAPHENE_100_PERCENT;
+	  uint32_t			profile_receive_percent = GRAPHENE_100_PERCENT;
 	  bool				can_unlock_not_expired = true;
       extensions_type   extensions;
       

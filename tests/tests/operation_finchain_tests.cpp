@@ -187,10 +187,11 @@ BOOST_AUTO_TEST_CASE(lock_balance_test2)
 		const auto& ast = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("TGHTT");
 		const auto & ast_id = ast.get_id();
 		trx.clear();
-		issue_uia(dan, ast.amount(UNIT * 7));
-		trx.clear();
+		issue_uia(dan, ast.amount(UNIT * 10));
+		
 		generate_block();
-		create_lock_able_asset(dan_id, ast_id, 1001126926400LL, 20, 0LL, 720);
+		trx.clear();
+		create_lock_able_asset(dan_id, ast_id, 1001126926400LL, 2000, 0LL, 720);
 		generate_block();
 		
 		
@@ -248,7 +249,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test2)
 			donation_balance_operation op;
 			op.fee = asset();
 			op.issuer = dan_id;
-			op.amount = asset(UNIT * 5, ast_id);
+			op.amount = asset(UNIT/2, ast_id);
 
 			trx.operations.push_back(op);
 
@@ -257,16 +258,16 @@ BOOST_AUTO_TEST_CASE(lock_balance_test2)
 			trx.clear();
 			generate_block();
 		}
-		dan_balance = UNIT * 2;
-		BOOST_CHECK_EQUAL(get_balance(dan_id, ast_id), dan_balance);
+		//dan_balance = UNIT * 2;
+		//BOOST_CHECK_EQUAL(get_balance(dan_id, ast_id), dan_balance);
 		
-		const asset_lock_data_object & obj = (*(ast_id(db).lock_data_id))(db);
-		BOOST_CHECK_EQUAL(obj.interest_pool.value, UNIT * 5);
+		//const asset_lock_data_object & obj = (*(ast_id(db).lock_data_id))(db);
+		//BOOST_CHECK_EQUAL(obj.interest_pool.value, UNIT * 5);
 		
 		verify_asset_supplies(db);
 
-		lock_balance(asset(UNIT, ast_id), JRC_INTEREST_DAY);
-		dan_balance -= UNIT;
+		lock_balance(asset(UNIT/10, ast_id), 720*JRC_INTEREST_DAY);
+		//dan_balance -= UNIT;
 		
 		BOOST_CHECK_EQUAL(get_balance(dan_id, ast_id), dan_balance);
 		verify_asset_supplies(db);

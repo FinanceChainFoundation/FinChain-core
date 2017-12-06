@@ -83,7 +83,7 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    }
 
 
-   auto actual_profile = pre_profile * uint128_t(interest_pool.value) * profile_scale_percent /GRAPHENE_100_PERCENT / max_need_pool;	
+   auto actual_profile = pre_profile * uint128_t(interest_pool.value) / max_need_pool * profile_scale_percent / GRAPHENE_100_PERCENT;
 
    if(actual_profile >=interest_pool)
 	   actual_profile = (uint128_t(interest_pool.value) * profile_receive_percent / GRAPHENE_100_PERCENT).convert_to<uint64_t>();

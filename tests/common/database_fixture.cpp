@@ -506,11 +506,12 @@ void database_fixture::create_lock_able_asset(account_id_type isser, asset_id_ty
 	set_lock_data_operation creator;
 	creator.issuer = isser;
 	creator.fee = asset();
-	creator.nominal_interest_perday = nominal_interest_perday;
+	creator.nominal_interest_perday = nominal_interest_perday; 
 	creator.reward_coefficient = reward_coefficient;
 	creator.init_interest_pool = asset(init_interest_pool,asset_id);
 	creator.max_period = max_period;
-	creator.can_unlock_not_expired = false;
+	creator.profile_scale_percent = 285000;
+	creator.can_unlock_not_expired = true;
 	
 	trx.operations.push_back(creator);
 	trx.validate();

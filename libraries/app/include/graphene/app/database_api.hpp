@@ -159,7 +159,7 @@ struct lock_data_detail{
    lock_data_detail() {}
    asset_id_type     asset_id;
    interest_detail   current_interest;
-   uint16_t          reward_coefficient;
+   uint32_t          reward_coefficient;
    share_type  		 interest_pool;
    uint32_t          max_period;
 };

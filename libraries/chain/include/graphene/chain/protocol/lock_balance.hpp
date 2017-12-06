@@ -79,6 +79,7 @@ namespace graphene { namespace chain {
 	  uint32_t			max_period;
 	  uint16_t		    profile_scale_percent = GRAPHENE_100_PERCENT;
 	  uint16_t			profile_receive_percent = GRAPHENE_100_PERCENT;
+	  bool				can_unlock_not_expired = true;
       extensions_type   extensions;
       
       account_id_type fee_payer()const { return issuer; }
@@ -140,7 +141,7 @@ FC_REFLECT( graphene::chain::lock_balance_operation::fee_parameters_type, (fee)(
 FC_REFLECT(graphene::chain::lock_balance_operation, (fee)(issuer)(amount)(period)(extensions))
 
 FC_REFLECT( graphene::chain::set_lock_data_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT(graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_perday)(reward_coefficient)(init_interest_pool)(max_period)(profile_scale_percent)(profile_receive_percent)(extensions))
+FC_REFLECT(graphene::chain::set_lock_data_operation, (fee)(issuer)(nominal_interest_perday)(reward_coefficient)(init_interest_pool)(max_period)(profile_scale_percent)(profile_receive_percent)(can_unlock_not_expired)(extensions))
 
 
 FC_REFLECT( graphene::chain::unlock_balance_operation::fee_parameters_type, (fee)(price_per_kbyte) )

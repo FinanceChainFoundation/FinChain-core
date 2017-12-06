@@ -84,10 +84,10 @@ namespace graphene { namespace chain {
          Interest             active_interest_rate;  //active interest = nominal interest ,if interest pool is enough
          uint16_t             reward_coefficient;
          share_type           interest_pool;
-		 uint32_t             max_period = 2 * JRC_INTEREST_DAYS_YEAR; // as days
-		 uint16_t			  profile_scale_percent = GRAPHENE_100_PERCENT;// to fit the profile as user wanted at early beginning when interest pool is not enough.
-		 uint16_t			  profile_receive_percent = GRAPHENE_100_PERCENT;// if the interest pool can't pay for locking balance,user will get the percent of pool balance.
-		 bool				  can_unlock_not_expired = true;
+         uint32_t             max_period = 2 * JRC_INTEREST_DAYS_YEAR; // as days
+         uint16_t             profile_scale_percent = GRAPHENE_100_PERCENT;// to fit the profile as user wanted at early beginning when interest pool is not enough.
+         uint16_t             profile_receive_percent = GRAPHENE_100_PERCENT;// if the interest pool can't pay for locking balance,user will get the percent of pool balance.
+         bool				  can_unlock_not_expired = true;
       
          share_type    get_profit(share_type tolocking_balance,uint32_t lock_period,const database &_db)const;
 

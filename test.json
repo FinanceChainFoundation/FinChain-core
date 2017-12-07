@@ -1,5 +1,5 @@
 {
-  "initial_timestamp": "2017-11-30T03:18:00",
+  "initial_timestamp": "2017-12-06T03:18:00",
   "max_core_supply": "1000000000000000000",
   "initial_parameters": {
     "current_fees": {
@@ -236,7 +236,7 @@
     "cashback_vesting_threshold": 10000000,
     "count_non_member_votes": true,
     "allow_non_member_whitelists": false,
-    "witness_pay_per_block": 1000000000,
+    "witness_pay_per_block": 300000000,
     "worker_budget_per_day": "50000000000000",
     "max_predicate_opcode": 1,
     "fee_liquidation_threshold": 10000000000,
@@ -247,66 +247,67 @@
   },
   "initial_accounts": [{
       "name": "init0",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC4w3RxnzEr42FTxyyp3NVpVgNyE3TUtFHV6Lrm8bTqr15pXdrj7",
+      "active_key": "JRC4w3RxnzEr42FTxyyp3NVpVgNyE3TUtFHV6Lrm8bTqr15pXdrj7",
       "is_lifetime_member": true
     },{
       "name": "init1",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC7BgLeVftgSMLTBcKJnmgvEL6G1WRRCsYM9FcDXzmW9mqsd3CUR",
+      "active_key": "JRC7BgLeVftgSMLTBcKJnmgvEL6G1WRRCsYM9FcDXzmW9mqsd3CUR",
       "is_lifetime_member": true
     },{
       "name": "init2",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC8GMj1RNvWVX7beAVTaGZKpGjVizLs2NSG4UqARij96TgQjdiUD",
+      "active_key": "JRC8GMj1RNvWVX7beAVTaGZKpGjVizLs2NSG4UqARij96TgQjdiUD",
       "is_lifetime_member": true
     },{
       "name": "init3",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC5ps1nbG5Ufjmi2jGSg6zatcUmk3aBZWqZKsMFC9pTxkvCigXod",
+      "active_key": "JRC5ps1nbG5Ufjmi2jGSg6zatcUmk3aBZWqZKsMFC9pTxkvCigXod",
       "is_lifetime_member": true
     },{
       "name": "init4",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC8CFZxsUr2Qcv9z18ehsYxtmYnHj3NuzB9kNT7Dp8KM3vauUPJs",
+      "active_key": "JRC8CFZxsUr2Qcv9z18ehsYxtmYnHj3NuzB9kNT7Dp8KM3vauUPJs",
       "is_lifetime_member": true
     },{
       "name": "init5",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC6zLyDPeuoXoFESkoM42km5n7GsBHcrQ7rkVAVE3w4veyn1wSiM",
+      "active_key": "JRC6zLyDPeuoXoFESkoM42km5n7GsBHcrQ7rkVAVE3w4veyn1wSiM",
       "is_lifetime_member": true
     },{
       "name": "init6",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
+      "owner_key": "JRC5UJ1BgSEY4SJZkzQvsa1j58tfFWPuXe9amvssnrWmCDeTpMkvG",
+      "active_key": "JRC5UJ1BgSEY4SJZkzQvsa1j58tfFWPuXe9amvssnrWmCDeTpMkvG",
       "is_lifetime_member": true
     },{
-      "name": "init7",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "is_lifetime_member": true
-    },{
-      "name": "init8",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "is_lifetime_member": true
-    },{
-      "name": "init9",
-      "owner_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "active_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE",
-      "is_lifetime_member": true
-    },{
-      "name": "pl",
-      "owner_key": "JRC5ux4xyYsF51Y2dUdheRnwVhwgybuitZiMLj53kmeEYVbtSgyDp",
-      "active_key": "JRC5ux4xyYsF51Y2dUdheRnwVhwgybuitZiMLj53kmeEYVbtSgyDp",
+      "name": "finChain-faucet",
+      "owner_key": "JRC551CBoCyWcKViVGCPpha397jWQ2FHAGujuLaTt7o9fW1B2VG6b",
+      "active_key": "JRC551CBoCyWcKViVGCPpha397jWQ2FHAGujuLaTt7o9fW1B2VG6b",
       "is_lifetime_member": true
     }
   ],
   "initial_assets": [],
   "initial_balances": [{
-      "owner": "JRCHxNYwUQ2kbeUQp6Wn368eJKnMRxE2ERBV",
+      "owner": "JRC8p3q6EkDDgHmRbEy3cW3VkDZrrBfuqKxj",
       "asset_symbol": "JRC",
-      "amount": "1000000000000000000"
+      "amount": "15000000000000000"
+    },{
+      "owner": "JRCKLH9WugM31xfN9teY79uUHfU7bG8Vw1Yf",
+      "asset_symbol": "JRC",
+      "amount": "9000000000000000"
+    },{
+      "owner": "JRCAL9GhGcQuC3Z4vgJVnyVVdyU1KkXP5BGG",
+      "asset_symbol": "JRC",
+      "amount": "1000000000000000"
+    },{
+      "owner": "JRCFyELqZ8o3WDfeN4Yd4CGn6fLyvjYXXGnu",
+      "asset_symbol": "JRC",
+      "amount": "5000000000000000"
+    },{
+      "owner": "JRCPjouAvDDnNs3UWyUZS8Y17tMqfrM8qfVn",
+      "asset_symbol": "JRC",
+      "amount": "70000000000000000"
     }
   ],
   "initial_vesting_balances": [],

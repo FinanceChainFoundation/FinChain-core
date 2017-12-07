@@ -67,7 +67,7 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    
    int32_t pecent_of_year = int32_t(lock_days - int32_t(max_period) / 2)*GRAPHENE_100_PERCENT / (int32_t(max_period) / 2);
 
-   int64_t reward_rate = GRAPHENE_100_PERCENT + pecent_of_year * reward_coefficient / GRAPHENE_100_PERCENT;
+   int64_t reward_rate = int64_t(GRAPHENE_100_PERCENT) + int64_t(pecent_of_year) * int64_t(reward_coefficient) / GRAPHENE_100_PERCENT;
    
    uint128_t pre_profile = uint128_t((base_asset * fast_pow_of_interest(nominal_interest_perday, lock_days, precision) - base_asset).amount.value)*uint128_t(reward_rate) / GRAPHENE_100_PERCENT;
    

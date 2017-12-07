@@ -314,25 +314,25 @@
   "initial_active_witnesses": 7,
   "initial_witness_candidates": [{
       "owner_name": "init0",
-      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC7Md5C8CKkBoDQmgi4W6P4i1jb3iaU8MFmwaXeYyx3WdAujpwiW"
     },{
       "owner_name": "init1",
-      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC61J9mTmdXmTZ4SjLHQQYULPFUiLTGgAcg1sp3RV4aKqMWxELcY"
     },{
       "owner_name": "init2",
-      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC6ttQyp7f7GhCedeFd8MQSou9hcEk1pZzjsvi7eD8c96Xn4yS9X"
     },{
       "owner_name": "init3",
-      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC5NS65yHj9E3M1dmyRgnXV42suAkyQHEe8AoaRG7K3fGGx9ZWTM"
     },{
       "owner_name": "init4",
-      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC7qNDYgEj6hwyWgJFVNfaMS1uJcSdyRFFGubf9iAYJ7pG6EU3Po"
     },{
       "owner_name": "init5",
-      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC7gwP214sMHoke8Pf7JUXunL3KWq3aEBe7MZb8uy9czHhPQTECR"
     },{
       "owner_name": "init6",
-      "block_signing_key": "JRC77pUKf2QGzo8qvEbutYzWXgmvaKLRCewzuMvFffPxc9hofZXNE"
+      "block_signing_key": "JRC7k9nf5JQJ4Cjuk5CWR1buaw6xp6gu1eRaFz4yxJPaLAgvKRjf5"
     }
   ],
   "initial_committee_candidates": [{

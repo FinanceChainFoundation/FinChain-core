@@ -14,9 +14,11 @@ install( TARGETS
    LIBRARY DESTINATION lib
    ARCHIVE DESTINATION lib
 )
+find_package(Boost QUIET REQUIRED COMPONENTS random)
 
 add_executable( get_dev_key get_dev_key.cpp )
 
+message("${Boost_random_LIBRARIES} ${Boost_CHRONO_LIBRARIES}")
 target_link_libraries( get_dev_key
                        PRIVATE graphene_app graphene_chain graphene_egenesis_none graphene_utilities fc ${CMAKE_DL_LIBS} ${PLATFORM_SPECIFIC_LIBS} )
 

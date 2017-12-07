@@ -31,6 +31,8 @@
 #include <graphene/chain/protocol/address.hpp>
 #include <graphene/chain/protocol/types.hpp>
 #include <graphene/utilities/key_conversion.hpp>
+#include <boost/random/random_device.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 #ifndef WIN32
 #include <csignal>
@@ -86,39 +88,37 @@ int main( int argc, char** argv )
 
       std::cout << "[";
 
-      for( int i=2; i<argc; i++ )
+      string salt;
+      uint32_t n;
+      cout<<"slat:";
+      cin>>salt;
+      cout<<"n:";
+      cin>>n;
+      
+      vector< fc::ecc::private_key > keys;
+      
+      fc::sha256 saltHash=fc::sha256::hash(salt);
+      for( int i=0; i<n; i++ )
       {
-         std::string arg = argv[i];
-         std::string prefix;
-         int lep = -1, rep;
-         auto dash_pos = arg.rfind('-');
-         if( dash_pos != string::npos )
+         fc::sha256 randomHash;
+         boost::random_device random_device;
+         for(uint i=0;i<4;i++)
          {
-            std::string lhs = arg.substr( 0, dash_pos+1 );
-            std::string rhs = arg.substr( dash_pos+1 );
-            auto colon_pos = rhs.find(':');
-            if( colon_pos != string::npos )
-            {
-               prefix = lhs;
-               lep = std::stoi( rhs.substr( 0, colon_pos ) );
-               rep = std::stoi( rhs.substr( colon_pos+1 ) );
-            }
+            for(uint j=0;j<8;j++)
+            if(j)
+               randomHash._hash[i]=randomHash._hash[i]<<8;
+            randomHash._hash[i]+= (uint8_t)boost::random::uniform_int_distribution<uint16_t>(0, 255)(random_device);
+
          }
-         vector< fc::ecc::private_key > keys;
-         if( lep >= 0 )
-         {
-            for( int k=lep; k<rep; k++ )
-            {
-               std::string s = dev_key_prefix + prefix + std::to_string(k);
-               show_key( fc::ecc::private_key::regenerate( fc::sha256::hash( s ) ) );
-            }
-         }
-         else
-         {
-            show_key( fc::ecc::private_key::regenerate( fc::sha256::hash( dev_key_prefix + arg ) ) );
-         }
+         
+         fc::sha256 serect =fc::sha256::hash(randomHash.str()+salt);
+
+         keys.push_back( fc::ecc::private_key::regenerate( serect));
+         
       }
-      std::cout << "]\n";
+      for(const auto &key:keys)
+         show_key(key);
+      std::cout << "\n";
    }
    catch ( const fc::exception& e )
    {

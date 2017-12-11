@@ -128,6 +128,16 @@ struct vote_id_type
    {
       return std::to_string(type()) + ":" + std::to_string(instance());
    }
+   
+   template <typename T>
+   static uint64_t amount(const T & vote_ids,vote_type type){
+      uint64_t res=0;
+      for (const auto & vote_id :vote_ids)
+         if(vote_id.type()==type)
+            ++res;
+      return res;
+   }
+   
 };
 
 class global_property_object;

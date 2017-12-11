@@ -1382,6 +1382,11 @@ class wallet_api
                                           string witness,
                                           bool approve,
                                           bool broadcast = false);
+   
+      signed_transaction vote_for_witnesses(string voting_account,
+                                         vector<string> witnesses,
+                                         bool approve,
+                                         bool broadcast = false);
 
       /** Set the voting proxy for an account.
        *
@@ -1693,6 +1698,7 @@ FC_API( graphene::wallet::wallet_api,
         (withdraw_vesting)
         (vote_for_committee_member)
         (vote_for_witness)
+        (vote_for_witnesses)
         (set_voting_proxy)
         (set_desired_witness_and_committee_member_count)
         (get_account)

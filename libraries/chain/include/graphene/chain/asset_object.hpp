@@ -123,7 +123,7 @@ for presale asset functions
 	   asset_id_type	asset_of_top;
 	   share_type		soft_top;
 	   share_type		hard_top;
-	   bool				is_reached_hard_top = false;
+	   
 
 	   //lock seconds. 0:don't lock
 	   uint32_t			lock_period;
@@ -151,6 +151,7 @@ for presale asset functions
 		   //already received current amount of the asset
 		   share_type		current = 0;
 		   share_type		current_weight = 0;
+		   bool				is_reached_hard_top = false;
 	   };
 	   vector<support_asset> accepts;
 	   bool					 ower_get  = false;

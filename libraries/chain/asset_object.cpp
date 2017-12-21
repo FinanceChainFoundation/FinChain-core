@@ -98,8 +98,10 @@ bool	asset_presale_object::is_selling(const time_point_sec & now)const
 {
 	if (now > stop || now < start)
 		return false; 
-
-	return !is_reached_hard_top;
+	for (auto itr = accepts.begin(); itr != accepts.end(); itr++)
+		if (!itr->is_reached_hard_top)
+			return true;
+	return false;
 }
 
 bool	asset_presale_object::is_presale_failed(const time_point_sec & now) const

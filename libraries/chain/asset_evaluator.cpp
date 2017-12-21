@@ -648,6 +648,7 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_buy_presale_operat
 		}
 
 		FC_ASSERT(index >=0, "not support the asset");
+		FC_ASSERT(!presale_obj.accepts[index].is_reached_hard_top, "this asset is finished presale");
 		
 		auto itrl = presale_obj.details.find(o.issuer); //check whether user buy before.		
 		asset_presale_object::record item;
@@ -685,9 +686,10 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_buy_presale_operat
 		d.adjust_balance(o.issuer, asset(-item.amount, item.asset_id));
 		d.modify(presale_obj, [&](asset_presale_object& obj){
 			obj.accepts[index].current += item.amount;
+			obj.accepts[index].is_reached_hard_top = is_hard_top;
 			obj.accepts[index].current_weight += item.amount*obj.early_bird(d.head_block_time()) / GRAPHENE_100_PERCENT;
 			obj.details[o.issuer] = detail;
-			obj.is_reached_hard_top = is_hard_top;
+			
 		});
 		return void_result();
 	} FC_CAPTURE_AND_RETHROW((o))

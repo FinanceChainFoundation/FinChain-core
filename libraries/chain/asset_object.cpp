@@ -94,6 +94,71 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    return Interest(base_asset,res_asset);
 }
 
+bool	asset_presale_object::is_selling(const time_point_sec & now)const
+{
+	if (now > stop || now < start)
+		return false; 
+
+	return !is_reached_hard_top;
+}
+
+bool	asset_presale_object::is_presale_failed(const time_point_sec & now) const
+{
+	return false;
+}
+
+uint64_t	asset_presale_object::early_bird(const time_point_sec& now) const
+{
+	uint32_t percent = GRAPHENE_100_PERCENT;
+	for (auto find = early_bird_pecents.begin(); find != early_bird_pecents.end(); find++)
+	{
+		if (now < find->first)
+		{
+			percent = find->second;
+			break;
+		}
+	}
+	return percent;
+}
+
+share_type asset_presale_object::should_reward(const record &  item) const
+{
+	share_type result = 0;
+	for (auto i = 0; i < accepts.size(); i++)
+	{
+		if (accepts[i].asset_id == item.asset_id)
+		{
+			uint64_t percent = early_bird(item.when);
+
+			if (mode == 0)
+				result = (asset(item.amount, item.asset_id) * accepts[i].base_price) * percent / GRAPHENE_100_PERCENT;
+			else
+				result = item.amount * accepts[i].amount / accepts[i].current_weight * percent / GRAPHENE_100_PERCENT;
+			//todo  total limit mode should think further deep
+			return result;
+		}
+	}
+	return result;
+}
+
+asset_presale_object::account_presale_detail asset_presale_object::get_account_detail(account_id_type account)const
+{
+	const auto  item = details.find(account);
+	FC_ASSERT(item != details.end(),"account not attend the presale");
+	account_presale_detail result = item->second;
+	if (result.last_claim_time == time_point_sec(0))// yet not claimed balance before
+	{
+		result.total_balance = 0;
+		for (auto i = item->second.records.begin(); i != item->second.records.end(); i++)
+		{
+			result.total_balance += should_reward(*i);
+		}
+	}
+
+	return result;
+}
+
+
 share_type asset_bitasset_data_object::max_force_settlement_volume(share_type current_supply) const
 {
    if( options.maximum_force_settlement_volume == 0 )

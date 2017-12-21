@@ -145,4 +145,32 @@ namespace graphene { namespace chain {
          void_result do_apply( const asset_claim_fees_operation& o );
    };
 
+
+   //for presales
+   class asset_presale_create_evaluator : public evaluator<asset_presale_create_evaluator>
+   {
+   public:
+	   typedef asset_presale_create_operation operation_type;
+
+	   void_result do_evaluate(const asset_presale_create_operation& o);
+	   void_result do_apply(const asset_presale_create_operation& o);
+   };
+
+   class asset_buy_presale_evaluator : public evaluator<asset_buy_presale_evaluator>
+   {
+   public:
+	   typedef asset_buy_presale_operation operation_type;
+
+	   void_result do_evaluate(const asset_buy_presale_operation& o);
+	   void_result do_apply(const asset_buy_presale_operation& o);
+   };
+
+   class asset_presale_claim_evaluator : public evaluator<asset_presale_claim_evaluator>
+   {
+   public:
+	   typedef asset_presale_claim_operation operation_type;
+
+	   void_result do_evaluate(const asset_presale_claim_operation& o);
+	   void_result do_apply(const asset_presale_claim_operation& o);
+   };
 } } // graphene::chain

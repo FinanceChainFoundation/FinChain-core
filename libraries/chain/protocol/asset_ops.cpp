@@ -234,4 +234,39 @@ void asset_claim_fees_operation::validate()const {
    FC_ASSERT( amount_to_claim.amount > 0 );
 }
 
+
+//for presales
+void asset_presale_create_operation::validate() const
+{
+	FC_ASSERT(fee.amount >= 0);
+	FC_ASSERT(amount > 0);
+	FC_ASSERT(unlock_type < 2);
+	FC_ASSERT(mode < 2);
+	FC_ASSERT(accepts.size()>0);	
+}
+
+share_type asset_presale_create_operation::calculate_fee(const fee_parameters_type& k) const
+{
+	return k.fee + calculate_data_fee(fc::raw::pack_size(*this), k.price_per_kbyte);
+}
+
+void asset_buy_presale_operation::validate() const
+{
+	FC_ASSERT(fee.amount >= 0);
+}
+
+share_type asset_buy_presale_operation::calculate_fee(const fee_parameters_type& k) const
+{
+	return k.fee;
+}
+
+void asset_presale_claim_operation::validate() const
+{
+	FC_ASSERT(fee.amount >= 0);
+}
+
+share_type asset_presale_claim_operation::calculate_fee(const fee_parameters_type& k) const
+{
+	return k.fee;
+}
 } } // namespace graphene::chain

@@ -112,6 +112,105 @@ namespace graphene { namespace chain {
       void validate()const;
    };
 
+   /*
+   for asset presale
+   */
+   
+   /**
+   * @ingroup operations
+   */
+   struct asset_presale_create_operation : public base_operation
+   {
+	   struct fee_parameters_type { 
+		   uint64_t fee = 5000 * GRAPHENE_BLOCKCHAIN_PRECISION; 
+		   uint32_t price_per_kbyte = 1 * GRAPHENE_BLOCKCHAIN_PRECISION;
+	   };
+
+	   asset                   fee;
+	   /// This account must sign and pay the fee for this operation. Later, this account may update the asset
+	   account_id_type         issuer;
+	   
+	   //presale start time
+	   time_point_sec	start;
+	   //presale stop time
+	   time_point_sec	stop;
+	   //presale finish time
+	   //time_point_sec	finish;
+	   //asset type to presale
+	   asset_id_type	asset_id;
+	   //amount to presale
+	   share_type		amount;
+	   share_type		early_bird_part;
+
+	   //limit related
+	   asset_id_type	asset_of_top;
+	   share_type		soft_top;
+	   share_type		hard_top;
+
+	   //lock seconds. 0:don't lock
+	   uint32_t			lock_period;
+	   // 0:line  1:when lock expired
+	   uint8_t			unlock_type;
+
+	   // 0:fixed prices but wait until presale success  1:total price mode
+	   uint8_t			mode;
+
+	   map<time_point_sec, uint32_t>	early_bird_pecents;
+
+	   //support asset
+	   struct support_asset
+	   {
+		   asset_id_type	asset_id;
+		   //amount to presale
+		   share_type		amount;
+
+		   share_type		base_price;  //base JRC_INTEREST_BASE_SUPPLY
+
+		   //user should pay at least/most asset to attend the presale.
+		   share_type		least;
+		   share_type		most;
+	   };
+	   vector<support_asset> accepts;
+
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+
+   struct asset_buy_presale_operation : public base_operation
+   {
+	   struct fee_parameters_type { uint64_t fee = 1 * GRAPHENE_BLOCKCHAIN_PRECISION; };
+
+	   asset                   fee;
+	   /// This account must sign and pay the fee for this operation. Later, this account may update the asset
+	   account_id_type         issuer;
+
+	   asset_presale_id_type   presale;
+
+	   //paid amount to buy the presale asset
+	   asset		amount;
+
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+
+   struct asset_presale_claim_operation : public base_operation
+   {
+	   struct fee_parameters_type { uint64_t fee = 1 * GRAPHENE_BLOCKCHAIN_PRECISION; };
+
+	   asset                   fee;
+	   /// This account must sign and pay the fee for this operation. Later, this account may update the asset
+	   account_id_type         issuer;
+
+	   asset_presale_id_type   presale;
+
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+
+   //////////////////////////////////////////////////////////////////////////////////////
 
    /**
     * @ingroup operations

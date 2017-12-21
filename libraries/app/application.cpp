@@ -163,7 +163,9 @@ namespace detail {
             // https:/
             vector<string> seeds = {
                "139.196.111.65:1888",
-               "47.100.130.46:1888"
+               "47.100.130.46:1888",
+               "139.162.51.89:1888",
+               "119.23.163.232:1888",
             };
             if(!_options->count("private"))
                for( const string& endpoint_string : seeds )

@@ -183,6 +183,9 @@ void database::initialize_evaluators()
    register_evaluator<set_lock_data_evaluator>();
    register_evaluator<unlock_balance_evaluator>();
    register_evaluator<donation_balance_evaluator>();
+   register_evaluator<asset_presale_create_evaluator>();
+   register_evaluator<asset_buy_presale_evaluator>();
+   register_evaluator<asset_presale_claim_evaluator>();
 }
 
 void database::initialize_indexes()

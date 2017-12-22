@@ -179,6 +179,7 @@ namespace graphene { namespace chain {
    class balance_object;
    class blinded_balance_object;
    class locked_balance_object;
+   class asset_presale_object;
 
    typedef object_id< protocol_ids, account_object_type,            account_object>               account_id_type;
    typedef object_id< protocol_ids, asset_object_type,              asset_object>                 asset_id_type;

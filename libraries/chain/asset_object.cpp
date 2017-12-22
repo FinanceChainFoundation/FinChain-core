@@ -108,13 +108,14 @@ bool	asset_presale_object::is_presale_failed(const time_point_sec & now) const
 {
 	if (now < stop)
 		return false;
-	share_type sold = 0;
+	fc::uint128_t sold = 0;
 	if (mode == 0)
 	{
 		for (const auto& n : accepts)
 		{
-			sold += (fc::uint128_t(n.current.value) * n.base_price.value / JRC_INTEREST_BASE_SUPPLY).to_uint64();
-			if (sold >= soft_top)
+			auto nx = fc::uint128_t(n.current.value) * n.base_price.value / JRC_INTEREST_BASE_SUPPLY;
+			sold += nx;
+			if (sold >= soft_top.value)
 				return false;
 		}
 	}
@@ -142,7 +143,7 @@ uint64_t	asset_presale_object::early_bird(const time_point_sec& now) const
 
 share_type asset_presale_object::should_reward(const record &  item) const
 {
-	share_type result = 0;
+	fc::uint128_t result = 0;
 	for (auto i = 0; i < accepts.size(); i++)
 	{
 		if (accepts[i].asset_id == item.asset_id)
@@ -150,14 +151,14 @@ share_type asset_presale_object::should_reward(const record &  item) const
 			uint64_t percent = early_bird(item.when);
 
 			if (mode == 0)
-				result = (asset(item.amount, item.asset_id) * accepts[i].base_price) * percent / GRAPHENE_100_PERCENT;
+				result = fc::uint128_t(item.amount.value) * accepts[i].base_price.value * percent / GRAPHENE_100_PERCENT;
 			else
-				result = item.amount * accepts[i].amount / accepts[i].current_weight * percent / GRAPHENE_100_PERCENT;
+				result = fc::uint128_t(item.amount.value) * accepts[i].amount.value / accepts[i].current_weight.value * percent / GRAPHENE_100_PERCENT;
 			//todo  total limit mode should think further deep
-			return result;
+			return result.to_uint64();
 		}
 	}
-	return result;
+	return result.to_uint64();
 }
 
 asset_presale_object::account_presale_detail asset_presale_object::get_account_detail(account_id_type account)const

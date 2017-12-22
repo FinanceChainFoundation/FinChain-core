@@ -405,3 +405,28 @@ FC_REFLECT_DERIVED( graphene::chain::asset_object, (graphene::db::object),
                     (bitasset_data_id)
                     (buyback_account)
                   )
+
+
+FC_REFLECT( graphene::chain::asset_presale_object::support_asset, (asset_id)(amount)(base_price)(least)(most)(current)(current_weight)(is_reached_hard_top) )
+FC_REFLECT( graphene::chain::asset_presale_object::record, (asset_id)(when)(amount) )
+FC_REFLECT( graphene::chain::asset_presale_object::account_presale_detail, (records)(last_claim_time)(total_balance)(claimed_balance))
+
+
+FC_REFLECT_DERIVED(graphene::chain::asset_presale_object, (graphene::db::object),
+					(issuer)
+					(start)
+					(stop)
+					(asset_id)            
+					(amount)
+					(early_bird_part)
+					(asset_of_top)
+					(soft_top)
+					(hard_top)
+					(lock_period)
+					(unlock_type)
+					(mode)
+					(early_bird_pecents)
+					(accepts)
+					(ower_get)
+					(details)
+				)

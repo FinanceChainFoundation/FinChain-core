@@ -106,7 +106,24 @@ bool	asset_presale_object::is_selling(const time_point_sec & now)const
 
 bool	asset_presale_object::is_presale_failed(const time_point_sec & now) const
 {
-	return false;
+	if (now < stop)
+		return false;
+	share_type sold = 0;
+	if (mode == 0)
+	{
+		for (const auto& n : accepts)
+		{
+			sold += (fc::uint128_t(n.current.value) * n.base_price.value / JRC_INTEREST_BASE_SUPPLY).to_uint64();
+			if (sold >= soft_top)
+				return false;
+		}
+	}
+	else
+	{
+		if (accepts[0].current < soft_top)
+			return true;
+	}
+	return true;
 }
 
 uint64_t	asset_presale_object::early_bird(const time_point_sec& now) const

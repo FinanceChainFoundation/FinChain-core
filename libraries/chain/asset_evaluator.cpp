@@ -564,6 +564,14 @@ void_result asset_presale_create_evaluator::do_evaluate(const asset_presale_crea
 		FC_ASSERT(o.asset_id(db()).issuer == o.issuer, "Asset presale may only be created by the issuer");
 		FC_ASSERT(o.asset_id(db()).presales.size() < 16, "The Asset presold too many times");
 		FC_ASSERT(db().get_balance(o.issuer,o.asset_id).amount >= o.amount + o.early_bird_part, "No enough balance to create presale");
+		if (o.mode == 1) //if set BTC/ETH ... as hard top,can only support one ASSET to attend presale
+			FC_ASSERT( (o.accepts.size() == 1) && (o.accepts[0].asset_id == o.asset_of_top) , "if you set ASSET(eg. BTC/ETH) as hard top,you can only accept the asset(eg. BTC/ETH) for presale");
+		
+		share_type total = 0;
+		for (auto idx = 0; idx < o.accepts.size(); idx++)
+			total += o.accepts[idx].amount;
+		
+		FC_ASSERT(total == o.amount);
 		return void_result();
 	} FC_CAPTURE_AND_RETHROW((o))
 }
@@ -582,8 +590,7 @@ void_result asset_presale_create_evaluator::do_apply(const asset_presale_create_
 			obj.early_bird_part = o.early_bird_part;
 			obj.asset_of_top = o.asset_of_top;
 			obj.soft_top = o.soft_top;
-			obj.hard_top = o.hard_top;
-			obj.is_reached_hard_top = false;
+			obj.hard_top = o.hard_top;			
 			obj.lock_period = o.lock_period;
 			obj.unlock_type = o.unlock_type;
 			obj.mode = o.mode;
@@ -599,6 +606,7 @@ void_result asset_presale_create_evaluator::do_apply(const asset_presale_create_
 				a.most = itr->most;
 				a.current = 0;
 				a.current_weight = 0;
+				a.is_reached_hard_top = false;
 				obj.accepts.push_back(a);
 			}
 		});
@@ -642,13 +650,13 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_buy_presale_operat
 			{
 				FC_ASSERT(o.amount.amount >= presale_obj.accepts[a].least, "too little amount to attend the presale"); 
 				FC_ASSERT(o.amount.amount <= presale_obj.accepts[a].most, "too many amount to attend the presale");
+				FC_ASSERT(!presale_obj.accepts[a].is_reached_hard_top, "this asset is finished presale");
 				index = a;
 				break;
 			}
 		}
 
-		FC_ASSERT(index >=0, "not support the asset");
-		FC_ASSERT(!presale_obj.accepts[index].is_reached_hard_top, "this asset is finished presale");
+		FC_ASSERT(index >=0, "not support the asset");		
 		
 		auto itrl = presale_obj.details.find(o.issuer); //check whether user buy before.		
 		asset_presale_object::record item;
@@ -675,7 +683,7 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_buy_presale_operat
 		}
 		else
 		{
-			if (presale_obj.asset_of_top == o.amount.asset_id && presale_obj.accepts[index].current + o.amount.amount >= presale_obj.hard_top)
+			if ( presale_obj.accepts[index].current + o.amount.amount >= presale_obj.hard_top)
 			{
 				item.amount = presale_obj.hard_top - presale_obj.accepts[index].current;
 				is_hard_top = true;
@@ -701,8 +709,7 @@ void_result asset_presale_claim_evaluator::do_evaluate(const asset_presale_claim
 	try {
 		database& d = db();
 		const asset_presale_object & presale_obj = o.presale(d);
-		FC_ASSERT(presale_obj.stop > d.head_block_time(), "it's not time to claim balance!");
-		
+		FC_ASSERT(d.head_block_time() >= presale_obj.stop, "not time to claim");
 		return void_result();
 	} FC_CAPTURE_AND_RETHROW((o))
 }
@@ -713,7 +720,6 @@ void_result asset_presale_claim_evaluator::do_apply(const asset_presale_claim_op
 	try {
 		database& d = db();
 		const asset_presale_object & presale_obj = o.presale(d);
-		FC_ASSERT(presale_obj.is_selling(d.head_block_time()), "is in presale");
 
 		if (presale_obj.issuer == o.issuer) //creator claim the assets
 		{			
@@ -749,7 +755,7 @@ void_result asset_presale_claim_evaluator::do_apply(const asset_presale_claim_op
 				d.adjust_balance(o.issuer, asset(i->amount,i->asset_id));
 			}
 			
-			d.modify(presale_obj, [&](asset_presale_object& obj){					
+			d.modify(presale_obj, [&](asset_presale_object& obj){
 				obj.details[o.issuer].last_claim_time = d.head_block_time();
 			});
 		}
@@ -761,7 +767,7 @@ void_result asset_presale_claim_evaluator::do_apply(const asset_presale_claim_op
 
 				if (presale_obj.unlock_type == 1)
 				{
-					FC_ASSERT(presale_obj.stop + presale_obj.lock_period >= d.head_block_time(), "not time to claimed balance");
+					FC_ASSERT(d.head_block_time() >= presale_obj.stop + presale_obj.lock_period, "not time to claim balance");
 				}
 
 				auto detail = presale_obj.get_account_detail(o.issuer);			

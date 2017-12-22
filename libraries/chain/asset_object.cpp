@@ -123,6 +123,8 @@ bool	asset_presale_object::is_presale_failed(const time_point_sec & now) const
 	{
 		if (accepts[0].current < soft_top)
 			return true;
+		else
+			return false;
 	}
 	return true;
 }

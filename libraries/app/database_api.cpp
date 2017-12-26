@@ -202,6 +202,7 @@ class database_api_impl : public std::enable_shared_from_this<database_api_impl>
       void on_objects_removed(const vector<object_id_type>& ids, const vector<const object*>& objs, const flat_set<account_id_type>& impacted_accounts);
       void on_applied_block();
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
+	  vector<asset_presale_object> get_asset_presales(asset_id_type asset_id)const;
    
       bool _notify_remove_create = false;
       mutable fc::bloom_filter _subscribe_filter;
@@ -2049,4 +2050,21 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    res.max_period = lock_data_obj.max_period;
    return res;
 }
+
+
+vector<asset_presale_object>  database_api::get_asset_presales(asset_id_type asset_id)const
+{
+	return my->get_asset_presales(asset_id);
+}
+
+vector<asset_presale_object> database_api_impl::get_asset_presales(asset_id_type asset_id)const
+{
+	vector<asset_presale_object> res;
+	const auto & asset_obj = asset_id(_db);
+	for (const auto item : asset_obj.presales)
+		res.push_back(item(_db));
+	return res;
+}
+
+
 } } // graphene::app

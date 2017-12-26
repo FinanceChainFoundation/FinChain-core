@@ -2598,6 +2598,109 @@ public:
 	   } FC_CAPTURE_AND_RETHROW((account_name)(asset_symbol)(locked_id)(broadcast))
    }
 
+   signed_transaction create_presale(string account_name,
+                                  string asset_symbol,
+                                  time_point_sec start,
+								  time_point_sec stop,
+								  asset_id_type asset_id,
+								  share_type amount,
+								  share_type early_bird_part,
+								  asset_id_type asset_of_top,
+								  share_type soft_top,
+								  share_type hard_top,
+								  uint32_t lock_period,
+								  uint8_t unlock_type,
+								  uint8_t mode,
+								  map<time_point_sec, uint32_t> early_bird_pecents,
+								  vector<asset_presale_create_operation::support_asset> accepts,
+                                  bool broadcast = false)
+	{
+	   try {
+		   FC_ASSERT(!self.is_locked());
+		   fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
+		   FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
+
+		   account_object from_account = get_account(account_name);
+
+		   asset_presale_create_operation  op;
+		   op.issuer = from_account.get_id();		   
+		   op.start = start;
+		   op.stop = stop;
+		   op.asset_id = asset_id;
+		   op.amount = amount;
+		   op.early_bird_part = early_bird_part;
+		   op.asset_of_top = asset_of_top;
+		   op.soft_top = soft_top;
+		   op.hard_top = hard_top;
+		   op.lock_period = lock_period;
+		   op.unlock_type = unlock_type;
+		   op.mode = mode;
+		   op.early_bird_pecents = early_bird_pecents;
+		   op.accepts = accepts;
+
+		   signed_transaction tx;
+		   tx.operations.push_back(op);
+		   set_operation_fees(tx, _remote_db->get_global_properties().parameters.current_fees);
+		   tx.validate();
+
+		   return sign_transaction(tx, broadcast);
+	   } FC_CAPTURE_AND_RETHROW((account_name)(asset_symbol)(start)(stop)(asset_id)(amount)(early_bird_part)(asset_of_top)(soft_top)(hard_top)(lock_period)(unlock_type)(mode)(early_bird_pecents)(accepts)(broadcast))
+   }
+
+   signed_transaction buy_presale(string account_name,
+	   string presale,
+	   string amount,
+	   string asset_symbol,
+	   bool broadcast = false)
+   {
+	   try {
+		   FC_ASSERT(!self.is_locked());
+		   fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
+		   FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
+
+		   fc::optional<asset_presale_id_type> pre_id = maybe_id<asset_presale_id_type>(presale);
+		   FC_ASSERT(pre_id, "invalid presale id");
+
+		   account_object from_account = get_account(account_name);
+
+		   asset_buy_presale_operation  op;
+		   op.issuer = from_account.get_id();
+		   op.presale = *pre_id;
+		   op.amount = asset_obj->amount_from_string(amount);
+
+		   signed_transaction tx;
+		   tx.operations.push_back(op);
+		   set_operation_fees(tx, _remote_db->get_global_properties().parameters.current_fees);
+		   tx.validate();
+
+		   return sign_transaction(tx, broadcast);
+	   } FC_CAPTURE_AND_RETHROW((account_name)(presale)(amount)(asset_symbol)(broadcast))
+   }
+
+   signed_transaction claim_presale(string account_name,
+	   string presale,
+	   bool broadcast = false)
+   {
+	   try {
+		   FC_ASSERT(!self.is_locked());
+		   
+		   fc::optional<asset_presale_id_type> pre_id = maybe_id<asset_presale_id_type>(presale);
+		   FC_ASSERT(pre_id, "invalid presale id");
+
+		   account_object from_account = get_account(account_name);
+
+		   asset_presale_claim_operation  op;
+		   op.issuer = from_account.get_id();
+		   op.presale = *pre_id;
+	
+		   signed_transaction tx;
+		   tx.operations.push_back(op);
+		   set_operation_fees(tx, _remote_db->get_global_properties().parameters.current_fees);
+		   tx.validate();
+
+		   return sign_transaction(tx, broadcast);
+	   } FC_CAPTURE_AND_RETHROW((account_name)(presale)(broadcast))
+   }
 
 
    void dbg_make_uia(string creator, string symbol)
@@ -4592,6 +4695,49 @@ signed_transaction wallet_api::unlock_balance(string account_name,
 	bool broadcast/* = false*/)
 {
 	return my->unlock_balance(account_name, asset_symbol, locked_id, expired, broadcast);
+}
+
+vector<asset_presale_object> wallet_api::list_asset_presales(string asset_symbol)
+{
+	asset_id_type    id = get_asset_id(asset_symbol);
+	return my->_remote_db->get_asset_presales(id);
+}
+
+signed_transaction wallet_api::create_presale(string account_name,
+	string asset_symbol,
+	time_point_sec start,
+	time_point_sec stop,
+	asset_id_type asset_id,
+	share_type amount,
+	share_type early_bird_part,
+	asset_id_type asset_of_top,
+	share_type soft_top,
+	share_type hard_top,
+	uint32_t lock_period,
+	uint8_t unlock_type,
+	uint8_t mode,
+	map<time_point_sec, uint32_t> early_bird_pecents,
+	vector<asset_presale_create_operation::support_asset> accepts,
+	bool broadcast)
+{
+	return  my->create_presale(account_name, asset_symbol, start, stop, asset_id, amount, early_bird_part, asset_of_top, soft_top, hard_top, lock_period, unlock_type, mode, early_bird_pecents, accepts, broadcast);
+}
+
+
+signed_transaction wallet_api::buy_presale(string account_name,
+	string presale,
+	string amount,
+	string asset_symbol,
+	bool broadcast)
+{
+	return my->buy_presale(account_name, presale, amount, asset_symbol, broadcast);
+}
+
+signed_transaction wallet_api::claim_presale(string account_name,
+	string presale,
+	bool broadcast)
+{
+	return my->claim_presale(account_name, presale,broadcast);
 }
 
 

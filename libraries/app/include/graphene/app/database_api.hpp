@@ -337,6 +337,13 @@ class database_api
        * @return Map of account names to corresponding IDs
        */
       map<string,account_id_type> lookup_accounts(const string& lower_bound_name, uint32_t limit)const;
+   
+      /**
+       * @brief Get account IDs by account names
+       * @param account names
+       * @return Map of account names to corresponding IDs
+       */
+      map<string,account_id_type> get_account_ids(const vector<string>& account_names)const;
 
       //////////////
       // Balances //
@@ -690,6 +697,7 @@ FC_API(graphene::app::database_api,
    (lookup_account_names)
    (lookup_accounts)
    (get_account_count)
+   (get_account_ids)
 
    // Balances
    (get_account_balances)

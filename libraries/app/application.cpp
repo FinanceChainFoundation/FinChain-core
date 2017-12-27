@@ -163,7 +163,9 @@ namespace detail {
             // https:/
             vector<string> seeds = {
                "139.196.111.65:1888",
-               "47.100.130.46:1888"
+               "47.100.130.46:1888",
+               "139.162.51.89:1888",
+               "119.23.163.232:1888"
             };
             if(!_options->count("private"))
                for( const string& endpoint_string : seeds )
@@ -949,7 +951,7 @@ void application::set_program_options(boost::program_options::options_descriptio
          ("seed-nodes", bpo::value<string>()->composing(), "JSON array of P2P nodes to connect to on startup")
          ("checkpoint,c", bpo::value<vector<string>>()->composing(), "Pairs of [BLOCK_NUM,BLOCK_ID] that should be enforced as checkpoints.")
          ("rpc-endpoint", bpo::value<string>()->implicit_value("127.0.0.1:9090"), "Endpoint for websocket RPC to listen on")
-         ("rpc-tls-endpoint", bpo::value<string>()->implicit_value("127.0.0.1:9090"), "Endpoint for TLS websocket RPC to listen on")
+         ("rpc-tls-endpoint", bpo::value<string>()->implicit_value("127.0.0.1:9091"), "Endpoint for TLS websocket RPC to listen on")
          ("server-pem,p", bpo::value<string>()->implicit_value("server.pem"), "The TLS certificate file for this server")
          ("server-pem-password,P", bpo::value<string>()->implicit_value(""), "Password for this certificate")
          ("genesis-json", bpo::value<boost::filesystem::path>(), "File to read Genesis State from")

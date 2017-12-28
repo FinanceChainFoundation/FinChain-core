@@ -215,7 +215,6 @@ namespace graphene { namespace chain {
    class buyback_object;
    class fba_accumulator_object;
    class asset_lock_data_object;
-   class asset_presale_object;
 
    typedef object_id< implementation_ids, impl_global_property_object_type,  global_property_object>                    global_property_id_type;
    typedef object_id< implementation_ids, impl_dynamic_global_property_object_type,  dynamic_global_property_object>    dynamic_global_property_id_type;

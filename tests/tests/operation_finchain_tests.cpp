@@ -46,7 +46,7 @@ using namespace graphene::chain::test;
 
 BOOST_FIXTURE_TEST_SUITE( operation_tests, database_fixture )
 
-
+/*
 BOOST_AUTO_TEST_CASE(lock_balance_test)
 {
 	try {
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(lock_balance_test2)
 		throw;
 	}
 }
-
+*/
 //test for asset presale
 BOOST_AUTO_TEST_CASE(asset_presale_test)
 {
@@ -333,10 +333,10 @@ BOOST_AUTO_TEST_CASE(asset_presale_test)
 		BOOST_CHECK(!has_asset("SECOND"));
 		create_user_issued_asset("SECOND", second_id(db), 0);
 		BOOST_CHECK(has_asset("SECOND"));
-		const auto a2 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("SECOND");
-		const auto  a2_id = a2.get_id();
+		auto a2 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("SECOND");
+		auto  a2_id = a2.get_id();
 		trx.clear();
-		issue_uia(second, a2.amount(GRAPHENE_MAX_SHARE_SUPPLY));
+		issue_uia(get_account("second"), a2.amount(GRAPHENE_MAX_SHARE_SUPPLY));
 
 		generate_block();
 		trx.clear();
@@ -345,10 +345,10 @@ BOOST_AUTO_TEST_CASE(asset_presale_test)
 		BOOST_CHECK(!has_asset("THIRD"));
 		create_user_issued_asset("THIRD", third_id(db), 0);
 		BOOST_CHECK(has_asset("THIRD"));
-		const auto a3 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("THIRD");
-		const auto a3_id = a3.get_id();
+		auto a3 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("THIRD");
+		auto a3_id = a3.get_id();
 		trx.clear();
-		issue_uia(third, a3.amount(GRAPHENE_MAX_SHARE_SUPPLY));
+		issue_uia(get_account("third"), a3.amount(GRAPHENE_MAX_SHARE_SUPPLY));
 
 		generate_block();
 		trx.clear();

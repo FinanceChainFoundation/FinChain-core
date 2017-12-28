@@ -80,8 +80,17 @@ namespace graphene { namespace chain {
 
          FC_ASSERT( itr!=index.end(), "Insufficient Balance");
 
-		 d.adjust_balance(o.issuer, -o.amount);
+		   d.adjust_balance(o.issuer, -o.amount);
          
+         //only for core asset
+         if(o.amount.asset_id==asset_id_type(0)){
+            const auto& account_stats = o.issuer(d).statistics(d);
+            d.modify(account_stats, [&](account_statistics_object& bal) {
+
+               bal.total_core_in_lock +=to_locked_balance;
+
+            });
+         }
          d.modify(*itr,[&](account_balance_object & obj){
             obj.add_lock_balance(new_locked_balance_o.id);
          });
@@ -221,7 +230,16 @@ namespace graphene { namespace chain {
             obj.unlock_balance(item.id);
          });
 
-
+         //only for core asset
+         if(item.asset_id==asset_id_type(0)){
+            const auto& account_stats = o.issuer(d).statistics(d);
+            d.modify(account_stats, [&](account_statistics_object& bal) {
+               FC_ASSERT(bal.total_core_in_lock>=item.locked_balance, "Unforeseen error; total_core_in_lock<item.locked_balance "); //
+               bal.total_core_in_lock +=item.locked_balance;
+               
+            });
+         }
+         
 	   } FC_CAPTURE_AND_RETHROW((o))
    }
 

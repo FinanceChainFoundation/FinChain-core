@@ -61,6 +61,9 @@ namespace graphene { namespace chain {
           * total here and update it every time an order is created or modified.
           */
          share_type total_core_in_orders;
+      
+         //locked balance is stabilisation powers of blockChain ,so should have vote power
+         share_type total_core_in_lock=0;
 
          /**
           * Tracks the total fees paid by this account for the purpose of calculating bulk discounts.
@@ -404,6 +407,7 @@ FC_REFLECT_DERIVED( graphene::chain::account_statistics_object,
                     (most_recent_op)
                     (total_ops)(removed_ops)
                     (total_core_in_orders)
+                    (total_core_in_lock)
                     (lifetime_fees_paid)
                     (pending_fees)(pending_vested_fees)
                   )

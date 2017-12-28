@@ -696,7 +696,7 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_buy_presale_operat
 		d.modify(presale_obj, [&](asset_presale_object& obj){
 			obj.accepts[index].current += item.amount;
 			obj.accepts[index].is_reached_hard_top = is_hard_top;
-			obj.accepts[index].current_weight += item.amount*obj.early_bird(d.head_block_time()) / GRAPHENE_100_PERCENT;
+			obj.accepts[index].current_weight += (fc::uint128_t(item.amount.value)*obj.early_bird(d.head_block_time()) / GRAPHENE_100_PERCENT).to_uint64();
 			obj.details[o.issuer] = detail;
 			
 		});

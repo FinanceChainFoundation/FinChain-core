@@ -595,7 +595,8 @@ void_result asset_presale_create_evaluator::do_apply(const asset_presale_create_
 			obj.unlock_type = o.unlock_type;
 			obj.mode = o.mode;
 			obj.early_bird_pecents = o.early_bird_pecents;
-			obj.accepts.resize(o.accepts.size());
+			obj.accepts.clear();
+
 			for (auto itr = o.accepts.begin(); itr != o.accepts.end(); itr++)
 			{
 				asset_presale_object::support_asset a;
@@ -650,7 +651,7 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_buy_presale_operat
 			{
 				FC_ASSERT(o.amount.amount >= presale_obj.accepts[a].least, "too little amount to attend the presale"); 
 				FC_ASSERT(o.amount.amount <= presale_obj.accepts[a].most, "too many amount to attend the presale");
-				FC_ASSERT(!presale_obj.accepts[a].is_reached_hard_top, "this asset is finished presale");
+				FC_ASSERT(!presale_obj.accepts[a].is_reached_hard_top, "this asset for presale is finished");
 				index = a;
 				break;
 			}

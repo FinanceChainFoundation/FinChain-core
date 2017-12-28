@@ -378,8 +378,8 @@ BOOST_AUTO_TEST_CASE(asset_presale_test)
 			op.early_bird_pecents[db.head_block_time() + 15 * 86400] = GRAPHENE_1_PERCENT * 130;
 			op.early_bird_pecents[db.head_block_time() + 30 * 86400] = GRAPHENE_1_PERCENT * 120;
 
-			op.accepts.push_back({ a2_id, GRAPHENE_MAX_SHARE_SUPPLY / 20, 1100000000000LL, GRAPHENE_MAX_SHARE_SUPPLY / 100000, GRAPHENE_MAX_SHARE_SUPPLY / 1000 });
-			op.accepts.push_back({ a3_id, GRAPHENE_MAX_SHARE_SUPPLY / 20, 1200000000000LL, GRAPHENE_MAX_SHARE_SUPPLY / 100000, GRAPHENE_MAX_SHARE_SUPPLY / 1000 });
+			op.accepts.push_back({ a2_id, GRAPHENE_MAX_SHARE_SUPPLY / 20, 1100000000000LL, GRAPHENE_MAX_SHARE_SUPPLY / 100000, GRAPHENE_MAX_SHARE_SUPPLY / 2 });
+			op.accepts.push_back({ a3_id, GRAPHENE_MAX_SHARE_SUPPLY / 20, 1200000000000LL, GRAPHENE_MAX_SHARE_SUPPLY / 100000, GRAPHENE_MAX_SHARE_SUPPLY / 2 });
 
 			trx.operations.push_back(op);
 			set_expiration(db, trx);
@@ -389,9 +389,10 @@ BOOST_AUTO_TEST_CASE(asset_presale_test)
 			generate_block();
 			verify_asset_supplies(db);
 		};
-		a1 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("FIRST");
+		
 		auto buy_presale= [&]()
 		{
+			a1 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("FIRST");
 			asset_buy_presale_operation op;
 			op.fee = asset();
 			op.issuer = second_id;
@@ -408,6 +409,7 @@ BOOST_AUTO_TEST_CASE(asset_presale_test)
 
 		auto claim_presale = [&]()
 		{
+			a1 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("FIRST");
 			asset_presale_claim_operation op;
 			op.fee = asset();
 			op.issuer = second_id;
@@ -422,7 +424,7 @@ BOOST_AUTO_TEST_CASE(asset_presale_test)
 		};
 		
 		create_presale();
-
+		generate_block(~0, generate_private_key("null_key"), 20);
 		buy_presale();
 
 		generate_block(~0, generate_private_key("null_key"), 28800);

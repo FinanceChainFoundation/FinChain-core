@@ -2663,7 +2663,7 @@ public:
 
 		   account_object from_account = get_account(account_name);
 
-		   asset_buy_presale_operation  op;
+		   asset_presale_buy_operation  op;
 		   op.issuer = from_account.get_id();
 		   op.presale = *pre_id;
 		   op.amount = asset_obj->amount_from_string(amount);

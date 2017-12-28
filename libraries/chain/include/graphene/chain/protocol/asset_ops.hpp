@@ -178,7 +178,7 @@ namespace graphene { namespace chain {
 	   share_type      calculate_fee(const fee_parameters_type& k)const;
    };
 
-   struct asset_buy_presale_operation : public base_operation
+   struct asset_presale_buy_operation : public base_operation
    {
 	   struct fee_parameters_type { uint64_t fee = 1 * GRAPHENE_BLOCKCHAIN_PRECISION; };
 
@@ -591,7 +591,7 @@ FC_REFLECT( graphene::chain::asset_reserve_operation::fee_parameters_type, (fee)
 
 FC_REFLECT( graphene::chain::asset_presale_create_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::asset_presale_create_operation::support_asset, (asset_id)(amount)(base_price)(least)(most) )
-FC_REFLECT( graphene::chain::asset_buy_presale_operation::fee_parameters_type, (fee) )
+FC_REFLECT( graphene::chain::asset_presale_buy_operation::fee_parameters_type, (fee) )
 FC_REFLECT( graphene::chain::asset_presale_claim_operation::fee_parameters_type, (fee) )
 
 
@@ -613,7 +613,7 @@ FC_REFLECT( graphene::chain::asset_presale_create_operation,
 	    	(accepts)
 	    	(extensions)
           )		  
-FC_REFLECT(graphene::chain::asset_buy_presale_operation,
+FC_REFLECT(graphene::chain::asset_presale_buy_operation,
 		  (fee)
 		  (issuer)
 		  (presale)

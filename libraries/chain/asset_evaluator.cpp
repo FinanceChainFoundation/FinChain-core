@@ -622,7 +622,7 @@ void_result asset_presale_create_evaluator::do_apply(const asset_presale_create_
 	} FC_CAPTURE_AND_RETHROW((o))
 }
 
-void_result asset_buy_presale_evaluator::do_evaluate(const asset_buy_presale_operation& o)
+void_result asset_buy_presale_evaluator::do_evaluate(const asset_presale_buy_operation& o)
 {
 	try {
 		database& d = db();
@@ -635,7 +635,7 @@ void_result asset_buy_presale_evaluator::do_evaluate(const asset_buy_presale_ope
 }
 
 
-void_result asset_buy_presale_evaluator::do_apply(const asset_buy_presale_operation& o)
+void_result asset_buy_presale_evaluator::do_apply(const asset_presale_buy_operation& o)
 {
 	try {
 		database& d = db();

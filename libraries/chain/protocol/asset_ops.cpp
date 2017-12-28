@@ -250,12 +250,12 @@ share_type asset_presale_create_operation::calculate_fee(const fee_parameters_ty
 	return k.fee + calculate_data_fee(fc::raw::pack_size(*this), k.price_per_kbyte);
 }
 
-void asset_buy_presale_operation::validate() const
+void asset_presale_buy_operation::validate() const
 {
 	FC_ASSERT(fee.amount >= 0);
 }
 
-share_type asset_buy_presale_operation::calculate_fee(const fee_parameters_type& k) const
+share_type asset_presale_buy_operation::calculate_fee(const fee_parameters_type& k) const
 {
 	return k.fee;
 }

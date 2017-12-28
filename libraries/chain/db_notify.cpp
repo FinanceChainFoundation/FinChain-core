@@ -209,7 +209,7 @@ struct get_impacted_account_visitor
    {
 	   _impacted.insert(op.issuer);
    }
-   void operator()(const asset_buy_presale_operation & op)
+   void operator()(const asset_presale_buy_operation & op)
    {
 	   _impacted.insert(op.issuer);
    }

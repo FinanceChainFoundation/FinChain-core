@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(asset_presale_test)
 		auto buy_presale= [&]()
 		{
 			a1 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("FIRST");
-			asset_buy_presale_operation op;
+			asset_presale_buy_operation op;
 			op.fee = asset();
 			op.issuer = second_id;
 			op.amount = asset(GRAPHENE_MAX_SHARE_SUPPLY / 50,a2_id);

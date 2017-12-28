@@ -159,10 +159,10 @@ namespace graphene { namespace chain {
    class asset_buy_presale_evaluator : public evaluator<asset_buy_presale_evaluator>
    {
    public:
-	   typedef asset_buy_presale_operation operation_type;
+	   typedef asset_presale_buy_operation operation_type;
 
-	   void_result do_evaluate(const asset_buy_presale_operation& o);
-	   void_result do_apply(const asset_buy_presale_operation& o);
+	   void_result do_evaluate(const asset_presale_buy_operation& o);
+	   void_result do_apply(const asset_presale_buy_operation& o);
    };
 
    class asset_presale_claim_evaluator : public evaluator<asset_presale_claim_evaluator>

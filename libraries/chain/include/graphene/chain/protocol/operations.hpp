@@ -98,7 +98,7 @@ namespace graphene { namespace chain {
             unlock_balance_operation,
             donation_balance_operation,
             asset_presale_create_operation,
-            asset_buy_presale_operation,
+            asset_presale_buy_operation,
             asset_presale_claim_operation
          > operation;
 

@@ -155,7 +155,7 @@ share_type asset_presale_object::should_reward(const record &  item) const
 			if (mode == 0)
 				result = fc::uint128_t(item.amount.value) * accepts[i].base_price.value / JRC_INTEREST_BASE_SUPPLY * percent / GRAPHENE_100_PERCENT;
 			else
-				result = fc::uint128_t(item.amount.value) * accepts[i].amount.value / accepts[i].current_weight.value * percent / GRAPHENE_100_PERCENT;
+				result = fc::uint128_t(item.amount.value) * percent / GRAPHENE_100_PERCENT * accepts[i].amount.value / accepts[i].current.value;
 			//todo  total limit mode should think further deep
 			return result.to_uint64();
 		}

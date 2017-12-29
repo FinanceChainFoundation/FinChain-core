@@ -730,10 +730,31 @@ void_result asset_presale_claim_evaluator::do_apply(const asset_presale_claim_op
 			{
 				d.adjust_balance(o.issuer, asset(presale_obj.amount + presale_obj.early_bird_part, presale_obj.asset_id));
 			}
-			else //claim the assets from buyers
+			else 
 			{				
+				//claim the assets from buyers
 				for (auto idx = presale_obj.accepts.begin(); idx != presale_obj.accepts.end();idx++)
 					d.adjust_balance(o.issuer,asset(idx->amount,idx->asset_id));	
+
+
+				//claim the assets which not sold out
+				fc::uint128_t sold = 0;
+				if (presale_obj.mode == 0)
+				{
+					for (auto idx = presale_obj.accepts.begin(); idx != presale_obj.accepts.end(); idx++)
+					{
+						sold += fc::uint128_t(idx->current_weight.value) * idx->base_price.value / JRC_INTEREST_BASE_SUPPLY;
+					}
+				}
+				else
+				{
+					for (auto idx = presale_obj.accepts.begin(); idx != presale_obj.accepts.end(); idx++)
+					{
+						sold += fc::uint128_t(idx->amount.value) * idx->current_weight.value / idx->current.value;
+					}
+				}
+
+				d.adjust_balance(o.issuer, asset(presale_obj.amount + presale_obj.early_bird_part - sold.to_uint64(), presale_obj.asset_id));				
 			}
 
 			d.modify(presale_obj, [&](asset_presale_object& obj){

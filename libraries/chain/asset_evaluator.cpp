@@ -569,9 +569,18 @@ void_result asset_presale_create_evaluator::do_evaluate(const asset_presale_crea
 		
 		share_type total = 0;
 		for (auto idx = 0; idx < o.accepts.size(); idx++)
-			total += o.accepts[idx].amount;
-		
+			total += o.accepts[idx].amount;		
 		FC_ASSERT(total == o.amount);
+
+		uint32_t max_percent = GRAPHENE_100_PERCENT;
+		for (const auto & m:o.early_bird_pecents)
+			if (m.second > max_percent)
+			{
+				max_percent = m.second;
+			}
+		FC_ASSERT(o.early_bird_part >= (fc::uint128_t(o.amount.value) * max_percent / GRAPHENE_100_PERCENT - o.amount.value).to_uint64(), "not enough early bird part");
+
+
 		return void_result();
 	} FC_CAPTURE_AND_RETHROW((o))
 }

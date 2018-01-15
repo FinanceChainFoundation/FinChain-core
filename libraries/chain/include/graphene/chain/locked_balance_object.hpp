@@ -64,22 +64,41 @@ namespace graphene { namespace chain {
          return (lock_time+lock_period).value;
       }
    };
-   //struct by_id{};
    
+   class locked_statistics_object : public abstract_object<locked_statistics_object>
+   {
+   public:
+      static const uint8_t space_id = implementation_ids;
+      static const uint8_t type_id  = impl_locked_statistics_object_type;
+      
+      TimeStamp  unlock_time;
+      share_type locked_value;
+      asset_id_type asset_id;
+      
+   };
+
+   struct by_asset_time;
    /**
     * @ingroup object_index
     */
-   /*
+   
    typedef multi_index_container<
-      locked_balance_object,
+      locked_statistics_object,
       indexed_by<
-         ordered_unique< tag<by_id>, member< object, object_id_type, &object::id > >
+         ordered_unique< tag<by_id>, member< object, object_id_type, &object::id > >,
+         ordered_unique< tag<by_asset_time>,
+            composite_key<
+               locked_statistics_object,
+               member<locked_statistics_object, asset_id_type, &locked_statistics_object::asset_id>,
+               member<locked_statistics_object, TimeStamp, &locked_statistics_object::unlock_time>   
+            >
+         >
       >
-   > locked_balance_index_type;
+   >locked_statistics_index_type;
    
 
-   typedef generic_index<locked_balance_object, locked_balance_index_type> locked_balance_index;
-    */
+   typedef generic_index<locked_statistics_object, locked_statistics_index_type> locked_statistics_index;
+  
 }}
 
 FC_REFLECT_ENUM(graphene::chain::locked_balance_object::LockType,(genesis)(userSet))
@@ -87,4 +106,9 @@ FC_REFLECT_ENUM(graphene::chain::locked_balance_object::LockType,(genesis)(userS
 FC_REFLECT_DERIVED( graphene::chain::locked_balance_object,
                    (graphene::db::object),
                    (initial_lock_balance)(locked_balance)(lock_time)(lock_period)(lock_type)
+                   )
+
+FC_REFLECT_DERIVED( graphene::chain::locked_statistics_object,
+                   (graphene::db::object),
+                   (unlock_time)(locked_value)(asset_id)
                    )

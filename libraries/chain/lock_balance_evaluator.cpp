@@ -65,13 +65,14 @@ namespace graphene { namespace chain {
          const asset_dynamic_data_object asset_dynamic_data_o=asset_type.dynamic_data(d);
          const asset_lock_data_object & lock_data_obj=asset_type.lock_data(d);
          
+         uint64_t lock_time=d.get_dynamic_global_properties().time.sec_since_epoch();
          const auto new_locked_balance_o =d.create<locked_balance_object>([&](locked_balance_object &obj){
             obj.initial_lock_balance=o.amount.amount;
             obj.locked_balance=to_locked_balance;
             obj.lock_period=o.period;
             obj.lock_type=locked_balance_object::userSet;
-			obj.asset_id = o.amount.asset_id;
-            obj.lock_time=d.get_dynamic_global_properties().time.sec_since_epoch();
+			   obj.asset_id =o.amount.asset_id;
+            obj.lock_time=lock_time;
          });
          
          
@@ -80,7 +81,7 @@ namespace graphene { namespace chain {
 
          FC_ASSERT( itr!=index.end(), "Insufficient Balance");
 
-		 d.adjust_balance(o.issuer, -o.amount);
+		   d.adjust_balance(o.issuer, -o.amount);
          
          d.modify(*itr,[&](account_balance_object & obj){
             obj.add_lock_balance(new_locked_balance_o.id);
@@ -98,6 +99,27 @@ namespace graphene { namespace chain {
             obj.locked_balance+=to_locked_balance;
          });
 
+         //statistas
+         uint64_t round_time_day=(o.period+lock_time)/(3600*24);
+         uint64_t round_time=round_time_day*(3600*24);
+         
+         auto& index_locked_statistics = d.get_index_type<locked_statistics_index>().indices().get<by_asset_time>();
+         auto itr2 = index_locked_statistics.find(boost::make_tuple(o.amount.asset_id, round_time));
+         if(itr2==index_locked_statistics.end())
+         {
+            const auto new_statistics =d.create<locked_statistics_object>([&](locked_statistics_object &obj){
+               obj.unlock_time=round_time;
+               obj.locked_value=to_locked_balance;
+               obj.asset_id=o.amount.asset_id;
+            });
+         }
+         else
+         {
+            d.modify(*itr2, [&](locked_statistics_object &obj){
+               obj.locked_value+=to_locked_balance;
+            });
+         }
+         
       return void_result();
    } FC_CAPTURE_AND_RETHROW( (o) ) }
    
@@ -200,10 +222,10 @@ namespace graphene { namespace chain {
             d.adjust_balance(o.issuer, asset(item.locked_balance,item.asset_id));
          }
          else if(!lock_data_obj.can_unlock_not_expired)
-     	 {
-     	 	FC_THROW_EXCEPTION( fc::assert_exception, "ASSET can't unlock balance if not expired!");
-     	 }
-		 else
+     	   {
+            FC_THROW_EXCEPTION( fc::assert_exception, "ASSET can't unlock balance if not expired!");
+     	   }
+		   else
          {
             d.adjust_balance(o.issuer, asset(item.initial_lock_balance, item.asset_id));
             d.modify(lock_data_obj, [&](asset_lock_data_object &obj){
@@ -222,6 +244,20 @@ namespace graphene { namespace chain {
          });
 
 
+         //statistas
+         const uint64_t round_time_day=(item.get_unlock_time())/(3600*24);
+         const uint64_t round_time=round_time_day*(3600*24);
+         const share_type to_locked_balance=item.locked_balance;
+         
+         auto& index_locked_statistics = d.get_index_type<locked_statistics_index>().indices().get<by_asset_time>();
+         auto itr2 = index_locked_statistics.find(boost::make_tuple(item.asset_id, round_time));
+         FC_ASSERT(itr2!=index_locked_statistics.end());
+         {
+            FC_ASSERT(itr2->locked_value>=to_locked_balance);
+            d.modify(*itr2, [&](locked_statistics_object &obj){
+               obj.locked_value-=to_locked_balance;
+            });
+         }
 	   } FC_CAPTURE_AND_RETHROW((o))
    }
 

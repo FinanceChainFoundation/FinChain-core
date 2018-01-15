@@ -204,6 +204,8 @@ class database_api_impl : public std::enable_shared_from_this<database_api_impl>
       void on_applied_block();
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
    
+      vector<locked_statistics_object> get_asset_lock_statistics(asset_id_type asset_id,uint32_t start,uint32_t limit)const;
+   
       bool _notify_remove_create = false;
       mutable fc::bloom_filter _subscribe_filter;
       std::set<account_id_type> _subscribed_accounts;
@@ -2054,6 +2056,10 @@ void database_api_impl::on_applied_block()
 lock_data_detail database_api::get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const{
    return my->get_asset_lock_data( asset_id,period );
 }
+   
+vector<locked_statistics_object> database_api::get_asset_lock_statistics(asset_id_type asset_id,uint32_t start,uint32_t limit)const{
+   return my->get_asset_lock_statistics( asset_id,start,limit );
+}
 
 lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const{
    
@@ -2069,5 +2075,29 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    res.interest_pool = lock_data_obj.interest_pool;
    res.max_period = lock_data_obj.max_period;
    return res;
+}
+vector<locked_statistics_object>database_api_impl::get_asset_lock_statistics(asset_id_type asset_id,uint32_t start,uint32_t limit)const{
+   
+   FC_ASSERT(limit<200);
+   vector<locked_statistics_object> res;
+   const locked_statistics_index& _index = _db.get_index_type<locked_statistics_index>();
+   auto &index_by=_index.indices().get<by_asset_time>();
+   
+
+   if(start){
+      auto itr=index_by.find( boost::make_tuple( asset_id ,start) );
+      FC_ASSERT(itr!=index_by.end());
+      for(uint16_t i=0;i<limit&&itr!=index_by.end();i++){
+         res.push_back(*itr++);
+      }
+   }
+   else{
+      auto itr=index_by.lower_bound( asset_id );
+      FC_ASSERT(itr!=index_by.end());
+      for(uint16_t i=0;i<limit&&itr!=index_by.end();i++){
+         res.push_back(*itr++);
+      }
+   }
+   return  res;
 }
 } } // graphene::app

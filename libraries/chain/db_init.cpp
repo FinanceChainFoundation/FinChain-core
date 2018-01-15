@@ -133,6 +133,9 @@ const uint8_t locked_balance_object::type_id;
 
 const uint8_t asset_lock_data_object::space_id;
 const uint8_t asset_lock_data_object::type_id;
+   
+const uint8_t locked_statistics_object::space_id;
+const uint8_t locked_statistics_object::type_id;
 
 
 void database::initialize_evaluators()
@@ -231,6 +234,7 @@ void database::initialize_indexes()
    
    add_index< primary_index< simple_index< locked_balance_object        > > >();
    add_index< primary_index< simple_index< asset_lock_data_object       > > >();
+   add_index< primary_index< locked_statistics_index                      > >();
 }
 
 void database::init_genesis(const genesis_state_type& genesis_state)

@@ -1463,7 +1463,7 @@ public:
       tx.validate();
 
       _wallet.pending_witness_registrations[owner_account] = key_to_wif(witness_private_key);
-
+      
       return sign_transaction( tx, broadcast );
    } FC_CAPTURE_AND_RETHROW( (owner_account)(broadcast) ) }
 
@@ -4553,7 +4553,21 @@ lock_data_detail   wallet_api::get_lock_data(string asset_symbol,string period)
 
 	return (my->_remote_db->get_asset_lock_data(id, nPeriod));
 }
+   
+vector<locked_statistics_detail> wallet_api::get_asset_lock_statistics(string asset,uint32_t start,uint32_t limit)const{
+   asset_id_type    id = get_asset_id(asset);
+   vector<locked_statistics_detail>  res;
+   auto locked_statistics_objs=my->_remote_db->get_asset_lock_statistics(id, start,limit);
+   for(const auto & lsobj:locked_statistics_objs){
+      locked_statistics_detail temp;
+      temp.unlock_time=fc::time_point_sec(lsobj.unlock_time.value);
+      temp.balance=lsobj.locked_value;
+      res.push_back(temp);
+   }
 
+   return res;
+}
+   
 signed_transaction wallet_api::set_lock_data(string account_name,
 	string asset_symbol,
 	string nominal_interest_rate,

@@ -114,6 +114,12 @@ struct blind_receipt
    stealth_confirmation            conf;
 };
 
+struct locked_statistics_detail{
+   fc::time_point_sec unlock_time;
+   share_type        balance;
+};
+   
+
 struct by_from;
 struct by_to;
 struct by_to_asset_used;
@@ -1514,6 +1520,8 @@ class wallet_api
 
 
 	  lock_data_detail   get_lock_data(string asset_symbol, string period = "0");
+     vector<locked_statistics_detail> get_asset_lock_statistics(string asset,uint32_t start,uint32_t limit)const;
+   
 	  signed_transaction set_lock_data(string account_name,
 							  	  string asset_symbol,
                                   string nominal_interest_rate,
@@ -1533,13 +1541,13 @@ class wallet_api
 	  signed_transaction lock_balance(string account_name,
                                   string amount,
                                   string asset_symbol,
-								  string period,
+								          string period,
                                   bool broadcast = false);
 
 	  signed_transaction unlock_balance(string account_name,
                                   string asset_symbol,
                                   string locked_id,
-								  string expired,
+                                  string expired,
                                   bool broadcast = false);
 	  
 
@@ -1631,6 +1639,8 @@ FC_REFLECT_DERIVED( graphene::wallet::vesting_balance_object_with_info, (graphen
 
 FC_REFLECT( graphene::wallet::operation_detail, 
             (memo)(description)(op) )
+
+FC_REFLECT(graphene::wallet::locked_statistics_detail,(unlock_time)(balance))
 
 FC_API( graphene::wallet::wallet_api,
         (help)
@@ -1747,10 +1757,11 @@ FC_API( graphene::wallet::wallet_api,
         (blind_history)
         (receive_blind_transfer)
         (get_order_book)
-		(set_lock_data)
-		(get_lock_data)
+        (set_lock_data)
+		  (get_lock_data)
 		//(get_account_locked_data)
-		(donation_balance)
-		(lock_balance)
-		(unlock_balance)		
+		  (donation_balance)
+		  (lock_balance)
+		  (unlock_balance)
+        (get_asset_lock_statistics)
       )

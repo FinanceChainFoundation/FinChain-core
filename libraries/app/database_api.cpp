@@ -2078,26 +2078,27 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
 }
 vector<locked_statistics_object>database_api_impl::get_asset_lock_statistics(asset_id_type asset_id,uint32_t start,uint32_t limit)const{
    
-   FC_ASSERT(limit<200);
+   FC_ASSERT(limit<720);
    vector<locked_statistics_object> res;
    const locked_statistics_index& _index = _db.get_index_type<locked_statistics_index>();
    auto &index_by=_index.indices().get<by_asset_time>();
    
 
-   if(start){
-      auto itr=index_by.find( boost::make_tuple( asset_id ,start) );
+   //if(start){
+      auto itr=start?index_by.find( boost::make_tuple( asset_id ,start) ):index_by.lower_bound( asset_id );
       FC_ASSERT(itr!=index_by.end());
       for(uint16_t i=0;i<limit&&itr!=index_by.end();i++){
-         res.push_back(*itr++);
+         //if(itr->locked_value.value)
+            res.push_back(*itr++);
       }
-   }
+   /*}
    else{
       auto itr=index_by.lower_bound( asset_id );
       FC_ASSERT(itr!=index_by.end());
       for(uint16_t i=0;i<limit&&itr!=index_by.end();i++){
          res.push_back(*itr++);
       }
-   }
+   }*/
    return  res;
 }
 } } // graphene::app

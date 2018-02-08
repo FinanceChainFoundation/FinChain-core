@@ -662,7 +662,6 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
       // Add the account's balances
       auto balance_range = _db.get_index_type<account_balance_index>().indices().get<by_account_asset>().equal_range(boost::make_tuple(account->id));
       //vector<account_balance_object> balances;
-      vector<full_account::FixBalance>                       fix_balances;
       std::for_each(balance_range.first, balance_range.second,
                     [&](const account_balance_object& balance) {
                        acnt.balances.emplace_back(balance);
@@ -671,11 +670,8 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
                        for(auto id:balance.lockeds)
                           asset_fix_balances.emplace_back(id(_db));
                        if(asset_fix_balances.size())
-                          fix_balances.emplace_back(full_account::FixBalance(balance.asset_type,asset_fix_balances));
+                          acnt.fix_balances.emplace_back(full_account::FixBalance(balance.asset_type,asset_fix_balances));
                     });
-      
-      if(fix_balances.size())
-         acnt.fix_balances=fix_balances;
       
       // Add the account's vesting balances
       auto vesting_range = _db.get_index_type<vesting_balance_index>().indices().get<by_account>().equal_range(account->id);
@@ -719,7 +715,7 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
 	  auto presale_record_range = _db.get_index_type<presale_record_index>().indices().get<by_owner>().equal_range(account->id);
 	  std::for_each(presale_record_range.first, presale_record_range.second,
 		  [&acnt](const presale_record_object& presale) {
-		  acnt.presales->push_back(presale);
+		  acnt.presales.push_back(presale);
 	  });
 	 
 

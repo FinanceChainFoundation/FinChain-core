@@ -636,13 +636,13 @@ void_result asset_buy_presale_evaluator::do_evaluate(const asset_presale_buy_ope
 	try {
 		database& d = db();
 		const asset_presale_object & presale_obj = o.presale(d);
+		FC_ASSERT(presale_obj.issuer != o.issuer,  "owner can't buy presale itself");
 		FC_ASSERT(presale_obj.stop > d.head_block_time(),  "Presale is already stopped!");
 		FC_ASSERT(presale_obj.start < d.head_block_time(), "Presale is not startted!");
 		FC_ASSERT(d.get_balance(o.issuer, o.amount.asset_id) >= o.amount, "No enough balance!");
 		return void_result();
 	} FC_CAPTURE_AND_RETHROW((o))
 }
-
 
 void_result asset_buy_presale_evaluator::do_apply(const asset_presale_buy_operation& o)
 {

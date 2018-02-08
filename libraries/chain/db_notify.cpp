@@ -365,6 +365,8 @@ void get_relevant_accounts( const object* obj, flat_set<account_id_type>& accoun
               break;
 			 case impl_asset_lock_data_type:
 			  break;
+			 case impl_presale_record_object_type:
+			  break;
       }
    }
 } // end get_relevant_accounts( const object* obj, flat_set<account_id_type>& accounts )

@@ -44,7 +44,6 @@ namespace graphene { namespace chain {
    class account_object;
    class database;
    using namespace graphene::db;
-
    /**
     *  @brief tracks the asset information that changes frequently
     *  @ingroup object
@@ -100,6 +99,27 @@ namespace graphene { namespace chain {
 /*
 for presale asset functions
 */
+
+   class presale_record_object : public abstract_object<presale_record_object>
+   {
+   public:
+	   static const uint8_t space_id = implementation_ids;
+	   static const uint8_t type_id = impl_presale_record_object_type;
+
+	   struct one_record
+	   {
+		   asset_id_type	asset_id;
+		   time_point_sec	when;
+		   share_type		amount;
+	   };
+	   account_id_type  owner;
+	   asset_presale_id_type presale_id;
+	   vector<one_record>	records;
+	   time_point_sec	last_claim_time = time_point_sec(0);
+	   share_type		total_balance = 0;
+	   share_type		claimed_balance = 0;
+   };
+
    class asset_presale_object : public abstract_object<asset_presale_object>
    {
    public:
@@ -156,28 +176,14 @@ for presale asset functions
 	   vector<support_asset> accepts;
 	   bool					 ower_get  = false;
 
-	   struct record
-	   {
-		   asset_id_type	asset_id;
-		   time_point_sec	when;
-		   share_type		amount;
-	   };
-
-	   struct account_presale_detail
-	   {
-		   vector<record>	records;
-		   time_point_sec	last_claim_time = time_point_sec(0);
-		   share_type		total_balance = 0;
-		   share_type		claimed_balance = 0;
-	   };
 	   //buyers attend presale,it also means history,time_point_sec shows claim balance timestamp;
-	   map<account_id_type, account_presale_detail>   details;
+	   map<account_id_type, presale_record_id_type>   details;
 
 	   bool	is_selling(const time_point_sec& now)const;
 	   bool	is_presale_failed(const time_point_sec & now) const;
 	   uint64_t	  early_bird(const time_point_sec& now) const;//percent of early bird
-	   share_type should_reward(const record & item) const;
-	   account_presale_detail get_account_detail(account_id_type account)const;
+	   share_type should_reward(const presale_record_object::one_record & item) const;
+	   presale_record_object get_account_detail(account_id_type account,const database & d)const;
    };
 
    /**
@@ -375,6 +381,19 @@ for presale asset functions
    > asset_object_multi_index_type;
    typedef generic_index<asset_object, asset_object_multi_index_type> asset_index;
 
+
+
+   struct by_owner;
+   struct by_type;
+   typedef multi_index_container<
+	   presale_record_object,
+	   indexed_by<
+	   ordered_unique< tag<by_id>, member< object, object_id_type, &object::id > >,
+	   ordered_non_unique< tag<by_owner>, member<presale_record_object, account_id_type, &presale_record_object::owner > >
+	   >
+   > presale_record_object_multi_index_type;
+   typedef generic_index<presale_record_object, presale_record_object_multi_index_type> presale_record_index;
+
 } } // graphene::chain
 
 FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::object),
@@ -407,9 +426,9 @@ FC_REFLECT_DERIVED( graphene::chain::asset_object, (graphene::db::object),
                   )
 
 
+FC_REFLECT(graphene::chain::presale_record_object::one_record, (asset_id)(when)(amount))
+FC_REFLECT(graphene::chain::presale_record_object, (owner)(presale_id)(records)(last_claim_time)(total_balance)(claimed_balance))
 FC_REFLECT( graphene::chain::asset_presale_object::support_asset, (asset_id)(amount)(base_price)(least)(most)(current)(current_weight)(is_reached_hard_top) )
-FC_REFLECT( graphene::chain::asset_presale_object::record, (asset_id)(when)(amount) )
-FC_REFLECT( graphene::chain::asset_presale_object::account_presale_detail, (records)(last_claim_time)(total_balance)(claimed_balance))
 
 
 FC_REFLECT_DERIVED(graphene::chain::asset_presale_object, (graphene::db::object),
@@ -430,3 +449,5 @@ FC_REFLECT_DERIVED(graphene::chain::asset_presale_object, (graphene::db::object)
 					(ower_get)
 					(details)
 				)
+
+		

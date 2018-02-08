@@ -715,6 +715,14 @@ std::map<std::string, full_account> database_api_impl::get_full_accounts( const 
                        acnt.withdraws.emplace_back(withdraw);
                     });
 
+	  //get presales
+	  auto presale_record_range = _db.get_index_type<presale_record_index>().indices().get<by_owner>().equal_range(account->id);
+	  std::for_each(presale_record_range.first, presale_record_range.second,
+		  [&acnt](const presale_record_object& presale) {
+		  acnt.presales->push_back(presale);
+	  });
+	 
+
       results[account_name_or_id] = acnt;
    }
    return results;

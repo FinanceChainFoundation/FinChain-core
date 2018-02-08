@@ -143,7 +143,7 @@ uint64_t	asset_presale_object::early_bird(const time_point_sec& now) const
 	return percent;
 }
 
-share_type asset_presale_object::should_reward(const record &  item) const
+share_type asset_presale_object::should_reward(const presale_record_object::one_record &  item) const
 {
 	fc::uint128_t result = 0;
 	for (auto i = 0; i < accepts.size(); i++)
@@ -163,15 +163,15 @@ share_type asset_presale_object::should_reward(const record &  item) const
 	return result.to_uint64();
 }
 
-asset_presale_object::account_presale_detail asset_presale_object::get_account_detail(account_id_type account)const
+presale_record_object asset_presale_object::get_account_detail(account_id_type account,const database & d)const
 {
 	const auto  item = details.find(account);
 	FC_ASSERT(item != details.end(),"account not attend the presale");
-	account_presale_detail result = item->second;
+	presale_record_object result = item->second(d);
 	if (result.last_claim_time == time_point_sec(0))// yet not claimed balance before
 	{
 		result.total_balance = 0;
-		for (auto i = item->second.records.begin(); i != item->second.records.end(); i++)
+		for (auto i = result.records.begin(); i != result.records.end(); i++)
 		{
 			result.total_balance += should_reward(*i);
 		}

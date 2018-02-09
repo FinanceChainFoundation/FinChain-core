@@ -710,7 +710,15 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_presale_buy_operat
 		presale_record_id_type record_id = detail.id;
 		if(bNewRecord)
 		{
-			const presale_record_object& presale_record = d.create<presale_record_object>([&](presale_record_object &obj){obj = detail;});
+			const presale_record_object& presale_record = d.create<presale_record_object>([&](presale_record_object &obj){
+            //obj = detail;
+            obj.owner=detail.owner;
+            obj.presale_id=detail.presale_id;
+            obj.records=detail.records;
+            obj.last_claim_time =detail.last_claim_time;
+            obj.total_balance=detail.total_balance;
+            obj.claimed_balance = detail.claimed_balance;
+         });
 			record_id = presale_record.id;
 		}
 		else

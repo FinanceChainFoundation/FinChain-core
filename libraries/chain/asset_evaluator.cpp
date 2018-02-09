@@ -636,13 +636,13 @@ void_result asset_buy_presale_evaluator::do_evaluate(const asset_presale_buy_ope
 	try {
 		database& d = db();
 		const asset_presale_object & presale_obj = o.presale(d);
+		FC_ASSERT(presale_obj.issuer != o.issuer,  "owner can't buy presale itself");
 		FC_ASSERT(presale_obj.stop > d.head_block_time(),  "Presale is already stopped!");
 		FC_ASSERT(presale_obj.start < d.head_block_time(), "Presale is not startted!");
 		FC_ASSERT(d.get_balance(o.issuer, o.amount.asset_id) >= o.amount, "No enough balance!");
 		return void_result();
 	} FC_CAPTURE_AND_RETHROW((o))
 }
-
 
 void_result asset_buy_presale_evaluator::do_apply(const asset_presale_buy_operation& o)
 {
@@ -669,12 +669,17 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_presale_buy_operat
 		FC_ASSERT(index >=0, "not support the asset");		
 		
 		auto itrl = presale_obj.details.find(o.issuer); //check whether user buy before.		
-		asset_presale_object::record item;
-		asset_presale_object::account_presale_detail detail;
+		presale_record_object::one_record item;
+		presale_record_object detail;
+		bool bNewRecord = false;
 		
 		if (itrl != presale_obj.details.end())
 		{
-			detail = itrl->second;
+			bNewRecord = false;
+			detail = itrl->second(d);
+		}else
+		{
+			bNewRecord = true;
 		}
 
 		item.asset_id = o.amount.asset_id;
@@ -702,11 +707,23 @@ void_result asset_buy_presale_evaluator::do_apply(const asset_presale_buy_operat
 			
 		detail.records.push_back(item);
 		d.adjust_balance(o.issuer, asset(-item.amount, item.asset_id));
+		presale_record_id_type record_id = detail.id;
+		if(bNewRecord)
+		{
+			const presale_record_object& presale_record = d.create<presale_record_object>([&](presale_record_object &obj){obj = detail;});
+			record_id = presale_record.id;
+		}
+		else
+		{
+			d.modify(detail, [&](presale_record_object& obj){obj = detail;});
+			record_id = detail.id;
+		}
+			
 		d.modify(presale_obj, [&](asset_presale_object& obj){
 			obj.accepts[index].current += item.amount;
 			obj.accepts[index].is_reached_hard_top = is_hard_top;
 			obj.accepts[index].current_weight += (fc::uint128_t(item.amount.value)*obj.early_bird(d.head_block_time()) / GRAPHENE_100_PERCENT).to_uint64();
-			obj.details[o.issuer] = detail;
+			obj.details[o.issuer] = record_id;
 			
 		});
 		return void_result();
@@ -775,46 +792,48 @@ void_result asset_presale_claim_evaluator::do_apply(const asset_presale_claim_op
 		const auto & itrl = presale_obj.details.find(o.issuer);
 
 		FC_ASSERT(itrl != presale_obj.details.end(), "invalid investor");
-		
+
+		const presale_record_object & record = itrl->second(d);
 		
 		if (presale_obj.is_presale_failed(d.head_block_time())) //  investors can get back their assets if presale failed.
 		{
-			FC_ASSERT(itrl->second.last_claim_time == time_point_sec(0), "already get back the assets");
+			FC_ASSERT(record.last_claim_time == time_point_sec(0), "already get back the assets");
 			
-			for (auto i = itrl->second.records.begin(); i != itrl->second.records.end(); i++)
+			for (auto i = record.records.begin(); i != record.records.end(); i++)
 			{
 				d.adjust_balance(o.issuer, asset(i->amount,i->asset_id));
 			}
 			
-			d.modify(presale_obj, [&](asset_presale_object& obj){
-				obj.details[o.issuer].last_claim_time = d.head_block_time();
+			d.modify(record, [&](presale_record_object& obj)
+			{
+				obj.last_claim_time = d.head_block_time();
 			});
 		}
 		else
 		{
 			if (presale_obj.lock_period == 0 || presale_obj.unlock_type == 1) //both types can claim their total balance at one time.
 			{
-				FC_ASSERT(itrl->second.last_claim_time == time_point_sec(0), "already claimed balance");
+				FC_ASSERT(record.last_claim_time == time_point_sec(0), "already claimed balance");
 
 				if (presale_obj.unlock_type == 1)
 				{
 					FC_ASSERT(d.head_block_time() >= presale_obj.stop + presale_obj.lock_period, "not time to claim balance");
 				}
 
-				auto detail = presale_obj.get_account_detail(o.issuer);			
+				auto detail = presale_obj.get_account_detail(o.issuer,d);
 
 				d.adjust_balance(o.issuer, asset(detail.total_balance, presale_obj.asset_id));
 
 				detail.last_claim_time = d.head_block_time();
 				detail.claimed_balance = detail.total_balance;
 
-				d.modify(presale_obj, [&](asset_presale_object& obj){
-					obj.details[o.issuer] = detail;
+				d.modify(detail, [&](presale_record_object& obj){
+					obj = detail;
 				});
 			}
 			else // unlock balance by line way
 			{
-				auto detail = presale_obj.get_account_detail(o.issuer);
+				auto detail = presale_obj.get_account_detail(o.issuer,d);
 				FC_ASSERT(detail.last_claim_time < presale_obj.stop + presale_obj.lock_period, "already claimed all balances.");
 				int64_t elapsed_seconds = (d.head_block_time() - presale_obj.stop).to_seconds();
 				if (elapsed_seconds > presale_obj.lock_period)
@@ -826,8 +845,8 @@ void_result asset_presale_claim_evaluator::do_apply(const asset_presale_claim_op
 
 				detail.last_claim_time = d.head_block_time();
 				detail.claimed_balance += this_vest;
-				d.modify(presale_obj, [&](asset_presale_object& obj){
-					obj.details[o.issuer] = detail;
+				d.modify(detail, [&](presale_record_object& obj){
+					obj = detail;
 				});
 			}
 		}

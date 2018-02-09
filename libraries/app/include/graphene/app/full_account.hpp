@@ -55,7 +55,8 @@ namespace graphene { namespace app {
       vector<proposal_object>          proposals;
       vector<asset_id_type>            assets;
       vector<withdraw_permission_object> withdraws;
-      optional<vector<FixBalance>>     fix_balances;
+      vector<FixBalance>     		   fix_balances;
+	  vector<presale_record_object>    presales;
    };
 
 } }
@@ -77,6 +78,7 @@ FC_REFLECT( graphene::app::full_account,
             (assets)
             (withdraws)
             (fix_balances)
+            (presales)
           )
 FC_REFLECT( graphene::app::full_account::FixBalance,
            (asset_type)

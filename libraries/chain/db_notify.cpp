@@ -305,6 +305,10 @@ void get_relevant_accounts( const object* obj, flat_set<account_id_type>& accoun
         } case balance_object_type:{
            /** these are free from any accounts */
            break;
+        } case locked_balance_object_type:{
+           break;
+        } case asset_presale_object_type:{
+           break;
         }
       }
    }
@@ -359,6 +363,10 @@ void get_relevant_accounts( const object* obj, flat_set<account_id_type>& accoun
               break;
              case impl_fba_accumulator_object_type:
               break;
+			 case impl_asset_lock_data_type:
+			  break;
+			 case impl_presale_record_object_type:
+			  break;
       }
    }
 } // end get_relevant_accounts( const object* obj, flat_set<account_id_type>& accounts )

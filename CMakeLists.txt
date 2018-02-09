@@ -77,6 +77,7 @@ if( WIN32 )
 
 #set compile option
     add_compile_options(/MP)
+    add_compile_options(/bigobj)
 
     set( DB_VERSION 60 )
     set( BDB_STATIC_LIBS 1 )

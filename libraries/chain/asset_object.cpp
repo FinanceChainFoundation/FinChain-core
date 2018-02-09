@@ -94,6 +94,93 @@ Interest asset_lock_data_object::_get_interest(uint32_t lock_period,const databa
    return Interest(base_asset,res_asset);
 }
 
+bool	asset_presale_object::is_selling(const time_point_sec & now)const
+{
+	if (now > stop || now < start)
+		return false; 
+	for (auto itr = accepts.begin(); itr != accepts.end(); itr++)
+		if (!itr->is_reached_hard_top)
+			return true;
+	return false;
+}
+
+bool	asset_presale_object::is_presale_failed(const time_point_sec & now) const
+{
+	if (now < stop)
+		return false;
+	fc::uint128_t sold = 0;
+	if (mode == 0)
+	{
+		for (const auto& n : accepts)
+		{
+			auto nx = fc::uint128_t(n.current.value) * n.base_price.value / JRC_INTEREST_BASE_SUPPLY;
+			sold += nx;
+			if (sold >= soft_top.value)
+				return false;
+		}
+	}
+	else
+	{
+		if (accepts[0].current < soft_top)
+			return true;
+		else
+			return false;
+	}
+	return true;
+}
+
+uint64_t	asset_presale_object::early_bird(const time_point_sec& now) const
+{
+	uint32_t percent = GRAPHENE_100_PERCENT;
+	for (auto find = early_bird_pecents.begin(); find != early_bird_pecents.end(); find++)
+	{
+		if (now < find->first)
+		{
+			percent = find->second;
+			break;
+		}
+	}
+	return percent;
+}
+
+share_type asset_presale_object::should_reward(const record &  item) const
+{
+	fc::uint128_t result = 0;
+	for (auto i = 0; i < accepts.size(); i++)
+	{
+		if (accepts[i].asset_id == item.asset_id)
+		{
+			uint64_t percent = early_bird(item.when);
+
+			if (mode == 0)
+				result = fc::uint128_t(item.amount.value) * accepts[i].base_price.value / JRC_INTEREST_BASE_SUPPLY * percent / GRAPHENE_100_PERCENT;
+			else
+				result = fc::uint128_t(item.amount.value) * percent / GRAPHENE_100_PERCENT * accepts[i].amount.value / accepts[i].current.value;
+			//todo  total limit mode should think further deep
+			return result.to_uint64();
+		}
+	}
+	return result.to_uint64();
+}
+
+asset_presale_object::account_presale_detail asset_presale_object::get_account_detail(account_id_type account)const
+{
+	const auto  item = details.find(account);
+	FC_ASSERT(item != details.end(),"account not attend the presale");
+	account_presale_detail result = item->second;
+	if (result.last_claim_time == time_point_sec(0))// yet not claimed balance before
+	{
+		result.total_balance = 0;
+		for (auto i = item->second.records.begin(); i != item->second.records.end(); i++)
+		{
+			result.total_balance += should_reward(*i);
+		}
+	}
+
+	return result;
+}
+
+
 share_type asset_bitasset_data_object::max_force_settlement_volume(share_type current_supply) const
 {
    if( options.maximum_force_settlement_volume == 0 )

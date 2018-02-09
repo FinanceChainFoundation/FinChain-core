@@ -1568,6 +1568,36 @@ class wallet_api
 
       std::map<string,std::function<string(fc::variant,const fc::variants&)>> get_result_formatters() const;
 
+	  //for presales
+	  vector<asset_presale_object> list_asset_presales(string asset_symbol);
+
+	  signed_transaction create_presale(string account_name,
+                                  string asset_symbol,
+                                  time_point_sec start,
+								  time_point_sec stop,
+								  asset_id_type asset_id,
+								  share_type amount,
+								  share_type early_bird_part,
+								  asset_id_type asset_of_top,
+								  share_type soft_top,
+								  share_type hard_top,
+								  uint32_t lock_period,
+								  uint8_t unlock_type,
+								  uint8_t mode,
+								  map<time_point_sec, uint32_t> early_bird_pecents,
+								  vector<asset_presale_create_operation::support_asset> accepts,
+                                  bool broadcast = false); 
+
+	  signed_transaction buy_presale(string account_name,
+								  string presale,
+								  string amount,
+								  string asset_symbol,
+								  bool broadcast = false);
+
+	  signed_transaction claim_presale(string account_name,
+								  string presale,
+								  bool broadcast = false);
+
       fc::signal<void(bool)> lock_changed;
       std::shared_ptr<detail::wallet_api_impl> my;
       void encrypt_keys();
@@ -1749,8 +1779,11 @@ FC_API( graphene::wallet::wallet_api,
         (get_order_book)
 		(set_lock_data)
 		(get_lock_data)
-		//(get_account_locked_data)
 		(donation_balance)
 		(lock_balance)
-		(unlock_balance)		
+		(unlock_balance)
+		(list_asset_presales)
+		(create_presale)
+		(buy_presale)
+		(claim_presale)
       )

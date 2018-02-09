@@ -205,6 +205,18 @@ struct get_impacted_account_visitor
    {
 	   _impacted.insert(op.issuer);
    }
+   void operator()(const asset_presale_create_operation & op)
+   {
+	   _impacted.insert(op.issuer);
+   }
+   void operator()(const asset_presale_buy_operation & op)
+   {
+	   _impacted.insert(op.issuer);
+   }
+   void operator()(const asset_presale_claim_operation & op)
+   {
+	   _impacted.insert(op.issuer);
+   }
 };
 
 void operation_get_impacted_accounts( const operation& op, flat_set<account_id_type>& result )

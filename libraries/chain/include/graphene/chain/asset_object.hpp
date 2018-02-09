@@ -97,6 +97,89 @@ namespace graphene { namespace chain {
 
    };
 
+/*
+for presale asset functions
+*/
+   class asset_presale_object : public abstract_object<asset_presale_object>
+   {
+   public:
+	   static const uint8_t space_id = protocol_ids;
+	   static const uint8_t type_id  = asset_presale_object_type;
+
+	   account_id_type	issuer;
+	   //presale start time
+	   time_point_sec	start;
+	   //presale stop time
+	   time_point_sec	stop;
+	   //presale finish time
+	   //time_point_sec	finish;
+	   //asset type to presale
+	   asset_id_type	asset_id;
+	   //amount of presale
+	   share_type		amount;
+	   share_type		early_bird_part;
+	  
+	   //limit related
+	   asset_id_type	asset_of_top;
+	   share_type		soft_top;
+	   share_type		hard_top;
+	   
+
+	   //lock seconds. 0:don't lock
+	   uint32_t			lock_period;
+	   // 0:line  1:when lock expired
+	   uint8_t			unlock_type;
+
+	   // 0:fixed prices but wait until presale success  1:total price mode
+	   uint8_t			mode;
+
+	   map<time_point_sec, uint32_t>	early_bird_pecents;
+
+	   //support asset
+	   struct support_asset
+	   {
+		   asset_id_type	asset_id;
+		   //amount of presale
+		   share_type		amount;
+
+		   share_type		base_price; //base JRC_INTEREST_BASE_SUPPLY
+		   
+		   //user should pay at least/most asset to attend the presale.
+		   share_type		least;
+		   share_type		most;
+
+		   //already received current amount of the asset
+		   share_type		current = 0;
+		   share_type		current_weight = 0;
+		   bool				is_reached_hard_top = false;
+	   };
+	   vector<support_asset> accepts;
+	   bool					 ower_get  = false;
+
+	   struct record
+	   {
+		   asset_id_type	asset_id;
+		   time_point_sec	when;
+		   share_type		amount;
+	   };
+
+	   struct account_presale_detail
+	   {
+		   vector<record>	records;
+		   time_point_sec	last_claim_time = time_point_sec(0);
+		   share_type		total_balance = 0;
+		   share_type		claimed_balance = 0;
+	   };
+	   //buyers attend presale,it also means history,time_point_sec shows claim balance timestamp;
+	   map<account_id_type, account_presale_detail>   details;
+
+	   bool	is_selling(const time_point_sec& now)const;
+	   bool	is_presale_failed(const time_point_sec & now) const;
+	   uint64_t	  early_bird(const time_point_sec& now) const;//percent of early bird
+	   share_type should_reward(const record & item) const;
+	   account_presale_detail get_account_detail(account_id_type account)const;
+   };
+
    /**
     *  @brief tracks the parameters of an asset
     *  @ingroup object
@@ -154,6 +237,7 @@ namespace graphene { namespace chain {
 
          asset_options options;
 
+		 vector<asset_presale_id_type>	presales;
 
          /// Current supply, fee pool, and collected fees are stored in a separate object as they change frequently.
          asset_dynamic_data_id_type  dynamic_asset_data_id;
@@ -321,3 +405,28 @@ FC_REFLECT_DERIVED( graphene::chain::asset_object, (graphene::db::object),
                     (bitasset_data_id)
                     (buyback_account)
                   )
+
+
+FC_REFLECT( graphene::chain::asset_presale_object::support_asset, (asset_id)(amount)(base_price)(least)(most)(current)(current_weight)(is_reached_hard_top) )
+FC_REFLECT( graphene::chain::asset_presale_object::record, (asset_id)(when)(amount) )
+FC_REFLECT( graphene::chain::asset_presale_object::account_presale_detail, (records)(last_claim_time)(total_balance)(claimed_balance))
+
+
+FC_REFLECT_DERIVED(graphene::chain::asset_presale_object, (graphene::db::object),
+					(issuer)
+					(start)
+					(stop)
+					(asset_id)            
+					(amount)
+					(early_bird_part)
+					(asset_of_top)
+					(soft_top)
+					(hard_top)
+					(lock_period)
+					(unlock_type)
+					(mode)
+					(early_bird_pecents)
+					(accepts)
+					(ower_get)
+					(details)
+				)

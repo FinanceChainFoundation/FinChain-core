@@ -644,6 +644,11 @@ class database_api
        *  @return asset`s lock data
        */
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
+
+	  /**
+	  *  @return asset`s presale data
+	  */
+	  vector<asset_presale_object> get_asset_presales(asset_id_type asset_id)const;
    private:
       std::shared_ptr< database_api_impl > my;
 };
@@ -757,5 +762,5 @@ FC_API(graphene::app::database_api,
    (get_blinded_balances)
        
    (get_asset_lock_data)
- //  (get_account_locked_data)
+   (get_asset_presales)
 )

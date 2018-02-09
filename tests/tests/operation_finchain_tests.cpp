@@ -46,6 +46,7 @@ using namespace graphene::chain::test;
 
 BOOST_FIXTURE_TEST_SUITE( operation_tests, database_fixture )
 
+/*
 BOOST_AUTO_TEST_CASE(lock_balance_test)
 {
 	try {
@@ -163,6 +164,8 @@ BOOST_AUTO_TEST_CASE(lock_balance_test)
 	}
 }
 
+
+//test for user issue asset's lock balance function
 BOOST_AUTO_TEST_CASE(lock_balance_test2)
 {
 	try {
@@ -290,6 +293,164 @@ BOOST_AUTO_TEST_CASE(lock_balance_test2)
 		generate_block(~0,generate_private_key("null_key"),28800 * 100);
 		unlock_balance(dan_balance, true, true);
 		BOOST_CHECK_EQUAL(get_balance(dan_id, ast_id), dan_balance);
+	}
+	catch (fc::exception& e) {
+		edump((e.to_detail_string()));
+		throw;
+	}
+}
+*/
+//test for asset presale
+BOOST_AUTO_TEST_CASE(asset_presale_test)
+{
+	try {
+		ACTORS((core)(first)(second)(third));
+		uint64_t UNIT = GRAPHENE_MAX_SHARE_SUPPLY / 10;
+		uint64_t dan_balance;
+
+		transfer(committee_account, core_id, asset(UNIT * 2));
+		transfer(committee_account, first_id, asset(UNIT * 2));
+		transfer(committee_account, second_id, asset(UNIT * 2));
+		transfer(committee_account, third_id, asset(UNIT * 2));
+		auto has_asset = [&](std::string symbol) -> bool
+		{
+			const auto& assets_by_symbol = db.get_index_type<asset_index>().indices().get<by_symbol>();
+			return assets_by_symbol.find(symbol) != assets_by_symbol.end();
+		};
+
+		BOOST_CHECK(!has_asset("FIRST"));
+		create_user_issued_asset("FIRST", first_id(db), 0);
+		BOOST_CHECK(has_asset("FIRST"));
+		auto a1 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("FIRST");
+		auto  a1_id = a1.get_id();
+		trx.clear();
+		issue_uia(first, a1.amount(GRAPHENE_MAX_SHARE_SUPPLY));
+
+		generate_block();
+		trx.clear();
+
+
+		BOOST_CHECK(!has_asset("SECOND"));
+		create_user_issued_asset("SECOND", second_id(db), 0);
+		BOOST_CHECK(has_asset("SECOND"));
+		auto a2 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("SECOND");
+		auto  a2_id = a2.get_id();
+		trx.clear();
+		issue_uia(get_account("second"), a2.amount(GRAPHENE_MAX_SHARE_SUPPLY));
+
+		generate_block();
+		trx.clear();
+
+
+		BOOST_CHECK(!has_asset("THIRD"));
+		create_user_issued_asset("THIRD", third_id(db), 0);
+		BOOST_CHECK(has_asset("THIRD"));
+		auto a3 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("THIRD");
+		auto a3_id = a3.get_id();
+		trx.clear();
+		issue_uia(get_account("third"), a3.amount(GRAPHENE_MAX_SHARE_SUPPLY));
+
+		generate_block();
+		trx.clear();
+		
+		generate_block();
+
+
+		auto create_presale = [&]()
+		{
+			asset_presale_create_operation op;
+			op.fee = asset();
+			op.issuer = first_id;
+			op.start = db.head_block_time() + 15;
+			op.stop = db.head_block_time() + 86400;
+			op.asset_id = a1_id;
+			op.amount = GRAPHENE_MAX_SHARE_SUPPLY/10;
+			op.early_bird_part = op.amount / GRAPHENE_100_PERCENT  * GRAPHENE_1_PERCENT * 50;
+			op.asset_of_top = a2_id;
+			op.soft_top = GRAPHENE_MAX_SHARE_SUPPLY / 50;
+			op.hard_top = GRAPHENE_MAX_SHARE_SUPPLY / 2;
+			op.lock_period = 86400;
+			op.unlock_type = 1;
+			op.mode = 0;
+
+			op.early_bird_pecents[db.head_block_time() + 1 * 86400] = GRAPHENE_1_PERCENT * 150;
+			op.early_bird_pecents[db.head_block_time() + 7 * 86400] = GRAPHENE_1_PERCENT * 140;
+			op.early_bird_pecents[db.head_block_time() + 15 * 86400] = GRAPHENE_1_PERCENT * 130;
+			op.early_bird_pecents[db.head_block_time() + 30 * 86400] = GRAPHENE_1_PERCENT * 120;
+
+			op.accepts.push_back({ a2_id, GRAPHENE_MAX_SHARE_SUPPLY / 20, 1100000000000LL, GRAPHENE_MAX_SHARE_SUPPLY / 100000, GRAPHENE_MAX_SHARE_SUPPLY / 2 });
+			op.accepts.push_back({ a3_id, GRAPHENE_MAX_SHARE_SUPPLY / 20, 1200000000000LL, GRAPHENE_MAX_SHARE_SUPPLY / 100000, GRAPHENE_MAX_SHARE_SUPPLY / 2 });
+
+			trx.operations.push_back(op);
+			set_expiration(db, trx);
+			sign(trx, first_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+			generate_block();
+			//verify_asset_supplies(db);
+		};
+		
+		auto buy_presale= [&]()
+		{
+			a1 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("FIRST");
+			asset_presale_buy_operation op;
+			op.fee = asset();
+			op.issuer = second_id;
+			op.amount = asset(GRAPHENE_MAX_SHARE_SUPPLY / 50,a2_id);
+			op.presale = a1.presales[0];
+			trx.operations.push_back(op);
+			set_expiration(db, trx);
+			sign(trx, second_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+			generate_block();
+			//verify_asset_supplies(db);
+		};
+
+		auto claim_presale = [&]()
+		{
+			a1 = *db.get_index_type<asset_index>().indices().get<by_symbol>().find("FIRST");
+			asset_presale_claim_operation op;
+			op.fee = asset();
+			op.issuer = second_id;
+			op.presale = a1.presales[0];
+			trx.operations.push_back(op);
+			set_expiration(db, trx);
+			sign(trx, second_private_key);
+			db.push_transaction(trx);
+			trx.clear();
+			generate_block();
+			//verify_asset_supplies(db);
+		};
+		
+		create_presale();
+
+		auto b1 = get_balance(first_id, a1_id);
+		auto b2 = get_balance(first_id, a2_id);
+		auto b3 = get_balance(first_id, a3_id);
+
+		generate_block(~0, generate_private_key("null_key"), 20);
+		buy_presale();
+
+		auto c1 = get_balance(second_id, a1_id);
+		auto c2 = get_balance(second_id, a2_id);
+		auto c3 = get_balance(second_id, a3_id);
+		generate_block(~0, generate_private_key("null_key"), 28800*2);
+
+		claim_presale();
+
+		auto d1 = get_balance(first_id, a1_id);
+		auto d2 = get_balance(first_id, a2_id);
+		auto d3 = get_balance(first_id, a3_id);
+
+		auto e1 = get_balance(second_id, a1_id);
+		auto e2 = get_balance(second_id, a2_id);
+		auto e3 = get_balance(second_id, a3_id);
+		generate_block(~0, generate_private_key("null_key"), 28800*3);
+
+		claim_presale();
+
+		BOOST_CHECK_EQUAL(get_balance(first_id, a1_id), GRAPHENE_MAX_SHARE_SUPPLY);
 	}
 	catch (fc::exception& e) {
 		edump((e.to_detail_string()));

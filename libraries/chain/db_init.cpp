@@ -134,6 +134,9 @@ const uint8_t locked_balance_object::type_id;
 const uint8_t asset_lock_data_object::space_id;
 const uint8_t asset_lock_data_object::type_id;
 
+const uint8_t asset_presale_object::space_id;
+const uint8_t asset_presale_object::type_id;
+
 
 void database::initialize_evaluators()
 {
@@ -183,6 +186,9 @@ void database::initialize_evaluators()
    register_evaluator<set_lock_data_evaluator>();
    register_evaluator<unlock_balance_evaluator>();
    register_evaluator<donation_balance_evaluator>();
+   register_evaluator<asset_presale_create_evaluator>();
+   register_evaluator<asset_buy_presale_evaluator>();
+   register_evaluator<asset_presale_claim_evaluator>();
 }
 
 void database::initialize_indexes()
@@ -231,6 +237,7 @@ void database::initialize_indexes()
    
    add_index< primary_index< simple_index< locked_balance_object        > > >();
    add_index< primary_index< simple_index< asset_lock_data_object       > > >();
+   add_index< primary_index< simple_index< asset_presale_object       > > >();
 }
 
 void database::init_genesis(const genesis_state_type& genesis_state)

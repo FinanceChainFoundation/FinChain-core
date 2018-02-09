@@ -112,6 +112,107 @@ namespace graphene { namespace chain {
       void validate()const;
    };
 
+   /*
+   for asset presale
+   */
+   
+   /**
+   * @ingroup operations
+   */
+   struct asset_presale_create_operation : public base_operation
+   {
+	   struct fee_parameters_type { 
+		   uint64_t fee = 5000 * GRAPHENE_BLOCKCHAIN_PRECISION; 
+		   uint32_t price_per_kbyte = 1 * GRAPHENE_BLOCKCHAIN_PRECISION;
+	   };
+
+	   asset                   fee;
+	   /// This account must sign and pay the fee for this operation. Later, this account may update the asset
+	   account_id_type         issuer;
+	   
+	   //presale start time
+	   time_point_sec	start;
+	   //presale stop time
+	   time_point_sec	stop;
+	   //presale finish time
+	   //time_point_sec	finish;
+	   //asset type to presale
+	   asset_id_type	asset_id;
+	   //amount to presale
+	   share_type		amount;
+	   share_type		early_bird_part;
+
+	   //limit related
+	   asset_id_type	asset_of_top;
+	   share_type		soft_top;
+	   share_type		hard_top;
+
+	   //lock seconds. 0:don't lock
+	   uint32_t			lock_period;
+	   // 0:line  1:when lock expired
+	   uint8_t			unlock_type;
+
+	   // 0:fixed prices but wait until presale success  1:total price mode
+	   uint8_t			mode;
+
+	   map<time_point_sec, uint32_t>	early_bird_pecents;
+
+	   //support asset
+	   struct support_asset
+	   {
+		   asset_id_type	asset_id;
+		   //amount to presale
+		   share_type		amount;
+
+		   share_type		base_price;  //base JRC_INTEREST_BASE_SUPPLY
+
+		   //user should pay at least/most asset to attend the presale.
+		   share_type		least;
+		   share_type		most;
+	   };
+	   vector<support_asset> accepts;
+	   extensions_type   	extensions;
+
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+
+   struct asset_presale_buy_operation : public base_operation
+   {
+	   struct fee_parameters_type { uint64_t fee = 1 * GRAPHENE_BLOCKCHAIN_PRECISION; };
+
+	   asset                   fee;
+	   /// This account must sign and pay the fee for this operation. Later, this account may update the asset
+	   account_id_type         issuer;
+
+	   asset_presale_id_type   presale;
+
+	   //paid amount to buy the presale asset
+	   asset		amount;
+	   extensions_type   	extensions;
+
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+
+   struct asset_presale_claim_operation : public base_operation
+   {
+	   struct fee_parameters_type { uint64_t fee = 1 * GRAPHENE_BLOCKCHAIN_PRECISION; };
+
+	   asset                   fee;
+	   /// This account must sign and pay the fee for this operation. Later, this account may update the asset
+	   account_id_type         issuer;
+
+	   asset_presale_id_type   presale;
+	   extensions_type   	extensions;
+	   account_id_type fee_payer()const { return issuer; }
+	   void            validate()const;
+	   share_type      calculate_fee(const fee_parameters_type& k)const;
+   };
+
+   //////////////////////////////////////////////////////////////////////////////////////
 
    /**
     * @ingroup operations
@@ -445,6 +546,10 @@ namespace graphene { namespace chain {
 
 } } // graphene::chain
 
+
+
+
+
 FC_REFLECT( graphene::chain::asset_claim_fees_operation, (fee)(issuer)(amount_to_claim)(extensions) )
 FC_REFLECT( graphene::chain::asset_claim_fees_operation::fee_parameters_type, (fee) )
 
@@ -472,7 +577,6 @@ FC_REFLECT( graphene::chain::bitasset_options,
             (extensions)
           )
 
-
 FC_REFLECT( graphene::chain::asset_create_operation::fee_parameters_type, (symbol3)(symbol4)(long_symbol)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::asset_global_settle_operation::fee_parameters_type, (fee) )
 FC_REFLECT( graphene::chain::asset_settle_operation::fee_parameters_type, (fee) )
@@ -485,6 +589,44 @@ FC_REFLECT( graphene::chain::asset_publish_feed_operation::fee_parameters_type, 
 FC_REFLECT( graphene::chain::asset_issue_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::asset_reserve_operation::fee_parameters_type, (fee) )
 
+FC_REFLECT( graphene::chain::asset_presale_create_operation::fee_parameters_type, (fee)(price_per_kbyte) )
+FC_REFLECT( graphene::chain::asset_presale_create_operation::support_asset, (asset_id)(amount)(base_price)(least)(most) )
+FC_REFLECT( graphene::chain::asset_presale_buy_operation::fee_parameters_type, (fee) )
+FC_REFLECT( graphene::chain::asset_presale_claim_operation::fee_parameters_type, (fee) )
+
+
+FC_REFLECT( graphene::chain::asset_presale_create_operation,
+            (fee)
+            (issuer)
+            (start)
+            (stop)
+            (asset_id)            
+			(amount)
+			(early_bird_part)
+			(asset_of_top)
+			(soft_top)
+			(hard_top)
+			(lock_period)
+			(unlock_type)
+			(mode)
+			(early_bird_pecents)
+	    	(accepts)
+	    	(extensions)
+          )		  
+FC_REFLECT(graphene::chain::asset_presale_buy_operation,
+		  (fee)
+		  (issuer)
+		  (presale)
+		  (amount)
+		  (extensions)
+		  )
+
+FC_REFLECT(graphene::chain::asset_presale_claim_operation,
+			  (fee)
+			  (issuer)
+			  (presale)
+			  (extensions)
+			  )
 
 FC_REFLECT( graphene::chain::asset_create_operation,
             (fee)

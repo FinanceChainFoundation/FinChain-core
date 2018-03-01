@@ -2330,6 +2330,7 @@ public:
       committee_member_update_global_parameters_operation update_op;
       update_op.new_parameters = new_params;
 
+      cout<< fc::json::to_pretty_string(new_params)<<endl;
       proposal_create_operation prop_op;
 
       prop_op.expiration_time = expiration_time;
@@ -2426,6 +2427,7 @@ public:
       set_operation_fees(tx, current_params.current_fees);
       tx.validate();
 
+      cout<< fc::json::to_pretty_string(new_params.current_fees)<<endl;
       return sign_transaction(tx, broadcast);
    }
 

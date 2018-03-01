@@ -131,6 +131,23 @@ namespace graphene { namespace chain {
       auto base_value = op.visit( calc_fee_visitor( params ) );
       auto scaled = fc::uint128(base_value) * scale;
       scaled /= GRAPHENE_100_PERCENT;
+      
+      //soft fork to deal bug of Max fee of proprole operation
+      {
+         if( scaled >=GRAPHENE_MAX_SHARE_SUPPLY)
+         {
+            auto which=op.which();
+            if(which>=operation::tag< proposal_create_operation >::value  && which<=operation::tag< proposal_delete_operation >::value ){
+               uint64_t temp_fee=300000000LL;//1*RAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-1000000000000000000LL+temp_fee;
+            }
+            if(which==operation::tag< asset_create_operation >::value){
+               uint64_t temp_fee=10000000000000LL;//100000*GRAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-1000000000000000000LL+temp_fee;
+            }
+         }
+      }
+      
       FC_ASSERT( scaled <= GRAPHENE_MAX_SHARE_SUPPLY );
       //idump( (base_value)(scaled)(core_exchange_rate) );
       auto result = asset( scaled.to_uint64(), asset_id_type(0) ) * core_exchange_rate;

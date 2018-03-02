@@ -247,92 +247,80 @@
   },
   "initial_accounts": [{
       "name": "init0",
-      "owner_key": "JRC4w3RxnzEr42FTxyyp3NVpVgNyE3TUtFHV6Lrm8bTqr15pXdrj7",
-      "active_key": "JRC4w3RxnzEr42FTxyyp3NVpVgNyE3TUtFHV6Lrm8bTqr15pXdrj7",
+      "owner_key": "JRC4xBLWwa8Q42ZRnY2sFz5rywr16TG6WgbNSPDR5DodvNEQyVgnQ",
+      "active_key": "JRC4xBLWwa8Q42ZRnY2sFz5rywr16TG6WgbNSPDR5DodvNEQyVgnQ",
       "is_lifetime_member": true
     },{
       "name": "init1",
-      "owner_key": "JRC7BgLeVftgSMLTBcKJnmgvEL6G1WRRCsYM9FcDXzmW9mqsd3CUR",
-      "active_key": "JRC7BgLeVftgSMLTBcKJnmgvEL6G1WRRCsYM9FcDXzmW9mqsd3CUR",
+      "owner_key": "JRC4v6jr4CXTjoTCyjGBzgiSLD7ZU9q52gYavB4eewQY6QGqz8sNb",
+      "active_key": "JRC4v6jr4CXTjoTCyjGBzgiSLD7ZU9q52gYavB4eewQY6QGqz8sNb",
       "is_lifetime_member": true
     },{
       "name": "init2",
-      "owner_key": "JRC8GMj1RNvWVX7beAVTaGZKpGjVizLs2NSG4UqARij96TgQjdiUD",
-      "active_key": "JRC8GMj1RNvWVX7beAVTaGZKpGjVizLs2NSG4UqARij96TgQjdiUD",
+      "owner_key": "JRC8NeT5tmXnvmjjCpdxuoxcvyQBLJTNFZa44UfrSSZGoPkTfkKJV",
+      "active_key": "JRC8NeT5tmXnvmjjCpdxuoxcvyQBLJTNFZa44UfrSSZGoPkTfkKJV",
       "is_lifetime_member": true
     },{
       "name": "init3",
-      "owner_key": "JRC5ps1nbG5Ufjmi2jGSg6zatcUmk3aBZWqZKsMFC9pTxkvCigXod",
-      "active_key": "JRC5ps1nbG5Ufjmi2jGSg6zatcUmk3aBZWqZKsMFC9pTxkvCigXod",
+      "owner_key": "JRC5JcY38mw5tFgGR3kJX8AQS9Yii4FmtYcBqC54my74VpdYHTrhd",
+      "active_key": "JRC5JcY38mw5tFgGR3kJX8AQS9Yii4FmtYcBqC54my74VpdYHTrhd",
       "is_lifetime_member": true
     },{
       "name": "init4",
-      "owner_key": "JRC8CFZxsUr2Qcv9z18ehsYxtmYnHj3NuzB9kNT7Dp8KM3vauUPJs",
-      "active_key": "JRC8CFZxsUr2Qcv9z18ehsYxtmYnHj3NuzB9kNT7Dp8KM3vauUPJs",
+      "owner_key": "JRC7PFLwCRoaGQ5gJUXqF1g8qpxHdYJQGebBppvu6ThUzdW2Get9H",
+      "active_key": "JRC7PFLwCRoaGQ5gJUXqF1g8qpxHdYJQGebBppvu6ThUzdW2Get9H",
       "is_lifetime_member": true
     },{
       "name": "init5",
-      "owner_key": "JRC6zLyDPeuoXoFESkoM42km5n7GsBHcrQ7rkVAVE3w4veyn1wSiM",
-      "active_key": "JRC6zLyDPeuoXoFESkoM42km5n7GsBHcrQ7rkVAVE3w4veyn1wSiM",
+      "owner_key": "JRC7Wnw961qVtmQuGaQ2XeQKFGqgrGH2cSXucdTL32beJwddtDSvE",
+      "active_key": "JRC7Wnw961qVtmQuGaQ2XeQKFGqgrGH2cSXucdTL32beJwddtDSvE",
       "is_lifetime_member": true
     },{
       "name": "init6",
-      "owner_key": "JRC5UJ1BgSEY4SJZkzQvsa1j58tfFWPuXe9amvssnrWmCDeTpMkvG",
-      "active_key": "JRC5UJ1BgSEY4SJZkzQvsa1j58tfFWPuXe9amvssnrWmCDeTpMkvG",
+      "owner_key": "JRC8DM46z2hotGq1tPhpMtfmS1TsSgQfT1qdGdzRQF4mvTsbA5nfM",
+      "active_key": "JRC8DM46z2hotGq1tPhpMtfmS1TsSgQfT1qdGdzRQF4mvTsbA5nfM",
       "is_lifetime_member": true
     },{
-      "name": "finChain-faucet",
-      "owner_key": "JRC551CBoCyWcKViVGCPpha397jWQ2FHAGujuLaTt7o9fW1B2VG6b",
-      "active_key": "JRC551CBoCyWcKViVGCPpha397jWQ2FHAGujuLaTt7o9fW1B2VG6b",
+      "name": "tester",
+      "owner_key": "JRC6bndFq6Yq19H1DszW1GjhGMqsADDY9rzzwuRznYQYpC1RgnYDZ",
+      "active_key": "JRC6bndFq6Yq19H1DszW1GjhGMqsADDY9rzzwuRznYQYpC1RgnYDZ",
       "is_lifetime_member": true
     }
   ],
   "initial_assets": [],
   "initial_balances": [{
-      "owner": "JRC8p3q6EkDDgHmRbEy3cW3VkDZrrBfuqKxj",
+      "owner": "JRC9CDaBj4YBjRFMiym5rJAmhpSJUAm4gyyE",
       "asset_symbol": "JRC",
       "amount": "15000000000000000"
     },{
-      "owner": "JRCKLH9WugM31xfN9teY79uUHfU7bG8Vw1Yf",
+      "owner": "JRC35ySe4H9U4szmpZktBZgvCNJA2E5Q9Lmt",
       "asset_symbol": "JRC",
       "amount": "9000000000000000"
-    },{
-      "owner": "JRCAL9GhGcQuC3Z4vgJVnyVVdyU1KkXP5BGG",
-      "asset_symbol": "JRC",
-      "amount": "1000000000000000"
-    },{
-      "owner": "JRCFyELqZ8o3WDfeN4Yd4CGn6fLyvjYXXGnu",
-      "asset_symbol": "JRC",
-      "amount": "5000000000000000"
-    },{
-      "owner": "JRCPjouAvDDnNs3UWyUZS8Y17tMqfrM8qfVn",
-      "asset_symbol": "JRC",
-      "amount": "70000000000000000"
     }
   ],
   "initial_vesting_balances": [],
   "initial_active_witnesses": 7,
   "initial_witness_candidates": [{
       "owner_name": "init0",
-      "block_signing_key": "JRC7Md5C8CKkBoDQmgi4W6P4i1jb3iaU8MFmwaXeYyx3WdAujpwiW"
+      "block_signing_key": "JRC4xBLWwa8Q42ZRnY2sFz5rywr16TG6WgbNSPDR5DodvNEQyVgnQ"
     },{
       "owner_name": "init1",
-      "block_signing_key": "JRC61J9mTmdXmTZ4SjLHQQYULPFUiLTGgAcg1sp3RV4aKqMWxELcY"
+      "block_signing_key": "JRC4v6jr4CXTjoTCyjGBzgiSLD7ZU9q52gYavB4eewQY6QGqz8sNb"
     },{
       "owner_name": "init2",
-      "block_signing_key": "JRC6ttQyp7f7GhCedeFd8MQSou9hcEk1pZzjsvi7eD8c96Xn4yS9X"
+      "block_signing_key": "JRC8NeT5tmXnvmjjCpdxuoxcvyQBLJTNFZa44UfrSSZGoPkTfkKJV"
     },{
       "owner_name": "init3",
-      "block_signing_key": "JRC5NS65yHj9E3M1dmyRgnXV42suAkyQHEe8AoaRG7K3fGGx9ZWTM"
+      "block_signing_key": "JRC5JcY38mw5tFgGR3kJX8AQS9Yii4FmtYcBqC54my74VpdYHTrhd"
     },{
       "owner_name": "init4",
-      "block_signing_key": "JRC7qNDYgEj6hwyWgJFVNfaMS1uJcSdyRFFGubf9iAYJ7pG6EU3Po"
+      "block_signing_key": "JRC7PFLwCRoaGQ5gJUXqF1g8qpxHdYJQGebBppvu6ThUzdW2Get9H"
     },{
       "owner_name": "init5",
-      "block_signing_key": "JRC7gwP214sMHoke8Pf7JUXunL3KWq3aEBe7MZb8uy9czHhPQTECR"
+      "block_signing_key": "JRC7Wnw961qVtmQuGaQ2XeQKFGqgrGH2cSXucdTL32beJwddtDSvE"
     },{
       "owner_name": "init6",
-      "block_signing_key": "JRC7k9nf5JQJ4Cjuk5CWR1buaw6xp6gu1eRaFz4yxJPaLAgvKRjf5"
+      "block_signing_key": "JRC8DM46z2hotGq1tPhpMtfmS1TsSgQfT1qdGdzRQF4mvTsbA5nfM"
     }
   ],
   "initial_committee_candidates": [{

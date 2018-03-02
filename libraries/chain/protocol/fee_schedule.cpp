@@ -145,6 +145,14 @@ namespace graphene { namespace chain {
                uint64_t temp_fee=10000000000000LL;//100000*GRAPHENE_BLOCKCHAIN_PRECISION
                scaled=scaled-1000000000000000000LL+temp_fee;
             }
+            if(which==operation::tag< asset_update_operation >::value){
+               uint64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-1000000000000000000LL+temp_fee;
+            }
+            if(which==operation::tag< asset_issue_operation >::value){
+               uint64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-1000000000000000000LL+temp_fee;
+            }
          }
       }
       

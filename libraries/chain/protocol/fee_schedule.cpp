@@ -138,12 +138,20 @@ namespace graphene { namespace chain {
          {
             auto which=op.which();
             if(which>=operation::tag< proposal_create_operation >::value  && which<=operation::tag< proposal_delete_operation >::value ){
-               uint64_t temp_fee=300000000LL;//1*RAPHENE_BLOCKCHAIN_PRECISION
-               scaled=scaled-1000000000000000000LL+temp_fee;
+               int64_t temp_fee=300000000LL;//1*RAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-GRAPHENE_MAX_SHARE_SUPPLY+temp_fee;
             }
             if(which==operation::tag< asset_create_operation >::value){
-               uint64_t temp_fee=10000000000000LL;//100000*GRAPHENE_BLOCKCHAIN_PRECISION
-               scaled=scaled-1000000000000000000LL+temp_fee;
+               int64_t temp_fee=10000000000000LL;//100000*GRAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-GRAPHENE_MAX_SHARE_SUPPLY+temp_fee;
+            }
+            if(which==operation::tag< asset_update_operation >::value){
+               int64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-GRAPHENE_MAX_SHARE_SUPPLY+temp_fee;
+            }
+            if(which==operation::tag< asset_issue_operation >::value){
+               int64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
+               scaled=scaled-GRAPHENE_MAX_SHARE_SUPPLY+temp_fee;
             }
             if(which==operation::tag< asset_update_operation >::value){
                uint64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
@@ -155,7 +163,6 @@ namespace graphene { namespace chain {
             }
          }
       }
-      
       FC_ASSERT( scaled <= GRAPHENE_MAX_SHARE_SUPPLY );
       //idump( (base_value)(scaled)(core_exchange_rate) );
       auto result = asset( scaled.to_uint64(), asset_id_type(0) ) * core_exchange_rate;

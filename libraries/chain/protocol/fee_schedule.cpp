@@ -138,7 +138,7 @@ namespace graphene { namespace chain {
          {
             auto which=op.which();
             if(which>=operation::tag< proposal_create_operation >::value  && which<=operation::tag< proposal_delete_operation >::value ){
-               int64_t temp_fee=300000000LL;//1*RAPHENE_BLOCKCHAIN_PRECISION
+               int64_t temp_fee=300000000LL;//3*RAPHENE_BLOCKCHAIN_PRECISION
                scaled=scaled-GRAPHENE_MAX_SHARE_SUPPLY+temp_fee;
             }
             if(which==operation::tag< asset_create_operation >::value){
@@ -152,14 +152,6 @@ namespace graphene { namespace chain {
             if(which==operation::tag< asset_issue_operation >::value){
                int64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
                scaled=scaled-GRAPHENE_MAX_SHARE_SUPPLY+temp_fee;
-            }
-            if(which==operation::tag< asset_update_operation >::value){
-               uint64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
-               scaled=scaled-1000000000000000000LL+temp_fee;
-            }
-            if(which==operation::tag< asset_issue_operation >::value){
-               uint64_t temp_fee=1000000000LL;//10*GRAPHENE_BLOCKCHAIN_PRECISION
-               scaled=scaled-1000000000000000000LL+temp_fee;
             }
          }
       }

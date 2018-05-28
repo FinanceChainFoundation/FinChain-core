@@ -118,8 +118,6 @@ void undo_database::undo()
       _db.insert( std::move(*item.second) );
 
    _stack.pop_back();
-   if( _stack.empty() )
-      _stack.emplace_back();
    enable();
    --_active_sessions;
 } FC_CAPTURE_AND_RETHROW() }

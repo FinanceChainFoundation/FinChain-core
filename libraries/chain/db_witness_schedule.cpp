@@ -51,8 +51,6 @@ fc::time_point_sec database::get_slot_time(uint32_t slot_num)const
    {
       // n.b. first block is at genesis_time plus one block interval
       fc::time_point_sec genesis_time = dpo.time;
-      //if(forMissBlock)
-      //   return fetch_block_by_number(1).timestamp;
       return genesis_time + slot_num * interval;
    }
 

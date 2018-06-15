@@ -62,15 +62,16 @@ void database::update_global_dynamic_data( const signed_block& b )
          });
       } 
    }
-
+   
+   uint32_t blocks = get_slot_at_time( b.timestamp )-1;
    // dynamic global properties updating
    modify( _dgp, [&]( dynamic_global_property_object& dgp ){
       if( BOOST_UNLIKELY( b.block_num() == 1 ) )
          dgp.recently_missed_count = 0;
          else if( _checkpoints.size() && _checkpoints.rbegin()->first >= b.block_num() )
          dgp.recently_missed_count = 0;
-      else if( missed_blocks )
-         dgp.recently_missed_count += GRAPHENE_RECENTLY_MISSED_COUNT_INCREMENT*missed_blocks;
+      else if( blocks )
+         dgp.recently_missed_count += GRAPHENE_RECENTLY_MISSED_COUNT_INCREMENT*blocks;
       else if( dgp.recently_missed_count > GRAPHENE_RECENTLY_MISSED_COUNT_INCREMENT )
          dgp.recently_missed_count -= GRAPHENE_RECENTLY_MISSED_COUNT_DECREMENT;
       else if( dgp.recently_missed_count > 0 )
@@ -82,8 +83,8 @@ void database::update_global_dynamic_data( const signed_block& b )
       dgp.current_witness = b.witness;
       dgp.recent_slots_filled = (
            (dgp.recent_slots_filled << 1)
-           + 1) << missed_blocks;
-      dgp.current_aslot += missed_blocks+1;
+           + 1) << blocks;
+      dgp.current_aslot += blocks+1;
    });
 
    if( !(get_node_properties().skip_flags & skip_undo_history_check) )

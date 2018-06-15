@@ -242,7 +242,7 @@ namespace graphene { namespace chain {
           *
           * If no such N exists, return 0.
           */
-         uint32_t get_slot_at_time(fc::time_point_sec when)const;
+         uint32_t get_slot_at_time(fc::time_point_sec when,bool forMissBlock=false)const;
 
          void update_witness_schedule();
 

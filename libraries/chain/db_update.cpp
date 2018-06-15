@@ -45,7 +45,7 @@ void database::update_global_dynamic_data( const signed_block& b )
    const dynamic_global_property_object& _dgp =
       dynamic_global_property_id_type(0)(*this);
 
-   uint32_t missed_blocks = get_slot_at_time( b.timestamp );
+   uint32_t missed_blocks = get_slot_at_time( b.timestamp ,true);
    assert( missed_blocks != 0 );
    missed_blocks--;
    for( uint32_t i = 0; i < missed_blocks; ++i ) {

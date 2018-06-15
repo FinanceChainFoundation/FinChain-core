@@ -51,6 +51,8 @@ fc::time_point_sec database::get_slot_time(uint32_t slot_num)const
    {
       // n.b. first block is at genesis_time plus one block interval
       fc::time_point_sec genesis_time = dpo.time;
+      //if(forMissBlock)
+      //   return fetch_block_by_number(1).timestamp;
       return genesis_time + slot_num * interval;
    }
 
@@ -69,11 +71,14 @@ fc::time_point_sec database::get_slot_time(uint32_t slot_num)const
    return head_slot_time + (slot_num * interval);
 }
 
-uint32_t database::get_slot_at_time(fc::time_point_sec when)const
+uint32_t database::get_slot_at_time(fc::time_point_sec when,bool forMissBlock)const
 {
    fc::time_point_sec first_slot_time = get_slot_time( 1 );
    if( when < first_slot_time )
       return 0;
+   if(forMissBlock)
+      if(head_block_num() == 0)
+         return 1;
    return (when - first_slot_time).to_seconds() / block_interval() + 1;
 }
 

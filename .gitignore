@@ -44,3 +44,5 @@ object_database/*
 
 config.ini
 build/
+build2/
+*.vcxproj

@@ -64,6 +64,7 @@ class account_history_plugin_impl
 
       account_history_plugin& _self;
       flat_set<account_id_type> _tracked_accounts;
+	  flat_set<account_id_type> _full_history_accounts;
       bool _partial_operations = false;
       primary_index< simple_index< operation_history_object > >* _oho_index;
       uint32_t _max_ops_per_account = -1;
@@ -190,6 +191,17 @@ void account_history_plugin_impl::add_account_history( const account_id_type acc
        obj.most_recent_op = ath.id;
        obj.total_ops = ath.sequence;
    });
+
+   flat_set<account_id_type>& full_accounts = _self.full_history_accounts();
+   if (full_accounts.count(account_id)){
+	   uint32_t num = stats_obj.total_ops - stats_obj.removed_ops;
+	   if (num > 100){
+		   account_object obj = account_id(db);
+		   std::cout << "name of account : " << obj.name <<std::endl;
+		   std::cout << "num of history : " << num << std::endl;
+	   }
+	   return;
+   }
    // remove the earliest account history entry if too many
    // _max_ops_per_account is guaranteed to be non-zero outside
    if( stats_obj.total_ops - stats_obj.removed_ops > _max_ops_per_account )
@@ -264,23 +276,36 @@ void account_history_plugin::plugin_set_program_options(
          ("track-account", boost::program_options::value<std::vector<std::string>>()->composing()->multitoken(), "Account ID to track history for (may specify multiple times)")
          ("partial-operations", boost::program_options::value<bool>(), "Keep only those operations in memory that are related to account history tracking")
          ("max-ops-per-account", boost::program_options::value<uint32_t>(), "Maximum number of operations per account will be kept in memory")
+		 ("full-history", boost::program_options::value<std::vector<std::string>>()->composing()->multitoken(), "Accounts have full history")
          ;
    cfg.add(cli);
 }
 
 void account_history_plugin::plugin_initialize(const boost::program_options::variables_map& options)
 {
-   database().applied_block.connect( [&]( const signed_block& b){ my->update_account_histories(b); } );
-   my->_oho_index = database().add_index< primary_index< simple_index< operation_history_object > > >();
-   database().add_index< primary_index< account_transaction_history_index > >();
+	database().applied_block.connect([&](const signed_block& b){ my->update_account_histories(b); });
+	my->_oho_index = database().add_index< primary_index< simple_index< operation_history_object > > >();
+	database().add_index< primary_index< account_transaction_history_index > >();
 
-   LOAD_VALUE_SET(options, "track-account", my->_tracked_accounts, graphene::chain::account_id_type);
-   if (options.count("partial-operations")) {
-       my->_partial_operations = options["partial-operations"].as<bool>();
-   }
-   if (options.count("max-ops-per-account")) {
-       my->_max_ops_per_account = options["max-ops-per-account"].as<uint32_t>();
-   }
+	LOAD_VALUE_SET(options, "track-account", my->_tracked_accounts, graphene::chain::account_id_type);
+	if (options.count("partial-operations")) {
+		my->_partial_operations = options["partial-operations"].as<bool>();
+	}
+	if (options.count("max-ops-per-account")) {
+		my->_max_ops_per_account = options["max-ops-per-account"].as<uint32_t>();
+	}
+	LOAD_VALUE_SET(options, "full-history", my->_full_history_accounts, graphene::chain::account_id_type);
+	//if (options.count("full-history")){
+	//	const std::vector<std::string>& account_ids = options["full-history"].as<std::vector<std::string>>();
+	//	graphene::chain::database& db = database();
+	//	const auto& accounts_by_name = db.get_index_type<account_index>().indices().get<by_name>();
+	//	my->_full_history_accounts.clear();
+	//	for (const auto & name : account_ids){
+	//		auto itr = accounts_by_name.find(name);
+	//		if (itr != accounts_by_name.end())
+	//			my->_full_history_accounts.insert(itr->get_id());
+	//	}
+	//}
 }
 
 void account_history_plugin::plugin_startup()
@@ -290,6 +315,11 @@ void account_history_plugin::plugin_startup()
 flat_set<account_id_type> account_history_plugin::tracked_accounts() const
 {
    return my->_tracked_accounts;
+}
+
+flat_set<account_id_type> account_history_plugin::full_history_accounts() const
+{
+	return my->_full_history_accounts;
 }
 
 } }

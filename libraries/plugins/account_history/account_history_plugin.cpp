@@ -281,6 +281,12 @@ void account_history_plugin::plugin_set_program_options(
    cfg.add(cli);
 }
 
+template<typename T>
+T dejsonify_test(const string& s)
+{
+	return fc::json::from_string(s).as<T>();
+}
+
 void account_history_plugin::plugin_initialize(const boost::program_options::variables_map& options)
 {
 	database().applied_block.connect([&](const signed_block& b){ my->update_account_histories(b); });
@@ -295,6 +301,12 @@ void account_history_plugin::plugin_initialize(const boost::program_options::var
 		my->_max_ops_per_account = options["max-ops-per-account"].as<uint32_t>();
 	}
 	LOAD_VALUE_SET(options, "full-history", my->_full_history_accounts, graphene::chain::account_id_type);
+
+	if (options.count("full-history")) {
+			const std::vector<std::string>& ops = options["full-history"].as<std::vector<std::string>>();
+			std::transform(ops.begin(), ops.end(), std::inserter(my->_full_history_accounts, my->_full_history_accounts.end()), &graphene::app::dejsonify<graphene::chain::account_id_type>);
+	}
+
 	//if (options.count("full-history")){
 	//	const std::vector<std::string>& account_ids = options["full-history"].as<std::vector<std::string>>();
 	//	graphene::chain::database& db = database();

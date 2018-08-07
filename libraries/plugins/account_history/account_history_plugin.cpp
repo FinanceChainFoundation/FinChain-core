@@ -192,7 +192,7 @@ void account_history_plugin_impl::add_account_history( const account_id_type acc
        obj.total_ops = ath.sequence;
    });
 
-   flat_set<account_id_type>& full_accounts = _self.full_history_accounts();
+   const flat_set<account_id_type>& full_accounts = _self.full_history_accounts();
    if (full_accounts.count(account_id)){
 	   uint32_t num = stats_obj.total_ops - stats_obj.removed_ops;
 	   if (num > 100){
@@ -300,11 +300,12 @@ void account_history_plugin::plugin_initialize(const boost::program_options::var
 	if (options.count("max-ops-per-account")) {
 		my->_max_ops_per_account = options["max-ops-per-account"].as<uint32_t>();
 	}
-	LOAD_VALUE_SET(options, "full-history", my->_full_history_accounts, graphene::chain::account_id_type);
-
+	
 	if (options.count("full-history")) {
 			const std::vector<std::string>& ops = options["full-history"].as<std::vector<std::string>>();
-			std::transform(ops.begin(), ops.end(), std::inserter(my->_full_history_accounts, my->_full_history_accounts.end()), &graphene::app::dejsonify<graphene::chain::account_id_type>);
+    std::transform(ops.begin(), ops.end(), std::inserter(my->_full_history_accounts, my->_full_history_accounts.end()), [](string s){
+      return fc::variant(s).as<graphene::chain::account_id_type>();
+    });
 	}
 
 	//if (options.count("full-history")){

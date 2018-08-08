@@ -194,12 +194,6 @@ void account_history_plugin_impl::add_account_history( const account_id_type acc
 
    const flat_set<account_id_type>& full_accounts = _self.full_history_accounts();
    if (full_accounts.count(account_id)){
-	   uint32_t num = stats_obj.total_ops - stats_obj.removed_ops;
-	   if (num > 100){
-		   account_object obj = account_id(db);
-		   std::cout << "name of account : " << obj.name <<std::endl;
-		   std::cout << "num of history : " << num << std::endl;
-	   }
 	   return;
    }
    // remove the earliest account history entry if too many
@@ -281,12 +275,6 @@ void account_history_plugin::plugin_set_program_options(
    cfg.add(cli);
 }
 
-template<typename T>
-T dejsonify_test(const string& s)
-{
-	return fc::json::from_string(s).as<T>();
-}
-
 void account_history_plugin::plugin_initialize(const boost::program_options::variables_map& options)
 {
 	database().applied_block.connect([&](const signed_block& b){ my->update_account_histories(b); });
@@ -302,23 +290,11 @@ void account_history_plugin::plugin_initialize(const boost::program_options::var
 	}
 	
 	if (options.count("full-history")) {
-			const std::vector<std::string>& ops = options["full-history"].as<std::vector<std::string>>();
-    std::transform(ops.begin(), ops.end(), std::inserter(my->_full_history_accounts, my->_full_history_accounts.end()), [](string s){
-      return fc::variant(s).as<graphene::chain::account_id_type>();
-    });
+		const std::vector<std::string>& ops = options["full-history"].as<std::vector<std::string>>();
+		std::transform(ops.begin(), ops.end(), std::inserter(my->_full_history_accounts, my->_full_history_accounts.end()), [](string s){
+            return fc::variant(s).as<graphene::chain::account_id_type>();
+        });
 	}
-
-	//if (options.count("full-history")){
-	//	const std::vector<std::string>& account_ids = options["full-history"].as<std::vector<std::string>>();
-	//	graphene::chain::database& db = database();
-	//	const auto& accounts_by_name = db.get_index_type<account_index>().indices().get<by_name>();
-	//	my->_full_history_accounts.clear();
-	//	for (const auto & name : account_ids){
-	//		auto itr = accounts_by_name.find(name);
-	//		if (itr != accounts_by_name.end())
-	//			my->_full_history_accounts.insert(itr->get_id());
-	//	}
-	//}
 }
 
 void account_history_plugin::plugin_startup()

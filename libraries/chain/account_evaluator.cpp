@@ -63,7 +63,7 @@ void verify_account_votes( const database& db, const account_options& options )
 
    const auto& gpo = db.get_global_properties();
    const auto& chain_params = gpo.parameters;
-
+   FC_ASSERT( db.find_object(options.voting_account), "Invalid proxy account specified." );
    FC_ASSERT( options.num_witness <= chain_params.maximum_witness_count,
               "Voted for more witnesses than currently allowed (${c})", ("c", chain_params.maximum_witness_count) );
    FC_ASSERT( options.num_committee <= chain_params.maximum_committee_count,
@@ -95,20 +95,6 @@ void verify_account_votes( const database& db, const account_options& options )
 void_result account_create_evaluator::do_evaluate( const account_create_operation& op )
 { try {
    database& d = db();
-   if( d.head_block_time() < HARDFORK_516_TIME )
-   {
-      FC_ASSERT( !op.extensions.value.owner_special_authority.valid() );
-      FC_ASSERT( !op.extensions.value.active_special_authority.valid() );
-   }
-   if( d.head_block_time() < HARDFORK_599_TIME )
-   {
-      FC_ASSERT( !op.extensions.value.null_ext.valid() );
-      FC_ASSERT( !op.extensions.value.owner_special_authority.valid() );
-      FC_ASSERT( !op.extensions.value.active_special_authority.valid() );
-      FC_ASSERT( !op.extensions.value.buyback_options.valid() );
-   }
-
-   FC_ASSERT( d.find_object(op.options.voting_account), "Invalid proxy account specified." );
    FC_ASSERT( fee_paying_account->is_lifetime_member(), "Only Lifetime members may register an account." );
    FC_ASSERT( op.referrer(d).is_member(d.head_block_time()), "The referrer must be either a lifetime or annual subscriber." );
 

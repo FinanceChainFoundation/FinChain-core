@@ -1,4 +1,4 @@
 // #0001 update fee fast
-#ifndef HARDFORK_0001_TIME
-#define HARDFORK_0001_TIME (fc::time_point_sec( 1458752400 ))
+#ifndef HARDFORK_0001_BLOCK_NO
+#define HARDFORK_0001_BLOCK_NO  uint32_t(20) 
 #endif

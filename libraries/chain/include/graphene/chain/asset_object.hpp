@@ -69,6 +69,7 @@ namespace graphene { namespace chain {
          share_type accumulated_fees;           ///< fees accumulate to be paid out over time
          share_type fee_pool;                   ///< in core asset
          share_type locked_balance=0;           /// locked supply;
+         share_type	market_fees=0;			//fees from market
    };
    
    class asset_lock_data_object : public abstract_object<asset_lock_data_object>
@@ -294,7 +295,7 @@ namespace graphene { namespace chain {
 } } // graphene::chain
 
 FC_REFLECT_DERIVED( graphene::chain::asset_dynamic_data_object, (graphene::db::object),
-                    (current_supply)(confidential_supply)(accumulated_fees)(fee_pool) (locked_balance))
+                    (current_supply)(confidential_supply)(accumulated_fees)(fee_pool) (locked_balance)(market_fees))
 
 FC_REFLECT_DERIVED( graphene::chain::asset_lock_data_object, (graphene::db::object),
                    (asset_id)

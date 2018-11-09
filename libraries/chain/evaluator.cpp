@@ -100,6 +100,10 @@ database& generic_evaluator::db()const { return trx_state->db(); }
          d.modify(*fee_paying_account_statistics, [&](account_statistics_object& s)
          {
             s.pay_fee( core_fee_paid, d.get_global_properties().parameters.cashback_vesting_threshold );
+			if(s.tx_fees.count(fee_from_account.asset_id))
+				s.tx_fees[fee_from_account.asset_id] +=fee_from_account.amount;
+			else
+				s.tx_fees[fee_from_account.asset_id] = fee_from_account.amount;
          });
       }
    } FC_CAPTURE_AND_RETHROW() }

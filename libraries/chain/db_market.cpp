@@ -302,7 +302,7 @@ bool database::fill_order( const limit_order_object& order, const asset& pays, c
    const account_object& seller = order.seller(*this);
    const asset_object& recv_asset = receives.asset_id(*this);
 
-   auto issuer_fees = pay_market_fees( recv_asset, receives );
+   auto issuer_fees = pay_market_fees( recv_asset, receives,seller.get_id());
    pay_order( seller, receives - issuer_fees, pays );
 
    assert( pays.asset_id != receives.asset_id );
@@ -392,7 +392,7 @@ bool database::fill_order(const force_settlement_object& settle, const asset& pa
 { try {
    bool filled = false;
 
-   auto issuer_fees = pay_market_fees(get(receives.asset_id), receives);
+   auto issuer_fees = pay_market_fees(get(receives.asset_id), receives,settle.owner);
 
    if( pays < settle.balance )
    {
@@ -578,7 +578,7 @@ asset database::calculate_market_fee( const asset_object& trade_asset, const ass
    return percent_fee;
 }
 
-asset database::pay_market_fees( const asset_object& recv_asset, const asset& receives )
+asset database::pay_market_fees( const asset_object& recv_asset, const asset& receives,account_id_type owner )
 {
    auto issuer_fees = calculate_market_fee( recv_asset, receives );
    assert(issuer_fees <= receives );
@@ -590,7 +590,15 @@ asset database::pay_market_fees( const asset_object& recv_asset, const asset& re
       modify( recv_dyn_data, [&]( asset_dynamic_data_object& obj ){
                    //idump((issuer_fees));
          obj.accumulated_fees += issuer_fees.amount;
+		 obj.market_fees += issuer_fees.amount;		
       });
+
+	  modify( get(owner).statistics(*this), [&]( account_statistics_object& b ){
+             if(b.market_fees.count(issuer_fees.asset_id))
+			 	b.market_fees[issuer_fees.asset_id] +=issuer_fees.amount;
+			 else
+			 	b.market_fees[issuer_fees.asset_id] =issuer_fees.amount;
+           });
    }
 
    return issuer_fees;

@@ -82,6 +82,14 @@ namespace graphene { namespace chain {
           */
          share_type pending_vested_fees;
 
+
+		 /**
+		 fees
+		 */
+		 map<asset_id_type,share_type>  tx_fees;
+
+		 map<asset_id_type,share_type>  market_fees;
+
          /// @brief Split up and pay out @ref pending_fees and @ref pending_vested_fees
          void process_fees(const account_object& a, database& d) const;
 
@@ -406,5 +414,7 @@ FC_REFLECT_DERIVED( graphene::chain::account_statistics_object,
                     (total_core_in_orders)
                     (lifetime_fees_paid)
                     (pending_fees)(pending_vested_fees)
+                    (tx_fees)
+					(market_fees)
                   )
 

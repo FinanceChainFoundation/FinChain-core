@@ -427,7 +427,7 @@ namespace detail {
          uint32_t maintain_replay_to=0;
          if(maintain_replay)
          {
-           uint32_t maintain_replay_to=_options->at("replay-blockchain-to").as<uint32_t>();
+           maintain_replay_to=_options->at("replay-blockchain-to").as<uint32_t>();
          }
          if( replay ||maintain_replay)
          {

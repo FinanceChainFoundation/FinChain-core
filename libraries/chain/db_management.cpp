@@ -46,7 +46,7 @@ database::~database()
    clear_pending();
 }
 
-void database::reindex(fc::path data_dir, const genesis_state_type& initial_allocation)
+void database::reindex(fc::path data_dir, const genesis_state_type& initial_allocation,uint32_t block_no)
 { try {
    ilog( "reindexing blockchain" );
    wipe(data_dir, false);
@@ -60,7 +60,7 @@ void database::reindex(fc::path data_dir, const genesis_state_type& initial_allo
       return;
    }
 
-   const auto last_block_num = last_block->block_num();
+  const auto last_block_num =block_no==0? last_block->block_num():block_no;
 
    ilog( "Replaying blocks..." );
    _undo_db.disable();

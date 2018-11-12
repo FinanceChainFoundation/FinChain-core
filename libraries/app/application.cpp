@@ -423,13 +423,20 @@ namespace detail {
                replay_reason = "exception in open()";
             }
          }
-
-         if( replay )
+         bool maintain_replay=_options->count("replay-blockchain-to");
+         uint32_t maintain_replay_to=0;
+         if(maintain_replay)
          {
-            ilog( "Replaying blockchain due to: ${reason}", ("reason", replay_reason) );
-
+           uint32_t maintain_replay_to=_options->at("replay-blockchain-to").as<uint32_t>();
+         }
+         if( replay ||maintain_replay)
+         {
+            if(replay)
+              ilog( "Replaying blockchain due to: ${reason}", ("reason", replay_reason) );
+            else
+              ilog( "Replaying blockchain  to ${maintain_replay_to}", ("maintain_replay_to", maintain_replay_to) );
             fc::remove_all( _data_dir / "db_version" );
-            _chain_db->reindex( _data_dir / "blockchain", initial_state() );
+            _chain_db->reindex( _data_dir / "blockchain", initial_state() ,maintain_replay_to);
 
             const auto mode = std::ios::out | std::ios::binary | std::ios::trunc;
             std::ofstream db_version( (_data_dir / "db_version").generic_string().c_str(), mode );
@@ -462,7 +469,8 @@ namespace detail {
             _apiaccess.permission_map["*"] = wild_access;
          }
 
-         reset_p2p_node(_data_dir);
+         if(!maintain_replay)
+           reset_p2p_node(_data_dir);
          reset_websocket_server();
          reset_websocket_tls_server();
       } FC_LOG_AND_RETHROW() }
@@ -957,6 +965,7 @@ void application::set_program_options(boost::program_options::options_descriptio
          ("genesis-json", bpo::value<boost::filesystem::path>(), "File to read Genesis State from")
          ("dbg-init-key", bpo::value<string>(), "Block signing key to use for init witnesses, overrides genesis file")
          ("api-access", bpo::value<boost::filesystem::path>(), "JSON file specifying API permissions")
+         ("replay-blockchain-to",bpo::value<uint32_t>(), "Rebuild object graph by replaying to blocks")
          ;
    command_line_options.add(configuration_file_options);
    command_line_options.add_options()

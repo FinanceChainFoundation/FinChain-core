@@ -100,7 +100,7 @@ namespace graphene { namespace chain {
           * This method may be called after or instead of @ref database::open, and will rebuild the object graph by
           * replaying blockchain history. When this method exits successfully, the database will be open.
           */
-         void reindex(fc::path data_dir, const genesis_state_type& initial_allocation = genesis_state_type());
+         void reindex(fc::path data_dir, const genesis_state_type& initial_allocation = genesis_state_type(),uint32_t block_no=0);
 
          /**
           * @brief wipe Delete database from disk, and potentially the raw chain as well.

@@ -46,3 +46,4 @@ config.ini
 build/
 build2/
 *.vcxproj
+.DS_Store

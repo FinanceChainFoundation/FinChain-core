@@ -165,7 +165,6 @@ struct lock_data_detail{
 };
 
 
-
 /**
  * @brief The database_api class implements the RPC API for the chain database.
  *
@@ -644,6 +643,11 @@ class database_api
        *  @return asset`s lock data
        */
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
+   
+      /**
+       *  @return get the focus ops in a block
+       */
+      set<vop_statistics_object> get_block_statistics(uint32_t block_no,uint32_t limit=100)const;
    private:
       std::shared_ptr< database_api_impl > my;
 };
@@ -757,5 +761,6 @@ FC_API(graphene::app::database_api,
    (get_blinded_balances)
        
    (get_asset_lock_data)
+   (get_block_statistics)
  //  (get_account_locked_data)
 )

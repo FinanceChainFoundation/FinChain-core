@@ -203,6 +203,7 @@ class database_api_impl : public std::enable_shared_from_this<database_api_impl>
       void on_objects_removed(const vector<object_id_type>& ids, const vector<const object*>& objs, const flat_set<account_id_type>& impacted_accounts);
       void on_applied_block();
       lock_data_detail get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const;
+      set<vop_statistics_object> get_block_statistics(uint32_t block_no,uint32_t limit)const;
    
       bool _notify_remove_create = false;
       mutable fc::bloom_filter _subscribe_filter;
@@ -2054,7 +2055,7 @@ void database_api_impl::on_applied_block()
 lock_data_detail database_api::get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const{
    return my->get_asset_lock_data( asset_id,period );
 }
-
+   
 lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,optional<uint32_t> period)const{
    
    lock_data_detail res;
@@ -2068,6 +2069,24 @@ lock_data_detail database_api_impl::get_asset_lock_data(asset_id_type asset_id,o
    res.reward_coefficient=lock_data_obj.reward_coefficient;
    res.interest_pool = lock_data_obj.interest_pool;
    res.max_period = lock_data_obj.max_period;
+   return res;
+}
+set<vop_statistics_object> database_api::get_block_statistics(uint32_t block_no,uint32_t limit)const{
+   return my->get_block_statistics( block_no ,limit);
+}
+set<vop_statistics_object> database_api_impl::get_block_statistics(uint32_t block_no,uint32_t _limit)const{
+   set<vop_statistics_object> res;
+   uint32_t limit=10000;
+   if(_limit<limit)
+      limit=_limit;
+
+   const auto & idx= _db.get_index_type<vop_statistics_index>().indices().get<by_block>();
+   //auto itr=idx.find(block_no);
+   uint32_t count=0;
+   for(auto itr=idx.lower_bound(block_no);
+       itr!=idx.end()&&itr->block_no<=block_no+limit;
+       itr++)
+      res.insert(*itr);
    return res;
 }
 } } // graphene::app

@@ -98,11 +98,25 @@ namespace graphene { namespace chain {
          //std::pair<account_id_type,operation_history_id_type>  account_op()const  { return std::tie( account, operation_id ); }
          //std::pair<account_id_type,uint32_t>                   account_seq()const { return std::tie( account, sequence );     }
    };
+   class vop_statistics_object :  public abstract_object<vop_statistics_object>
+   {
+   public:
+      static const uint8_t space_id = implementation_ids;
+      static const uint8_t type_id  = impl_vop_statistics_object_type;
+      
+      uint32_t                             block_no;
+      uint8_t                              op_type;
+      account_id_type                      account; /// the account this operation applies to
+      set<asset>                           fees;
+
+   };
+   inline bool operator <  ( const vop_statistics_object& a, const vop_statistics_object& b ) { return a.block_no <  b.block_no; }
    
-   struct by_id;
+struct by_id;
 struct by_seq;
 struct by_op;
 struct by_opid;
+struct by_block;
 typedef multi_index_container<
    account_transaction_history_object,
    indexed_by<
@@ -127,6 +141,16 @@ typedef multi_index_container<
 
 typedef generic_index<account_transaction_history_object, account_transaction_history_multi_index_type> account_transaction_history_index;
 
+typedef multi_index_container<
+vop_statistics_object,
+   indexed_by<
+      ordered_unique< tag<by_id>, member< object, object_id_type, &object::id > >,
+      ordered_non_unique< tag<by_block>, member< vop_statistics_object, uint32_t, &vop_statistics_object::block_no > >
+   >
+> vop_statistics_multi_index_type;
+
+typedef generic_index<vop_statistics_object, vop_statistics_multi_index_type> vop_statistics_index;
+   
    
 } } // graphene::chain
 
@@ -135,3 +159,6 @@ FC_REFLECT_DERIVED( graphene::chain::operation_history_object, (graphene::chain:
 
 FC_REFLECT_DERIVED( graphene::chain::account_transaction_history_object, (graphene::chain::object),
                     (account)(operation_id)(sequence)(next) )
+
+FC_REFLECT_DERIVED( graphene::chain::vop_statistics_object, (graphene::chain::object),
+                   (block_no)(op_type)(account)(fees) )

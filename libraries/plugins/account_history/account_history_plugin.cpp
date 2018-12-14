@@ -56,6 +56,9 @@ class account_history_plugin_impl
        * and will process/index all operations that were applied in the block.
        */
       void update_account_histories( const signed_block& b );
+   
+      template< class Op_type>
+      void update_account_histories( graphene::chain::database& db,const signed_block& b,const operation& op );
 
       graphene::chain::database& database()
       {
@@ -78,6 +81,17 @@ account_history_plugin_impl::~account_history_plugin_impl()
 {
    return;
 }
+   
+template< class Op_type>
+void account_history_plugin_impl::update_account_histories( graphene::chain::database& db,const signed_block& b,const operation& op ){
+   
+   db.create<vop_statistics_object>( [&]( vop_statistics_object& obj ){
+      obj.block_no=b.block_num();
+      obj.account=account_id_type();
+      obj.op_type=Op_type::whitch();
+      obj.fees.insert(op.get<Op_type>().fees);
+   });
+}
 
 void account_history_plugin_impl::update_account_histories( const signed_block& b )
 {
@@ -85,6 +99,36 @@ void account_history_plugin_impl::update_account_histories( const signed_block& 
    const vector<optional< operation_history_object > >& hist = db.get_applied_operations();
    for( const optional< operation_history_object >& o_op : hist )
    {
+      //create vop
+      {
+         uint8_t op_type_value=o_op->op.which();
+
+         if(op_type_value== operation::tag< account_create_operation >::value||
+            op_type_value==operation::tag< fill_order_operation >::value||
+            op_type_value==operation::tag< limit_order_create_operation >::value)
+         {
+            account_id_type account;
+            if(o_op->op.which()== operation::tag< account_create_operation >::value)
+               account=o_op->result.get<object_id_type>();
+            if(o_op->op.which()== operation::tag< fill_order_operation >::value){
+               account=o_op->op.get<fill_order_operation>().account_id;
+               //fees.insert(o_op->op.get<fill_order_operation>().fee);
+            }
+            db.create<vop_statistics_object>( [&]( vop_statistics_object& obj ){
+               obj.block_no=b.block_num();
+               obj.account=account;
+               obj.op_type=op_type_value;
+               if(o_op->op.which()== operation::tag< fill_order_operation >::value){
+                  obj.fees.insert(o_op->op.get<fill_order_operation>().fee);
+               }
+               if(o_op->op.which()== operation::tag< limit_order_create_operation >::value){
+                  obj.fees.insert(o_op->op.get<limit_order_create_operation>().fee);
+               }
+
+            });
+            
+      }
+      }
       optional<operation_history_object> oho;
 
       auto create_oho = [&]() {
@@ -280,6 +324,8 @@ void account_history_plugin::plugin_initialize(const boost::program_options::var
 	database().applied_block.connect([&](const signed_block& b){ my->update_account_histories(b); });
 	my->_oho_index = database().add_index< primary_index< simple_index< operation_history_object > > >();
 	database().add_index< primary_index< account_transaction_history_index > >();
+   
+   database().add_index< primary_index< vop_statistics_index > >();
 
 	LOAD_VALUE_SET(options, "track-account", my->_tracked_accounts, graphene::chain::account_id_type);
 	if (options.count("partial-operations")) {

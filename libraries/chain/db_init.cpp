@@ -134,6 +134,9 @@ const uint8_t locked_balance_object::type_id;
 const uint8_t asset_lock_data_object::space_id;
 const uint8_t asset_lock_data_object::type_id;
 
+const uint8_t vop_statistics_object::space_id;
+const uint8_t vop_statistics_object::type_id;
+
 
 void database::initialize_evaluators()
 {

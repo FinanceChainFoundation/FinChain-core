@@ -646,6 +646,9 @@ class database_api
    
       /**
        *  @return get the focus ops in a block
+       *  @param block_no start block
+       *  @param limit limit block from start block
+       *  only return fill_order_operation,account_create_operation and limit_order_create_operation ops,
        */
       set<vop_statistics_object> get_block_statistics(uint32_t block_no,uint32_t limit=100)const;
    private:

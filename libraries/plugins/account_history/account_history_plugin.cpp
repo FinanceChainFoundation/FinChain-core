@@ -114,6 +114,9 @@ void account_history_plugin_impl::update_account_histories( const signed_block& 
                account=o_op->op.get<fill_order_operation>().account_id;
                //fees.insert(o_op->op.get<fill_order_operation>().fee);
             }
+            if(o_op->op.which()== operation::tag< limit_order_create_operation >::value){
+                account=o_op->op.get<limit_order_create_operation>().seller;
+            }
             db.create<vop_statistics_object>( [&]( vop_statistics_object& obj ){
                obj.block_no=b.block_num();
                obj.account=account;

@@ -3390,13 +3390,17 @@ signed_transaction wallet_api::issue_asset(string to_account, string amount, str
 signed_transaction wallet_api::transfer(string from, string to, string amount,
                                         string asset_symbol, string memo, bool broadcast /* = false */)
 {
-   ilog("get transfer from cli or rpc from : ${from} to : ${to} amount : ${amount} asset_symbol :${asset_symbol} memo : ${memo}",
-        ("from",from)
-        ("to",to)
-        ("amount",amount)
-        ("asset_symbol",asset_symbol)
-        ("memo",memo));
-   return my->transfer(from, to, amount, asset_symbol, memo, broadcast);
+   auto my_accounts=list_my_accounts();
+   for(const auto& my_account:my_accounts){
+      if(my_account.name==from)
+         return my->transfer(from, to, amount, asset_symbol, memo, broadcast);
+   }
+   FC_ASSERT(false,"get transfer from cli or rpc but cannot find from name in my accounts from : ${from} to : ${to} amount : ${amount} asset_symbol :${asset_symbol} memo : ${memo}",
+             ("from",from)
+             ("to",to)
+             ("amount",amount)
+             ("asset_symbol",asset_symbol)
+             ("memo",memo));
 }
 signed_transaction wallet_api::create_asset(string issuer,
                                             string symbol,

@@ -3390,6 +3390,12 @@ signed_transaction wallet_api::issue_asset(string to_account, string amount, str
 signed_transaction wallet_api::transfer(string from, string to, string amount,
                                         string asset_symbol, string memo, bool broadcast /* = false */)
 {
+   ilog("get transfer from cli or rpc from : ${from} to : ${to} amount : ${amount} asset_symbol :${asset_symbol} memo : ${memo}",
+        ("from",from)
+        ("to",to)
+        ("amount",amount)
+        ("asset_symbol",asset_symbol)
+        ("memo",memo));
    return my->transfer(from, to, amount, asset_symbol, memo, broadcast);
 }
 signed_transaction wallet_api::create_asset(string issuer,

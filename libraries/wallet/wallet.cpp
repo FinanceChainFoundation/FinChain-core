@@ -2851,7 +2851,7 @@ string operation_printer::operator()(const transfer_operation& op) const
          out << " -- Unlock wallet to see memo.";
       } else {
          try {
-            FC_ASSERT(wallet._keys.count(op.memo->to) || wallet._keys.count(op.memo->from), "Memo is encrypted to a key ${to} or ${from} not in this wallet.", ("to", op.memo->to)("from",op.memo->from));
+            FC_ASSERT(wallet._keys.count(op.memo->to) || wallet._keys.count(op.memo->from), "Memo is encrypted to a key ${to} or ${from} not in this wallet. \n ${op}", ("to", op.memo->to)("from",op.memo->from)("op",op));
             if( wallet._keys.count(op.memo->to) ) {
                auto my_key = wif_to_key(wallet._keys.at(op.memo->to));
                FC_ASSERT(my_key, "Unable to recover private key to decrypt memo. Wallet may be corrupted.");

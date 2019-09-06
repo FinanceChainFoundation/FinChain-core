@@ -594,7 +594,8 @@ public:
             return *_wallet.my_accounts.get<by_name>().find(account_name_or_id);
          }
          auto rec = _remote_db->lookup_account_names({account_name_or_id}).front();
-         FC_ASSERT( rec && rec->name == account_name_or_id , "${rec}  ${rec->name}", ("rec", rec)("rec->name",rec->name));
+         FC_ASSERT(rec,"cannot find account ${account_name_or_id}",("account_name_or_id",account_name_or_id));
+         FC_ASSERT( rec->name == account_name_or_id , "${rec}  ${rec->name}", ("rec", rec)("rec->name",rec->name));
          return *rec;
       }
    }

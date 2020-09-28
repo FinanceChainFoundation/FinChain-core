@@ -163,7 +163,10 @@ struct lock_data_detail{
    share_type  		 interest_pool;
    uint32_t          max_period;
 };
-
+struct blocks_txs{
+   set<signed_transaction> txs;
+   uint32_t end_block_no;
+};
 
 /**
  * @brief The database_api class implements the RPC API for the chain database.
@@ -651,6 +654,8 @@ class database_api
        *  only return fill_order_operation,account_create_operation and limit_order_create_operation ops,
        */
       set<vop_statistics_object> get_block_statistics(uint32_t block_no,uint32_t limit=100)const;
+   
+      blocks_txs get_blocks_txs(uint32_t start,uint32_t limit)const;
    private:
       std::shared_ptr< database_api_impl > my;
 };
@@ -765,5 +770,6 @@ FC_API(graphene::app::database_api,
        
    (get_asset_lock_data)
    (get_block_statistics)
+   (get_blocks_txs)
  //  (get_account_locked_data)
 )

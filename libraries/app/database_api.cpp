@@ -1753,7 +1753,27 @@ vector< fc::variant > database_api::get_required_fees( const vector<operation>& 
 {
    return my->get_required_fees( ops, id );
 }
-
+blocks_txs database_api::get_blocks_txs(uint32_t start,uint32_t limit)const{
+   blocks_txs res;
+   uint32_t tx_amount=0;
+   while(tx_amount<=limit){
+      auto b=my->get_block(start);
+      if(!b){
+         res.end_block_no=start-1;
+         break;
+         
+      }
+      else{
+         for (const auto & t:b->transactions){
+            res.txs.insert(t);
+            tx_amount++;
+         }
+      }
+      start++;
+   }
+   res.end_block_no=start-1;
+   return res;
+}
 /**
  * Container method for mutually recursive functions used to
  * implement get_required_fees() with potentially nested proposals.

@@ -672,7 +672,7 @@ FC_REFLECT( graphene::app::asset_locked_balance,(asset_id)(lockded_balances));
 FC_REFLECT(graphene::app::locked_balance_detail, (initial_lock_balance)(locked_balance)(lock_time)(lock_period)(lock_type)(interest)(locked_id));
 FC_REFLECT(graphene::app::lock_data_detail, (asset_id)(current_interest)(reward_coefficient)(interest_pool)(max_period));
 FC_REFLECT( graphene::app::interest_detail,(nominal)(period_days)(active_interest));
-
+FC_REFLECT(graphene::app::blocks_txs,(txs)(end_block_no))
 FC_API(graphene::app::database_api,
    // Objects
    (get_objects)

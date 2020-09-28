@@ -369,6 +369,9 @@ namespace detail {
                loaded_checkpoints[item.first] = item.second;
             }
          }
+         //add checkpoint
+         loaded_checkpoints[27714549]=block_id_type("01a6e3f533bc8376e774d64a567e7d0f9c384cc1");
+         
          _chain_db->add_checkpoints( loaded_checkpoints );
 
          bool replay = false;

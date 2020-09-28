@@ -150,9 +150,12 @@ void database::update_last_irreversible_block()
 
    if( new_last_irreversible_block_num > dpo.last_irreversible_block_num )
    {
+      if(_checkpoints.count(this->head_block_num()))
+         new_last_irreversible_block_num=this->head_block_num();
       modify( dpo, [&]( dynamic_global_property_object& _dpo )
       {
-         _dpo.last_irreversible_block_num = new_last_irreversible_block_num;
+         if(new_last_irreversible_block_num>_dpo.last_irreversible_block_num)
+            _dpo.last_irreversible_block_num = new_last_irreversible_block_num;
       } );
    }
 }

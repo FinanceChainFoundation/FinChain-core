@@ -147,15 +147,15 @@ void database::update_last_irreversible_block()
       } );
 
    uint32_t new_last_irreversible_block_num = wit_objs[offset]->last_confirmed_block_num;
-
+   if(_checkpoints.count(this->head_block_num())){
+      new_last_irreversible_block_num=this->head_block_num();
+      ilog( "set irreversible_block by checkpoints ${no}", ("no", this->head_block_num()) );
+   }
    if( new_last_irreversible_block_num > dpo.last_irreversible_block_num )
    {
-      if(_checkpoints.count(this->head_block_num()))
-         new_last_irreversible_block_num=this->head_block_num();
       modify( dpo, [&]( dynamic_global_property_object& _dpo )
       {
-         if(new_last_irreversible_block_num>_dpo.last_irreversible_block_num)
-            _dpo.last_irreversible_block_num = new_last_irreversible_block_num;
+         _dpo.last_irreversible_block_num = new_last_irreversible_block_num;
       } );
    }
 }

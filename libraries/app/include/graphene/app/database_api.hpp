@@ -164,7 +164,7 @@ struct lock_data_detail{
    uint32_t          max_period;
 };
 struct blocks_txs{
-   set<signed_transaction> txs;
+   vector<signed_transaction> txs;
    uint32_t end_block_no;
 };
 

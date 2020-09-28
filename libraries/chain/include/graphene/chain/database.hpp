@@ -423,6 +423,7 @@ namespace graphene { namespace chain {
          void                  apply_block( const signed_block& next_block, uint32_t skip = skip_nothing );
          processed_transaction apply_transaction( const signed_transaction& trx, uint32_t skip = skip_nothing );
          operation_result      apply_operation( transaction_evaluation_state& eval_state, const operation& op );
+         void set_max_undo(uint32_t _max){max_undo=_max;}
       private:
          void                  _apply_block( const signed_block& next_block );
          processed_transaction _apply_transaction( const signed_transaction& trx );
@@ -499,6 +500,7 @@ namespace graphene { namespace chain {
          flat_map<uint32_t,block_id_type>  _checkpoints;
 
          node_property_object              _node_property_object;
+         uint32_t                          max_undo  =GRAPHENE_MAX_UNDO_HISTORY;
    };
 
    namespace detail

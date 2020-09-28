@@ -469,6 +469,9 @@ namespace detail {
            reset_p2p_node(_data_dir);
          reset_websocket_server();
          reset_websocket_tls_server();
+         if( _options->count("max_undo") ){
+            _chain_db->set_max_undo(_options->at("max_undo").as<uint32_t>());
+         }
       } FC_LOG_AND_RETHROW() }
 
       optional< api_access_info > get_api_access_info(const string& username)const
@@ -962,6 +965,7 @@ void application::set_program_options(boost::program_options::options_descriptio
          ("dbg-init-key", bpo::value<string>(), "Block signing key to use for init witnesses, overrides genesis file")
          ("api-access", bpo::value<boost::filesystem::path>(), "JSON file specifying API permissions")
          ("replay-blockchain-to",bpo::value<uint32_t>(), "Rebuild object graph by replaying to blocks")
+         ("max_undo",bpo::value<uint32_t>(), "set db max undo stake size")
          ;
    command_line_options.add(configuration_file_options);
    command_line_options.add_options()

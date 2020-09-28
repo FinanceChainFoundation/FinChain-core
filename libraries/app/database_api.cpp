@@ -1765,7 +1765,7 @@ blocks_txs database_api::get_blocks_txs(uint32_t start,uint32_t limit)const{
       }
       else{
          for (const auto & t:b->transactions){
-            res.txs.insert(t);
+            res.txs.emplace_back(t);
             tx_amount++;
          }
       }

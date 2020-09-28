@@ -191,7 +191,7 @@ struct wallet_data
    key_label_index_type                                              labeled_keys;
    blind_receipt_index_type                                          blind_receipts;
 
-   string                    ws_server = "ws://localhost:8090";
+   string                    ws_server = "ws://localhost:9090";
    string                    ws_user;
    string                    ws_password;
 };

@@ -45,6 +45,7 @@
 #include <graphene/chain/vote_count.hpp>
 #include <graphene/chain/witness_object.hpp>
 #include <graphene/chain/worker_object.hpp>
+#include <iostream>
 
 namespace graphene { namespace chain {
 
@@ -175,7 +176,11 @@ void database::update_active_witnesses()
          stake_tally += _witness_count_histogram_buffer[++witness_count];
       }
    }
-
+   
+   std::cout<<"_total_voting_stake :"<<_total_voting_stake<<std::endl;
+   for(uint32_t i=0;i<10;i++)
+      std::cout<<_witness_count_histogram_buffer[i]<<std::endl;
+   
    const chain_property_object& cpo = get_chain_properties();
    auto wits = sort_votable_objects<witness_index>(std::max(witness_count*2+1, (size_t)cpo.immutable_parameters.min_witness_count));
 
@@ -883,3 +888,4 @@ void database::perform_chain_maintenance(const signed_block& next_block, const g
 }
 
 } }
+

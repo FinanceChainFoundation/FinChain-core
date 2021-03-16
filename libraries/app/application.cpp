@@ -162,6 +162,7 @@ namespace detail {
          {
             // https:/
             vector<string> seeds = {
+               "121.36.211.170:1888"
             };
             if(!_options->count("private"))
                for( const string& endpoint_string : seeds )

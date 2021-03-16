@@ -371,6 +371,7 @@ namespace detail {
          }
          //add checkpoint
          loaded_checkpoints[27714549]=block_id_type("01a6e3f533bc8376e774d64a567e7d0f9c384cc1");
+         loaded_checkpoints[28908953]=block_id_type("01b91d99118ba3ba9c42a63b265a1c8dfa731bfc");
          
          _chain_db->add_checkpoints( loaded_checkpoints );
 

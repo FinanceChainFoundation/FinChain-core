@@ -33,6 +33,40 @@ To build after all dependencies are installed:
     to build cli_wallet use:
         make cli_wallet
 
+build on Ubuntu 18.04 LTS:
+
+    git clone https://github.com/FinanceChainFoundation/FinChain-core.git
+    
+    mkdir Fin-depend
+    cd Fin-depend
+    wget https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_1_0_2g.tar.gz
+    mkdir openssl
+    tar -zxvf OpenSSL_1_0_2g.tar.gz
+    cd OpenSSL_1_0_2g
+    ./config --prefix=/root/Fin-depend/openssl --openssldir=/root/Fin-depend/openssl shared zlib install
+    make 
+    cd ..
+    wget https://nchc.dl.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz
+    tar -zxvf boost_1_58_0.tar.gz
+    mkdir boost158
+    cd boost_1_58_0
+    ./bootstrap.sh
+    ./b2 --prefix=/root/Fin-depend/boost158 install
+    cd ~/FinChain-core
+    mkdir build 
+    cd build 
+    cmake -DBOOST_ROOT=~/Fin-depend/boost158 -DOPENSSL_ROOT_DIR=~/Fin-depend/openssl ..
+
+    make witness_node cli_wallet
+    cd FinChain-core
+    git checkout <LATEST_RELEASE_TAG>
+    git submodule update --init --recursive
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+    to build witness_node use:
+        make witness_node 
+    to build cli_wallet use:
+        make cli_wallet
+
 **NOTE:** FinChain requires an [OpenSSL](https://www.openssl.org/) version in the 1.0.x series. OpenSSL 1.1.0 and newer are NOT supported. If your system OpenSSL version is newer, then you will need to manually provide an older version of OpenSSL and specify it to CMake using `-DOPENSSL_INCLUDE_DIR`, `-DOPENSSL_SSL_LIBRARY`, and `-DOPENSSL_CRYPTO_LIBRARY`.
 
 **NOTE:** FinChain requires a [Boost](http://www.boost.org/) version in the range [1.57, 1.60]. Versions earlier than

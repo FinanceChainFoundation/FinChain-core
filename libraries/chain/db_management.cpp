@@ -129,8 +129,9 @@ void database::open(
          while(last_block->block_num()>block_no )
          {
             _block_id_to_block.remove(last_block->id());
-            if((wip_amount++)%1000==0)
+            /*if((wip_amount++)%1000==0)
                ilog("Wiping block ${no}", ("no", last_block->block_num()));
+             */
             last_block = _block_id_to_block.last();
 
          }

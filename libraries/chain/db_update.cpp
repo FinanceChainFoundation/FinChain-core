@@ -150,7 +150,16 @@ void database::update_last_irreversible_block()
    if(_checkpoints.count(this->head_block_num())){
       new_last_irreversible_block_num=this->head_block_num();
       ilog( "set irreversible_block by checkpoints ${no}", ("no", this->head_block_num()) );
+         
    }
+   //to maintain block missing from block 34560000 to 34700000
+   auto num=this->head_block_num();
+   if(num>=34560000&&num<=34700000 && num%5000==0)
+   {
+      new_last_irreversible_block_num=this->head_block_num()-20;
+      ilog( "set irreversible_block by maintaining ${no}", ("no", num) );
+   }
+   
    if( new_last_irreversible_block_num > dpo.last_irreversible_block_num )
    {
       modify( dpo, [&]( dynamic_global_property_object& _dpo )

@@ -92,7 +92,7 @@ namespace graphene { namespace chain {
           */
           void open(
              const fc::path& data_dir,
-             std::function<genesis_state_type()> genesis_loader );
+             std::function<genesis_state_type()> genesis_loader,uint32_t block_no=0 );
 
          /**
           * @brief Rebuild object graph from block history and open detabase

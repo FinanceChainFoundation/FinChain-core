@@ -50,7 +50,7 @@ void database::reindex(fc::path data_dir, const genesis_state_type& initial_allo
 { try {
    ilog( "reindexing blockchain" );
    wipe(data_dir, false);
-   open(data_dir, [&initial_allocation]{return initial_allocation;});
+   open(data_dir, [&initial_allocation]{return initial_allocation;},block_no);
 
    auto start = fc::time_point::now();
    auto last_block = _block_id_to_block.last();
@@ -60,7 +60,8 @@ void database::reindex(fc::path data_dir, const genesis_state_type& initial_allo
       return;
    }
 
-  const auto last_block_num =block_no==0? last_block->block_num():block_no;
+  //const auto last_block_num =block_no==0? last_block->block_num():block_no;
+   const auto last_block_num=last_block->block_num();
 
    ilog( "Replaying blocks..." );
    _undo_db.disable();
@@ -110,7 +111,7 @@ void database::wipe(const fc::path& data_dir, bool include_blocks)
 
 void database::open(
    const fc::path& data_dir,
-   std::function<genesis_state_type()> genesis_loader)
+   std::function<genesis_state_type()> genesis_loader,uint32_t block_no)
 {
    try
    {
@@ -122,6 +123,18 @@ void database::open(
          init_genesis(genesis_loader());
 
       fc::optional<signed_block> last_block = _block_id_to_block.last();
+      if(block_no!=0&&last_block.valid())
+      {
+         uint32_t wip_amount=0;
+         while(last_block->block_num()>block_no )
+         {
+            _block_id_to_block.remove(last_block->id());
+            if((wip_amount++)%1000==0)
+               ilog("Wiping block ${no}", ("no", last_block->block_num()));
+            last_block = _block_id_to_block.last();
+
+         }
+      }
       if( last_block.valid() )
       {
          _fork_db.start_block( *last_block );

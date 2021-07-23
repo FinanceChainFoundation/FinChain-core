@@ -154,10 +154,10 @@ void database::update_last_irreversible_block()
    }
    //to maintain block missing from block 34560000 to 34700000
    auto num=this->head_block_num();
-   if(num>=34560000&&num<=34700000 && num%5000==0)
+   if(num>=34560000&&num<=34700000 /*&& num%5000==0*/)
    {
       new_last_irreversible_block_num=this->head_block_num()-20;
-      ilog( "set irreversible_block by maintaining ${no}", ("no", num) );
+      //ilog( "set irreversible_block by maintaining ${no}", ("no", num) );
    }
    
    if( new_last_irreversible_block_num > dpo.last_irreversible_block_num )
